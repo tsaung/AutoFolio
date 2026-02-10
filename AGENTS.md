@@ -6,32 +6,33 @@
 ## 1. The Collaborative Seniors Model
 This repository is built by a team of **autonomous Senior Developers** (both Human, Cloud Agents, and Local Agents).
 - **Equality:** All agents (Jules, Copilot, etc.) are treated as Senior Engineers. You have the authority to make architectural decisions, refactor code, and improve the implementation.
-- **Responsibility:** With authority comes responsibility. You must document your decisions.
+- **Responsibility:** With authority comes responsibility. You must document your decisions in `specs/`.
 
-## 2. The Universal Law: "The Plan is the Living Truth"
-- **Single Source of Truth:** The `plans/` directory is the ONLY source of truth for feature specifications.
-- **Synchronization Rule:** The Code and the Plan MUST NEVER diverge.
-    - If you change the code (e.g., swap a library, change a data structure), you **MUST** update the active plan file to reflect this change.
-    - **Definition of Completion:** A task is NOT finished until the code works AND the plan accurately describes that code.
+## 2. The Universal Law: "Specs & Tests are Truth"
+- **Documentation Entry Point:** The `specs/` directory is the **Living Documentation** for this project. It is the starting point for every task.
+- **Single Source of Truth:** The `specs/` directory is the ONLY source of truth for feature specifications.
+- **Test-Driven Development (TDD):**
+    - **Logic:** Write a failing test BEFORE writing implementation code.
+    - **UI:** If strict TDD is too heavy, ensure you have a verification script or clear manual test steps.
+- **Synchronization:** The Code, the Tests, and the Specs MUST NEVER diverge.
+    - If you change the code, you **MUST** update the `specs/` and the tests.
 
 ## 3. Workflow Protocol
-1.  **Check Context:** Before starting, read `plans/active/` to see if a plan exists for your task.
-2.  **No Plan? Create One:** If it's a new feature, create a plan in `plans/active/` first. (Exception: Minor UI tweaks/typos do not need a plan).
-3.  **Global Backlog (`plans/todo.md`):**
-    - **Mandatory Format:** Every task must be tracked here with a link to its plan file.
-      ```markdown
-      - [ ] **Task Title**
-        - 📅 Added: YYYY-MM-DD
-        - 🚨 Priority: High/Medium/Low
-        - 📝 Plan: [Link Text](plans/active/###-slug.md)
-        - ℹ️ Context: Brief description.
-      ```
-4.  **Execute & Update:** As you code, if you realize the plan is wrong or suboptimal:
-    - **Refactor the Plan:** Update the markdown file immediately.
-    - **Refactor the Code:** Implement the better solution.
-5.  **Finish:** Move the plan to `plans/completed/` only when Code + Plan are in perfect sync.
+1.  **Check Context:**
+    - Read `todo.md` (Root) to identify the task.
+    - **CRITICAL:** Read `specs/` to understand the existing system behavior before changing anything.
+2.  **Update Spec:**
+    - If the task introduces a new feature or changes behavior, update the relevant markdown file in `specs/` *first*.
+    - This serves as your "Plan" and ensures documentation never rots.
+3.  **Execute (TDD):**
+    - **Red:** Write a failing test (Unit/Integration) that defines the expected behavior.
+    - **Green:** Write the code to pass the test.
+    - **Refactor:** Clean up the code and tests.
+4.  **Finish:**
+    - Mark the item in `todo.md` as checked `[x]`.
+    - Verify that `specs/` accurately describes the final implementation.
 
 ## 4. Interaction Style
-- Be concise.
-- Be proactive. If you see a bug unrelated to your task, fix it (and update the plan if it's significant).
-- Assume competence. The previous agent (Cloud or Local) had a reason for their code. Read the plan to understand *why* before deleting it.
+- **Be Concise:** Don't explain basic concepts unless asked.
+- **Be Proactive:** If you spot a bug or a potential improvement, fix it (and update the spec).
+- **Assume Competence:** The previous agent had a reason for their code. Read the spec to understand *why* before deleting it.
