@@ -13,27 +13,47 @@ This file contains the **Global Backlog** of all tasks, big or small, that are y
 ## Backlog
 
 ### Phase 1: Foundation
-- [ ] **Database Schema & Auth**
-  - ℹ️ Context: Implement `profiles`, `documents` tables and Supabase Auth (Google/Email).
+- [x] **Database Schema & Auth**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: High
+  - 📝 Plan: [Setup Auth & DB](plans/completed/002-setup-auth-db.md)
+  - ℹ️ Context: Implement `profiles` table and Supabase Auth (Email/Password).
 - [ ] **Visitor Chat Interface (UI)**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Medium
+  - 📝 Plan: Pending
   - ℹ️ Context: Build the chat shell with Vercel AI SDK UI (`useChat`).
 
 ### Phase 2: RAG & Enrichment
 - [ ] **Admin Dashboard Layout**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Medium
+  - 📝 Plan: Pending
   - ℹ️ Context: Create the protected admin layout and navigation.
 - [ ] **Profile Enrichment Chat (The Logic)**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Medium
+  - 📝 Plan: Pending
   - ℹ️ Context: Implement the "Admin Agent" using Vercel AI SDK Core to generate RAG docs.
 - [ ] **RAG Pipeline Implementation**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Medium
+  - 📝 Plan: Pending
   - ℹ️ Context: Vectorize documents and implement retrieval logic.
 
 ### Phase 3: Polish & Deployment
 - [ ] **Generative UI Widgets**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Low
+  - 📝 Plan: Pending
   - ℹ️ Context: Implement `streamUI` for Project Cards and Contact Forms.
 - [ ] **SEO & Metadata**
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Low
+  - 📝 Plan: Pending
+  - ℹ️ Context: Add OpenGraph tags and metadata.
 - [ ] **Deployment to Vercel**
-
-## Legacy / Reference
-- [ ] **Optimize the workflow for human - agents loop**
-  - 📅 Added: 2026-02-09
-  - 🚨 Priority: High
-  - ℹ️ Context: Establish seamless collaboration.
+  - 📅 Added: 2026-02-10
+  - 🚨 Priority: Low
+  - 📝 Plan: Pending
+  - ℹ️ Context: Deploy the application.

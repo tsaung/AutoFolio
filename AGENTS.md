@@ -1,3 +1,8 @@
+# AutoFolio - Collaborative Seniors
+
+> **Status:** Active Development
+> **Last Updated:** 2026-02-10
+
 ## 1. The Collaborative Seniors Model
 This repository is built by a team of **autonomous Senior Developers** (both Human, Cloud Agents, and Local Agents).
 - **Equality:** All agents (Jules, Copilot, etc.) are treated as Senior Engineers. You have the authority to make architectural decisions, refactor code, and improve the implementation.
@@ -12,10 +17,19 @@ This repository is built by a team of **autonomous Senior Developers** (both Hum
 ## 3. Workflow Protocol
 1.  **Check Context:** Before starting, read `plans/active/` to see if a plan exists for your task.
 2.  **No Plan? Create One:** If it's a new feature, create a plan in `plans/active/` first. (Exception: Minor UI tweaks/typos do not need a plan).
-3.  **Execute & Update:** As you code, if you realize the plan is wrong or suboptimal:
+3.  **Global Backlog (`plans/todo.md`):**
+    - **Mandatory Format:** Every task must be tracked here with a link to its plan file.
+      ```markdown
+      - [ ] **Task Title**
+        - 📅 Added: YYYY-MM-DD
+        - 🚨 Priority: High/Medium/Low
+        - 📝 Plan: [Link Text](plans/active/###-slug.md)
+        - ℹ️ Context: Brief description.
+      ```
+4.  **Execute & Update:** As you code, if you realize the plan is wrong or suboptimal:
     - **Refactor the Plan:** Update the markdown file immediately.
     - **Refactor the Code:** Implement the better solution.
-4.  **Finish:** Move the plan to `plans/completed/` only when Code + Plan are in perfect sync.
+5.  **Finish:** Move the plan to `plans/completed/` only when Code + Plan are in perfect sync.
 
 ## 4. Interaction Style
 - Be concise.

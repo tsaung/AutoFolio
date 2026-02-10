@@ -21,7 +21,10 @@
 *   **Goal:** Manage data and train the AI.
 *   **Mechanism:** Admin Dashboard.
 *   **Data Enrichment:** Chat with the "Admin Agent" to generate RAG-optimized documents.
-*   **Authentication:** Supabase Auth (`Magic Link` or `Email/Password`).
+*   **Authentication:** Supabase Auth (Email/Password).
+    - **Login:** Standard email/password flow.
+    - **Signup:** Disabled/Manual creation (Single Tenant focus).
+    - **Password Reset:** Supported via email link.
 
 ## 3. Core Features
 
@@ -50,25 +53,32 @@
 *   **Database:** Supabase.
 *   **Deployment:** Vercel (recommended).
 
-## 5. Preliminary Data Schema (Draft)
-To support the "WordPress" model transition:
-*   `profiles` (id, user_id, bio, logic_settings)
-*   `documents` (id, user_id, content, type=['raw','enriched'], created_at)
-*   `embeddings` (id, document_id, vector, content_chunk)
-*   `messages` (id, user_id, session_id, role, content)
+## 5. Data Schema (Current)
+*   `profiles`:
+    - `id` (uuid, PK, references auth.users)
+    - `username`, `full_name`, `avatar_url`, `website`
+    - `updated_at`
+*   `documents` (Future):
+    - `id`, `user_id`, `content`, `type`=['raw','enriched'], `created_at`
+*   `embeddings` (Future):
+    - `id`, `document_id`, `vector`, `content_chunk`
+*   `messages` (Future):
+    - `id`, `user_id`, `session_id`, `role`, `content`
 
 ## 6. Implementation Strategy (MVP)
 ### 6.1 Project Structure
 *   `app/(visitor)/page.tsx` -> Main Chat Interface.
 *   `app/(admin)/dashboard/...` -> Admin Panel (Protected).
+*   `app/(auth)/...` -> Authentication Pages.
 *   `lib/ai` -> SDK Core definition and prompts.
 *   `lib/db` -> Supabase Client (Server/Client).
 
 ### 6.2 Environment Variables
 *   `OPENROUTER_API_KEY`
-*   `SUPABASE_URL`
-*   `SUPABASE_ANON_KEY`
+*   `NEXT_PUBLIC_SUPABASE_URL`
+*   `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 *   `SUPABASE_SERVICE_ROLE_KEY` (for admin/enrichment tasks)
+*   `NEXT_PUBLIC_SITE_URL` (for auth redirects)
 
 ---
 *This document will be updated as we clarify requirements.*

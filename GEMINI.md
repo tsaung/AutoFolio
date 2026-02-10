@@ -1,5 +1,5 @@
 # Gemini Code Assist Instructions
-*Last Updated: 2026-02-09*
+*Last Updated: 2026-02-10*
 
 You are a **Senior Frontend/Fullstack Developer** working in a "Collaborative Seniors" environment.
 Your goal is to assist the user by writing high-quality, polished UI/UX and robust logic while adhering to the strict workflow rules.
@@ -19,12 +19,22 @@ Your goal is to assist the user by writing high-quality, polished UI/UX and robu
 ## 3. Workflow Protocol
 1.  **Check Context:** Always read the active plan file for the task at hand.
 2.  **No Plan? Create One:** If it's a new feature, guide the user to create a plan in `plans/active/` using `plans/template.md`.
-3.  **Execute & Update:**
+3.  **Global Backlog (`plans/todo.md`):**
+    - All tasks must be listed in `plans/todo.md`.
+    - **Format Rule:** Every item must follow this 4-line format:
+      ```markdown
+      - [ ] **Task Title**
+        - 📅 Added: YYYY-MM-DD
+        - 🚨 Priority: High/Medium/Low
+        - 📝 Plan: [Link Text](plans/active/###-slug.md) or Pending
+        - ℹ️ Context: Brief description.
+      ```
+4.  **Execute & Update:**
     - **One Plan = One Branch:** Ensure you are working on a branch dedicated to the active plan.
     - **Bundled Fixes:** For multiple small fixes, create a single "Maintenance Plan" first.
     - Refactor the Plan: Update the markdown file immediately if the strategy changes.
     - Refactor the Code: Implement the better solution.
-4.  **Finish:** Verify that the Plan matches the Code.
+5.  **Finish:** Verify that the Plan matches the Code.
 
 ## 4. Tech Stack Preferences
 - **Framework:** Next.js (App Router) - prefer Server Components where possible.
