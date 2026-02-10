@@ -13,8 +13,8 @@ Implement a responsive admin dashboard layout with:
 - Uniform styling using Shadcn UI components.
 - Mobile responsiveness.
 - Correct OpenRouter integration using `@openrouter/ai-sdk-provider`.
-- **Database Seeding**: Default admin user and initial system settings.
 - **Route Protection**: Ensure all `/settings/*` and `/dashboard/*` routes are protected.
+- **Seeding**: Manual creation via Studio (seed.sql removed from plan).
 
 ## Proposed Changes
 
@@ -34,9 +34,6 @@ Implement a responsive admin dashboard layout with:
 - **`src/app/(admin)/settings/ai/page.tsx`**: Ensure consistent styling.
 - **`src/app/api/chat/route.ts`**: Update OpenRouter initialization.
 
-### 4. Database
-- **`supabase/seed.sql`**: Add SQL for default admin user and initial `ai_model_config`.
-
 ## Step-by-Step Plan
 
 1.  **Create Sidebar & Header Components**
@@ -54,14 +51,10 @@ Implement a responsive admin dashboard layout with:
 5.  **Refactor OpenRouter Integration**
     -   (Already Implemented) Verify `src/app/api/chat/route.ts`.
 
-6.  **Seed Database**
-    -   Create `supabase/seed.sql`.
-    -   Insert into `auth.users`: email `admin@gmail.com`, password `admin` (hashed).
-    -   Insert into `public.profiles`: corresponding profile.
-    -   Insert into `public.system_settings`: key `ai_model_config`, value default JSON.
+6.  **Cleanup**
+    -   Remove `supabase/seed.sql`.
 
 7.  **Verify & Test**
-    -   Reset DB locally if possible (or just run seed manually via SQL editor if local instance is running).
     -   Visit `/settings/ai` without login -> Should redirect.
-    -   Login with `admin@gmail.com` / `admin`.
-    -   Visit `/settings/ai` -> Should show default config, no "0 rows" error.
+    -   Login with manually created user.
+    -   Visit `/settings/ai` -> Should show default config (or empty state handled gracefully), no "0 rows" error.
