@@ -1,12 +1,11 @@
-import { createOpenAI } from '@ai-sdk/openai'
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { streamText } from 'ai'
 import { adminClient } from '@/lib/db/admin'
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30
 
-const openrouter = createOpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
+const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
 })
 
@@ -30,10 +29,10 @@ export async function POST(req: Request) {
 
   // 2. Call the AI provider
   const result = streamText({
-    model: openrouter(modelId),
+    model: openrouter.chat(modelId),
     messages,
     system: 'You are a helpful portfolio assistant. You are chatting with a visitor on the portfolio site.',
   })
 
-  return result.toDataStreamResponse()
+  return result.toTextStreamResponse()
 }

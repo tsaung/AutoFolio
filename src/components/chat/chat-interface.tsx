@@ -15,9 +15,7 @@ export function ChatInterface() {
   const [input, setInput] = useState('')
 
   // Destructure with fallback
-  // Note: @ai-sdk/react useChat exposes sendMessage instead of append in some versions,
-  // or it might be a specific behavior of this version.
-  const { messages = [], isLoading, sendMessage, append } = chat
+  const { messages = [], isLoading, append } = chat as any
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -33,15 +31,11 @@ export function ChatInterface() {
     e?.preventDefault()
     if (!input.trim()) return
 
-    // Prefer sendMessage if available (string input), otherwise append (object input)
-    if (sendMessage) {
-      await sendMessage(input)
-      setInput('')
-    } else if (append) {
+    if (append) {
       await append({ role: 'user', content: input })
       setInput('')
     } else {
-      console.error('Neither sendMessage nor append function available from useChat')
+      console.error('append function not available from useChat')
     }
   }
 
@@ -76,7 +70,7 @@ export function ChatInterface() {
             </div>
           </div>
         ) : (
-          messages.map((m) => (
+          messages.map((m: any) => (
             <div
               key={m.id}
               className={`flex gap-3 ${
@@ -107,22 +101,23 @@ export function ChatInterface() {
                     : 'bg-muted text-foreground'
                 }`}
               >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  className="prose dark:prose-invert prose-sm break-words"
-                  components={{
-                    pre: ({ ...props }) => (
+                <div className="prose dark:prose-invert prose-sm break-words">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      pre: ({ ...props }) => (
                       <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
                         <pre {...props} />
                       </div>
                     ),
-                    code: ({ ...props }) => (
-                      <code className="bg-black/10 rounded px-1" {...props} />
-                    ),
-                  }}
-                >
-                  {m.content}
-                </ReactMarkdown>
+                      code: ({ ...props }) => (
+                        <code className="bg-black/10 rounded px-1" {...props} />
+                      ),
+                    }}
+                  >
+                    {m.content}
+                  </ReactMarkdown>
+                </div>
               </div>
             </div>
           ))

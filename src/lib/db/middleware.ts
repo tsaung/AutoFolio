@@ -37,7 +37,8 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    request.nextUrl.pathname.startsWith('/dashboard')
+    (request.nextUrl.pathname.startsWith('/dashboard') ||
+     request.nextUrl.pathname.startsWith('/settings'))
   ) {
     // no user, potentially respond with redirect
     const url = request.nextUrl.clone()

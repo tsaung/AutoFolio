@@ -8,12 +8,16 @@ export default async function AISettingsPage() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Settings</h1>
-        <p className="text-muted-foreground">Configure the AI models and behavior.</p>
+        <h1 className="text-3xl font-bold tracking-tight">AI Configuration</h1>
+        <p className="text-muted-foreground">
+          Manage how the AI interacts with visitors on your portfolio.
+        </p>
       </div>
-      <ModelSelector initialConfig={config} />
+      <div className="grid gap-6 max-w-2xl">
+        <ModelSelector initialConfig={config} />
+      </div>
     </div>
   )
 }

@@ -13,7 +13,9 @@ export async function getSystemSetting(key: string) {
     .single()
 
   if (error) {
-    console.error(`Error fetching system setting '${key}':`, error)
+    if (error.code !== 'PGRST116') {
+      console.error(`Error fetching system setting '${key}':`, error)
+    }
     return null
   }
 
