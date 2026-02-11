@@ -1,7 +1,7 @@
 # AI-Driven TDD Workflow
 
 **Status:** Active
-**Last Updated:** 2026-02-10
+**Last Updated:** 2026-02-12
 
 This document defines the mandatory development workflow for all contributors (Human and AI) to the AutoFolio project. It enforces the "Specs & Tests are Truth" philosophy.
 
@@ -18,9 +18,9 @@ If you change the code, you **MUST** update the Specs and the Tests to match.
 
 ## 2. The 5-Step Workflow
 
-### Sync Strategy
-- **Cloud Agents:** Use `scripts/sync-dev.sh` (Merge) to ensure safety.
-- **Local (Humans):** Use `scripts/sync-dev.sh --rebase` or manual rebase to keep history clean.
+### Integration Strategy
+- **Manual Merging:** All merging and conflict resolution is a manual responsibility of the Human Lead.
+- **No Automated Sync:** Agents should focus on their specific task without syncing `development` automatically.
 
 
 Every task, feature, or bug fix must follow this cycle:
