@@ -10,12 +10,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Send, Bot, User, Sparkles } from 'lucide-react'
 
 export function ChatInterface() {
-  const chat = useChat()
+  const { messages, status, sendMessage } = useChat()
   // Manual state management for input
   const [input, setInput] = useState('')
-
-  // Destructure with fallback
-  const { messages = [], isLoading, append } = chat as any
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -23,20 +20,18 @@ export function ChatInterface() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handlePromptClick = (prompt: string) => {
-    setInput(prompt)
+  const handlePromptClick = async (prompt: string) => {
+    // Optimistically set input? No, per spec "User types a message OR clicks a prompt".
+    // Clicking a prompt should send it.
+    await sendMessage({ text: prompt })
   }
 
   const onSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!input.trim()) return
 
-    if (append) {
-      await append({ role: 'user', content: input })
-      setInput('')
-    } else {
-      console.error('append function not available from useChat')
-    }
+    await sendMessage({ text: input })
+    setInput('')
   }
 
   return (
@@ -73,9 +68,8 @@ export function ChatInterface() {
           messages.map((m: any) => (
             <div
               key={m.id}
-              className={`flex gap-3 ${
-                m.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-              }`}
+              className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                }`}
             >
               <Avatar className="w-8 h-8 mt-1">
                 {m.role === 'user' ? (
@@ -95,27 +89,29 @@ export function ChatInterface() {
                 )}
               </Avatar>
               <div
-                className={`rounded-lg p-3 max-w-[80%] text-sm ${
-                  m.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-foreground'
-                }`}
+                className={`rounded-lg p-3 max-w-[80%] text-sm ${m.role === 'user'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-foreground'
+                  }`}
               >
                 <div className="prose dark:prose-invert prose-sm break-words">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
                       pre: ({ ...props }) => (
-                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                        <pre {...props} />
-                      </div>
-                    ),
+                        <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                          <pre {...props} />
+                        </div>
+                      ),
                       code: ({ ...props }) => (
                         <code className="bg-black/10 rounded px-1" {...props} />
                       ),
                     }}
                   >
-                    {m.content}
+                    {/* Handle both string content and parts */}
+                    {typeof m.content === 'string'
+                      ? m.content
+                      : m.parts?.map((p: any) => p.text).join('') || ''}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -139,7 +135,7 @@ export function ChatInterface() {
               }
             }}
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+          <Button type="submit" size="icon" disabled={status !== 'ready' || !input.trim()} aria-label="Send message" data-testid="submit-button">
             <Send className="w-4 h-4" />
           </Button>
         </form>

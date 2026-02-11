@@ -18,8 +18,15 @@
 
 ## 3. Visitor Chat
 - **Interface:** Full-screen chat UI.
-- **Functionality:** Visitors can chat with the AI to learn about the portfolio owner.
-- **Model:** Configurable via Admin Dashboard (stored in `system_settings`).
+- **Functionality:**
+    - **Welcome Screen:** Display a welcoming message and suggested prompts (e.g., "Tell me about your experience", "Contact info").
+    - **Chat Interaction:**
+        - User types a message or clicks a prompt.
+        - AI responds with streaming text.
+        - Support for Markdown rendering (bold, italics, code blocks).
+    - **Loading State:** Input is disabled while AI is "thinking".
+    - **History:** Chat history persists within the session (no need for long-term persistence yet).
+- **Model:** Configurable via Admin Dashboard (stored in `system_settings`). Default to `gpt-4o` or similar high-quality model.
 
 ## 4. Planned Features (The "Brain")
 - **RAG Pipeline:** Vectorize documents (Markdown/Text) for retrieval.
