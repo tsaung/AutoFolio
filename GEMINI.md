@@ -17,7 +17,7 @@ Your goal is to assist the user by writing high-quality, polished UI/UX and robu
 - **Synchronization:** Code, Tests, and Specs must always match.
 
 ## 3. Workflow Protocol
-1.  **Task & Sync:** Get task from User or `todo.md`. **Run `scripts/sync-dev.sh`** to update your branch.
+1.  **Task & Sync:** Get task from User or `todo.md`. **Run `scripts/sync-dev.sh`** (or `--rebase` if local) to update your branch.
 2.  **Context:** Read `specs/*.md` to understand the current system.
 3.  **Spec:** Update `specs/*.md` to reflect the *intended* change.
 4.  **Test:** Write a failing test that asserts the new behavior.

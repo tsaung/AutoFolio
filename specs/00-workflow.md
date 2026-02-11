@@ -18,6 +18,11 @@ If you change the code, you **MUST** update the Specs and the Tests to match.
 
 ## 2. The 5-Step Workflow
 
+### Sync Strategy
+- **Cloud Agents:** Use `scripts/sync-dev.sh` (Merge) to ensure safety.
+- **Local (Humans):** Use `scripts/sync-dev.sh --rebase` or manual rebase to keep history clean.
+
+
 Every task, feature, or bug fix must follow this cycle:
 
 ### Step 1: Context & Analysis
@@ -62,3 +67,13 @@ Every task, feature, or bug fix must follow this cycle:
     - Functions/Vars: `camelCase`
 - **Exports:** Prefer **Named Exports** over Default Exports for better refactoring support.
 - **Types:** Explicitly define return types for significant functions.
+
+## 4. Running Tests
+
+### Unit & Component Tests (Vitest)
+- **Run all:** `npm run test`
+- **Watch mode:** `npm run test:watch`
+
+### End-to-End Tests (Playwright)
+- **Run all:** `npm run test:e2e`
+- **UI Mode:** `npx playwright test --ui`
