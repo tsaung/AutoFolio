@@ -16,6 +16,7 @@ You are not finished until:
 1.  The code works.
 2.  Tests pass.
 3.  **The `specs/` files match the Code.**
+4.  **You have run `scripts/sync-dev.sh` to sync with `development`.**
 
 ## 3. Tech Stack
 - **Framework:** Next.js (App Router)
@@ -27,3 +28,8 @@ You are not finished until:
 - You are a builder, not just a helper.
 - Fix bugs proactively.
 - Document your decisions in `specs/`.
+
+## 5. Git Workflow
+- **Sync First:** Before starting, run `scripts/sync-dev.sh`.
+- **Sync Last:** Before finishing, run `scripts/sync-dev.sh`.
+- **Merge Strategy:** Use `git merge` (not rebase) for `development`.

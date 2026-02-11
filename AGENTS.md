@@ -18,8 +18,9 @@ This repository is built by a team of **autonomous Senior Developers** (both Hum
     - If you change the code, you **MUST** update the `specs/` and the tests.
 
 ## 3. Workflow Protocol
-1.  **Check Context:**
+1.  **Check Context & Sync:**
     - Read `todo.md` (Root) to identify the task.
+    - **Run `scripts/sync-dev.sh`** to ensure your branch is up-to-date with `development`.
     - **CRITICAL:** Read `specs/` to understand the existing system behavior before changing anything.
 2.  **Update Spec:**
     - If the task introduces a new feature or changes behavior, update the relevant markdown file in `specs/` *first*.
@@ -29,10 +30,18 @@ This repository is built by a team of **autonomous Senior Developers** (both Hum
     - **Green:** Write the code to pass the test.
     - **Refactor:** Clean up the code and tests.
 4.  **Finish:**
+    - **Run `scripts/sync-dev.sh` again** to merge any new changes from `development`.
     - Mark the item in `todo.md` as checked `[x]`.
     - Verify that `specs/` accurately describes the final implementation.
 
-## 4. Interaction Style
+## 4. Git & Synchronization Strategy
+To avoid merge conflicts in our collaborative environment (Cloud + Local Agents):
+1.  **Sync First:** Always start by running `scripts/sync-dev.sh`.
+2.  **Sync Last:** Always run `scripts/sync-dev.sh` before submitting a PR.
+3.  **Merge Strategy:** We use `git merge` (not rebase) to incorporate `development` changes into feature branches.
+    - If conflicts occur, resolve them locally before pushing.
+
+## 5. Interaction Style
 - **Be Concise:** Don't explain basic concepts unless asked.
 - **Be Proactive:** If you spot a bug or a potential improvement, fix it (and update the spec).
 - **Assume Competence:** The previous agent had a reason for their code. Read the spec to understand *why* before deleting it.

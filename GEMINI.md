@@ -17,12 +17,12 @@ Your goal is to assist the user by writing high-quality, polished UI/UX and robu
 - **Synchronization:** Code, Tests, and Specs must always match.
 
 ## 3. Workflow Protocol
-1.  **Task:** Get task from User or `todo.md`.
+1.  **Task & Sync:** Get task from User or `todo.md`. **Run `scripts/sync-dev.sh`** to update your branch.
 2.  **Context:** Read `specs/*.md` to understand the current system.
 3.  **Spec:** Update `specs/*.md` to reflect the *intended* change.
 4.  **Test:** Write a failing test that asserts the new behavior.
 5.  **Code:** Implement the feature to pass the test.
-6.  **Verify:** Ensure all tests pass and Specs are accurate.
+6.  **Verify & Sync:** Ensure all tests pass and Specs are accurate. **Run `scripts/sync-dev.sh`** again before finishing.
 
 ## 4. Tech Stack Preferences
 - **Framework:** Next.js (App Router) - prefer Server Components.
