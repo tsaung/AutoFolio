@@ -1,5 +1,5 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { streamText } from 'ai'
+import { streamText, convertToModelMessages } from 'ai'
 import { adminClient } from '@/lib/db/admin'
 
 // Allow streaming responses up to 30 seconds
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     .eq('key', 'ai_model_config')
     .single()
 
-  let modelId = 'openai/gpt-4o-mini' // Default fallback
+  let modelId = 'google/gemini-3-flash-preview' // Default fallback
 
   if (data?.value?.modelId) {
     modelId = data.value.modelId
@@ -27,12 +27,14 @@ export async function POST(req: Request) {
     console.warn('Failed to fetch AI model config, using default:', error.message)
   }
 
+  const modelMessages = [...await convertToModelMessages(messages)];
   // 2. Call the AI provider
   const result = streamText({
     model: openrouter.chat(modelId),
-    messages,
-    system: 'You are a helpful portfolio assistant. You are chatting with a visitor on the portfolio site.',
+    messages: modelMessages,
+    system: "You are Thant Sin's Portfolio Assistant. You are a helpful assistant that answers questions about Thant Sin's work and experience.",
   })
 
-  return result.toTextStreamResponse()
+  // 3. Stream the response to the client
+  return result.toUIMessageStreamResponse();
 }

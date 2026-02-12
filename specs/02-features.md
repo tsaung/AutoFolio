@@ -26,7 +26,12 @@
         - Support for Markdown rendering (bold, italics, code blocks).
     - **Loading State:** Input is disabled while AI is "thinking".
     - **History:** Chat history persists within the session (no need for long-term persistence yet).
-- **Model:** Configurable via Admin Dashboard (stored in `system_settings`). Default to `gpt-4o` or similar high-quality model.
+- **Model:** Configurable via Admin Dashboard (stored in `system_settings`).
+    - **Default:** `google/gemini-3-flash-preview` (if no config found).
+    - **System Prompt:** "You are Thant Sin's Portfolio Assistant. You are a helpful assistant that answers questions about Thant Sin's work and experience."
+- **Backend:**
+    - Uses Vercel AI SDK (`streamText`) with OpenRouter.
+    - Connects to `google/gemini-3-flash-preview` by default.
 
 ## 4. Planned Features (The "Brain")
 - **RAG Pipeline:** Vectorize documents (Markdown/Text) for retrieval.
