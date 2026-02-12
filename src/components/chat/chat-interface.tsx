@@ -45,7 +45,7 @@ export function ChatInterface() {
       <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10">
         <h1 className="text-xl font-bold flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          AutoFolio
+          BotFolio
         </h1>
         <div className="text-sm text-muted-foreground">
           Ask me anything about my work.

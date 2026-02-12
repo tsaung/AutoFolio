@@ -68,7 +68,7 @@ export function SidebarContent({
             href="/dashboard"
             className="flex items-center gap-2 font-semibold overflow-hidden whitespace-nowrap"
           >
-            <span className="">AutoFolio Admin</span>
+            <span className="">BotFolio Admin</span>
           </Link>
         )}
         {onToggle && (

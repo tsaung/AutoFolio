@@ -3,7 +3,7 @@ import { AdminLayoutWrapper } from "@/components/admin/admin-layout-wrapper";
 import { AdminHeader } from "@/components/admin/header";
 
 export const metadata: Metadata = {
-  title: "AutoFolio Admin",
+  title: "BotFolio Admin",
   description: "Manage your portfolio and AI settings.",
 };
 
