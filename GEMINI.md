@@ -15,7 +15,7 @@ Your goal is to assist the user by writing high-quality, polished UI/UX and robu
 - **Documentation Entry Point:** The `specs/` directory is your primary source of context. It contains the **Living Documentation**.
 - **Single Source of Truth:** `specs/` defines what the system _should_ do.
 - **TDD:** Write tests first.
-  - For Logic: Jest/Vitest (or equivalent).
+  - For Logic: Jest/Vitest (or equivalent). Use `npx vitest run` to run tests.
   - For UI: Playwright or manual verification scripts.
 - **Synchronization:** Code, Tests, and Specs must always match.
 

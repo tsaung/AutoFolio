@@ -15,8 +15,8 @@ This repository is built by a team of **autonomous Senior Developers** (both Hum
 - **Documentation Entry Point:** The `specs/` directory is the **Living Documentation** for this project. It is the starting point for every task.
 - **Single Source of Truth:** The `specs/` directory is the ONLY source of truth for feature specifications.
 - **Test-Driven Development (TDD):**
-  - **Logic:** Write a failing test BEFORE writing implementation code.
-  - **UI:** If strict TDD is too heavy, ensure you have a verification script or clear manual test steps.
+  - **Logic:** Write a failing test BEFORE writing implementation code. Use `npx vitest run` to run tests.
+  - **UI/E2E:** For complex UI interactions, use **Playwright**. If strict TDD is too heavy, ensure you have a verification script or clear manual test steps.
 - **Synchronization:** The Code, the Tests, and the Specs MUST NEVER diverge.
   - If you change the code, you **MUST** update the `specs/` and the tests.
 
