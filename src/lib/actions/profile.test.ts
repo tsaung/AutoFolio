@@ -1,6 +1,5 @@
-
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getProfile, updateProfile } from './profile';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { getProfile, updateProfile } from "./profile";
 
 // Mock the server client creation
 const mockSelect = vi.fn();
@@ -10,7 +9,7 @@ const mockSingle = vi.fn();
 const mockFrom = vi.fn();
 const mockGetUser = vi.fn();
 
-vi.mock('@/lib/db/server', () => ({
+vi.mock("@/lib/db/server", () => ({
   createClient: vi.fn(() => ({
     auth: {
       getUser: mockGetUser,
@@ -19,11 +18,11 @@ vi.mock('@/lib/db/server', () => ({
   })),
 }));
 
-vi.mock('next/cache', () => ({
+vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-describe('Profile Server Actions', () => {
+describe("Profile Server Actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -43,26 +42,29 @@ describe('Profile Server Actions', () => {
     });
   });
 
-  describe('getProfile', () => {
-    it('should return profile data when found', async () => {
+  describe("getProfile", () => {
+    it("should return profile data when found", async () => {
       const mockProfile = {
-        id: 'user-123',
-        full_name: 'Test User',
-        profession: 'Developer',
+        id: "user-123",
+        name: "Test User",
+        profession: "Developer",
       };
 
-      mockGetUser.mockResolvedValue({ data: { user: { id: 'user-123' } }, error: null });
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "user-123", email: "test@example.com" } },
+        error: null,
+      });
       mockSingle.mockResolvedValue({ data: mockProfile, error: null });
 
       const result = await getProfile();
 
-      expect(mockFrom).toHaveBeenCalledWith('profiles');
-      expect(mockSelect).toHaveBeenCalledWith('*');
-      expect(mockEq).toHaveBeenCalledWith('id', 'user-123');
-      expect(result).toEqual(mockProfile);
+      expect(mockFrom).toHaveBeenCalledWith("profiles");
+      expect(mockSelect).toHaveBeenCalledWith("*");
+      expect(mockEq).toHaveBeenCalledWith("id", "user-123");
+      expect(result).toEqual({ ...mockProfile, email: "test@example.com" });
     });
 
-    it('should return null when not authenticated', async () => {
+    it("should return null when not authenticated", async () => {
       mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
 
       const result = await getProfile();
@@ -70,9 +72,15 @@ describe('Profile Server Actions', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null on database error', async () => {
-      mockGetUser.mockResolvedValue({ data: { user: { id: 'user-123' } }, error: null });
-      mockSingle.mockResolvedValue({ data: null, error: { message: 'DB Error' } });
+    it("should return null on database error", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "user-123" } },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({
+        data: null,
+        error: { message: "DB Error" },
+      });
 
       const result = await getProfile();
 
@@ -80,39 +88,49 @@ describe('Profile Server Actions', () => {
     });
   });
 
-  describe('updateProfile', () => {
-    it('should update profile successfully', async () => {
+  describe("updateProfile", () => {
+    it("should update profile successfully", async () => {
       const updateData = {
-        profession: 'Senior Developer',
-        experience: '10 years',
+        profession: "Senior Developer",
+        experience: "10 years",
       };
 
-      mockGetUser.mockResolvedValue({ data: { user: { id: 'user-123' } }, error: null });
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "user-123" } },
+        error: null,
+      });
       mockEq.mockResolvedValue({ error: null }); // success for update
 
       const result = await updateProfile(updateData);
 
-      expect(mockFrom).toHaveBeenCalledWith('profiles');
-      expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
-          profession: 'Senior Developer',
-          experience: '10 years',
-          updated_at: expect.any(String) // We expect a timestamp
-      }));
-      expect(mockEq).toHaveBeenCalledWith('id', 'user-123');
+      expect(mockFrom).toHaveBeenCalledWith("profiles");
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          profession: "Senior Developer",
+          experience: "10 years",
+          updated_at: expect.any(String), // We expect a timestamp
+        }),
+      );
+      expect(mockEq).toHaveBeenCalledWith("id", "user-123");
       expect(result).toEqual({ success: true });
     });
 
-    it('should throw error when not authenticated', async () => {
+    it("should throw error when not authenticated", async () => {
       mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
 
-      await expect(updateProfile({})).rejects.toThrow('Unauthorized');
+      await expect(updateProfile({})).rejects.toThrow("Unauthorized");
     });
 
-    it('should throw error on database failure', async () => {
-      mockGetUser.mockResolvedValue({ data: { user: { id: 'user-123' } }, error: null });
-      mockEq.mockResolvedValue({ error: { message: 'Update failed' } });
+    it("should throw error on database failure", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "user-123" } },
+        error: null,
+      });
+      mockEq.mockResolvedValue({ error: { message: "Update failed" } });
 
-      await expect(updateProfile({})).rejects.toThrow('Failed to update profile');
+      await expect(updateProfile({})).rejects.toThrow(
+        "Failed to update profile",
+      );
     });
   });
 });

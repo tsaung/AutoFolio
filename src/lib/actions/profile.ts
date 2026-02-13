@@ -1,51 +1,57 @@
-'use server'
+"use server";
 
-import { createClient } from '@/lib/db/server'
-import { revalidatePath } from 'next/cache'
+import { createClient } from "@/lib/db/server";
+import { revalidatePath } from "next/cache";
 
 export async function getProfile() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
-    return null
+    return null;
   }
 
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   if (error) {
-    console.error('Error fetching profile:', error)
-    return null
+    console.error("Error fetching profile:", error);
+    return null;
   }
 
-  return data
+  return { ...data, email: user.email };
 }
 
 export async function updateProfile(data: Record<string, any>) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
-    throw new Error('Unauthorized')
+    throw new Error("Unauthorized");
   }
 
   const { error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', user.id)
+    .eq("id", user.id);
 
   if (error) {
-    console.error('Error updating profile:', error)
-    throw new Error('Failed to update profile')
+    console.error("Error updating profile:", error);
+    throw new Error("Failed to update profile");
   }
 
-  revalidatePath('/settings/profile')
-  return { success: true }
+  revalidatePath("/settings/profile");
+  return { success: true };
 }

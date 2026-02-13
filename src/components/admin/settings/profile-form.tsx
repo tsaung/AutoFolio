@@ -39,7 +39,9 @@ const profileFormSchema = z.object({
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
-type ProfileData = Database['public']['Tables']['profiles']['Row'];
+type ProfileData = Database["public"]["Tables"]["profiles"]["Row"] & {
+  email?: string;
+};
 
 interface ProfileFormProps {
   initialData?: ProfileData;
@@ -51,12 +53,14 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const defaultValues = {
-    name: initialData?.full_name || "",
+    name: initialData?.name || "",
+    email: initialData?.email || "",
     profession: initialData?.profession || "",
     experience: initialData?.experience || 0,
     field: initialData?.field || "",
-    welcomeMessage: initialData?.welcome_message ||
-      "Hi, I'm {name}. I'm a {profession} with {experience} years of experience in {field}. How can I help you today?",
+    welcomeMessage:
+      initialData?.welcome_message ||
+      "I'm {name}, a {profession} with over {experience} years of experience in {field}. This is my personal AI assistant—feel free to ask it anything about my work or background.",
   };
 
   const form = useForm({
@@ -72,7 +76,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
     try {
       await updateProfile({
-        full_name: data.name,
+        name: data.name,
         profession: data.profession,
         experience: data.experience,
         field: data.field,
@@ -107,6 +111,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             </FormItem>
           )}
         />
+        <FormItem>
+          <FormLabel>Email</FormLabel>
+          <FormControl>
+            <Input disabled value={defaultValues.email} />
+          </FormControl>
+          <FormDescription>
+            Your email address is managed by your authentication provider.
+          </FormDescription>
+        </FormItem>
         <FormField
           control={form.control}
           name="profession"
@@ -129,7 +142,12 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               <FormItem>
                 <FormLabel>Years of Experience</FormLabel>
                 <FormControl>
-                <Input type="number" placeholder="e.g. 5" {...field} value={field.value as number} />
+                  <Input
+                    type="number"
+                    placeholder="e.g. 5"
+                    {...field}
+                    value={field.value as number}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
