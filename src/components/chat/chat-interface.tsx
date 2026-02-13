@@ -10,7 +10,16 @@ import { Send, Bot, User, Sparkles } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 
-export function ChatInterface() {
+import { ProfileHero } from "@/components/visitor/profile-hero";
+import { Database } from "@/types/database";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+interface ChatInterfaceProps {
+  profile?: Profile | null;
+}
+
+export function ChatInterface({ profile }: ChatInterfaceProps) {
   const { messages, status, sendMessage } = useChat();
   // Manual state management for input
   const [input, setInput] = useState("");
@@ -47,33 +56,31 @@ export function ChatInterface() {
           <Sparkles className="w-5 h-5 text-primary" />
           BotFolio
         </h1>
-        <div className="text-sm text-muted-foreground">
-          Ask me anything about my work.
-        </div>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6 min-h-0 flex flex-col">
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 text-muted-foreground">
-            <Bot className="w-12 h-12 mb-2 opacity-20" />
-            <h2 className="text-2xl font-semibold text-foreground">Welcome!</h2>
-            <p>I am an AI assistant representing this portfolio.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-8 w-full max-w-lg">
-              {[
-                "Tell me about your experience",
-                "What are your skills?",
-                "Show me your projects",
-                "Contact info",
-              ].map((prompt) => (
-                <button
-                  key={prompt}
-                  className="p-3 text-sm border rounded-lg hover:bg-muted/50 transition-colors text-left"
-                  onClick={() => handlePromptClick(prompt)}
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
+            <ProfileHero profile={profile || null} />
+
+            {profile && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 w-full max-w-lg">
+                {[
+                  "Tell me about your experience",
+                  "What are your skills?",
+                  "Show me your projects",
+                  "Contact info",
+                ].map((prompt) => (
+                  <button
+                    key={prompt}
+                    className="p-3 text-sm border rounded-lg hover:bg-muted/50 transition-colors text-left"
+                    onClick={() => handlePromptClick(prompt)}
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           messages.map((m: any) => (

@@ -45,14 +45,14 @@ export function AdminLayoutWrapper({
   return (
     <div
       className={cn(
-        "grid min-h-screen w-full transition-all duration-300",
+        "grid h-screen w-full transition-all duration-300 overflow-hidden",
         isCollapsed ? "lg:grid-cols-[60px_1fr]" : "lg:grid-cols-[280px_1fr]",
       )}
     >
-      <div className="hidden border-r bg-muted/40 lg:block dark:bg-zinc-800/40">
+      <div className="hidden border-r bg-muted/40 lg:block dark:bg-zinc-800/40 overflow-y-auto">
         <AdminSidebar collapsed={isCollapsed} onToggle={toggleSidebar} />
       </div>
-      <div className="flex flex-col">{children}</div>
+      <div className="flex flex-col h-full overflow-hidden">{children}</div>
     </div>
   );
 }

@@ -1,9 +1,12 @@
-import { ChatInterface } from '@/components/chat/chat-interface'
+import { ChatInterface } from "@/components/chat/chat-interface";
+import { getPublicProfile } from "@/lib/actions/profile";
 
-export default function VisitorPage() {
+export default async function VisitorPage() {
+  const profile = await getPublicProfile();
+
   return (
     <main className="min-h-screen bg-background">
-      <ChatInterface />
+      <ChatInterface profile={profile} />
     </main>
-  )
+  );
 }

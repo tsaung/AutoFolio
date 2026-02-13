@@ -28,6 +28,25 @@ export async function getProfile() {
   return { ...data, email: user.email };
 }
 
+export async function getPublicProfile() {
+  const supabase = await createClient();
+
+  // Fetch the first profile found. Ideally this should be filtered by "owner" role or similar if multi-user.
+  // Since this is a portfolio, we assume the single user is the owner.
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error("Error fetching public profile:", error);
+    return null;
+  }
+
+  return data;
+}
+
 export async function updateProfile(data: Record<string, any>) {
   const supabase = await createClient();
 

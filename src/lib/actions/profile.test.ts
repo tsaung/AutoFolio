@@ -88,6 +88,39 @@ describe("Profile Server Actions", () => {
     });
   });
 
+  describe("getPublicProfile", () => {
+    it("should return the first profile found", async () => {
+      const mockProfile = {
+        id: "user-123",
+        name: "Public User",
+      };
+
+      mockSingle.mockResolvedValue({ data: mockProfile, error: null });
+      // mockFrom -> select -> limit -> single
+      const mockLimit = vi.fn().mockReturnValue({ single: mockSingle });
+      mockSelect.mockReturnValue({ limit: mockLimit });
+
+      const { getPublicProfile } = await import("./profile");
+      const result = await getPublicProfile();
+
+      expect(mockFrom).toHaveBeenCalledWith("profiles");
+      expect(mockSelect).toHaveBeenCalledWith("*");
+      expect(mockLimit).toHaveBeenCalledWith(1);
+      expect(result).toEqual(mockProfile);
+    });
+
+    it("should return null on error", async () => {
+      const mockLimit = vi.fn().mockReturnValue({ single: mockSingle });
+      mockSelect.mockReturnValue({ limit: mockLimit });
+      mockSingle.mockResolvedValue({ data: null, error: { message: "Error" } });
+
+      const { getPublicProfile } = await import("./profile");
+      const result = await getPublicProfile();
+
+      expect(result).toBeNull();
+    });
+  });
+
   describe("updateProfile", () => {
     it("should update profile successfully", async () => {
       const updateData = {
