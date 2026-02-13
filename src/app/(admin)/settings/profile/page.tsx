@@ -16,7 +16,7 @@ export default async function SettingsProfilePage() {
       </div>
       <Separator />
 
-      {!profile && (
+      {!profile?.id && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900 p-4 rounded-md flex items-center gap-3 text-yellow-800 dark:text-yellow-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"

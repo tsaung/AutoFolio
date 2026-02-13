@@ -14,23 +14,24 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface SetupChecklistProps {
   profile: Profile | null;
+  hasAnyUser: boolean;
 }
 
-export function SetupChecklist({ profile }: SetupChecklistProps) {
+export function SetupChecklist({ profile, hasAnyUser }: SetupChecklistProps) {
   const steps = [
     {
-      title: "Create User Account",
-      description: "Sign up to create your own BotFolio instance.",
+      title: "Create Owner Account",
+      description: "Create the first user in Supabase to claim ownership.",
       href: "/login",
-      cta: "Sign Up / Login",
-      isComplete: !!profile,
+      cta: "Create User",
+      isComplete: hasAnyUser,
     },
     {
       title: "Setup Profile",
       description: "Add your name, profession, and bio details.",
       href: "/settings/profile",
       cta: "Setup Profile",
-      isComplete: !!(profile && profile.name),
+      isComplete: !!profile,
     },
   ];
 

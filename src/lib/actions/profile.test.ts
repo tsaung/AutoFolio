@@ -114,6 +114,21 @@ describe("Profile Server Actions", () => {
 
       expect(result).toBeNull();
     });
+
+    it("should return email object when profile is not found (PGRST116)", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "user-123", email: "new@example.com" } },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({
+        data: null,
+        error: { code: "PGRST116", message: "Row not found" },
+      });
+
+      const result = await getProfile();
+
+      expect(result).toEqual({ email: "new@example.com" });
+    });
   });
 
   describe("getPublicProfile", () => {

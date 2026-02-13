@@ -33,13 +33,14 @@ If the user account is created but the profile is incomplete (specifically missi
 
 ### Checklist Steps
 
-1.  **Create Account**: Validated by existence of a profile record (or any row in `profiles`).
-2.  **Setup Profile**: Now enforced by `NOT NULL` constraints on `name`, `profession`, etc. If a profile row exists, it is assumed complete enough for display, as partial rows are no longer allowed.
+1.  **Create Owner Account**: Validated by existence of ANY user in the system (checked via Admin API).
+2.  **Setup Profile**: Enforced by `NOT NULL` constraints.
 
 ### UI Reference
 
 - Card-based layout with progress bar.
-- List of steps with completion status (CheckCircle2 vs Circle).
+- List of steps with completion status.
 - Action buttons for incomplete steps:
-  - Step 1: Login/Sign-up.
+  - Step 1: Link to `/login` (Create User).
+  - Step 2: Link to `/settings/profile` (Setup Profile).
   - Step 2: Navigate to Profile Settings.

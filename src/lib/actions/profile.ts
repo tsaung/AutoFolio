@@ -23,8 +23,11 @@ export async function getProfile() {
   if (error) {
     if (error.code !== "PGRST116") {
       console.error("Error fetching profile:", error);
+      return null;
     }
-    return null;
+    // Profile doesn't exist yet, but user is authenticated
+    // Return partial profile with just email
+    return { email: user.email } as any;
   }
 
   return { ...data, email: user.email };

@@ -47,7 +47,7 @@ type ProfileData = Database["public"]["Tables"]["profiles"]["Row"] & {
 };
 
 interface ProfileFormProps {
-  initialData?: ProfileData;
+  initialData?: Partial<ProfileData>;
 }
 
 export function ProfileForm({ initialData }: ProfileFormProps) {
@@ -230,10 +230,10 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
-            ? initialData
+            ? initialData?.id
               ? "Updating..."
               : "Creating..."
-            : initialData
+            : initialData?.id
               ? "Update Profile"
               : "Create Profile"}
         </Button>
