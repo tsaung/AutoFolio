@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { updateProfile } from "@/lib/actions/profile";
+import { Database } from "@/types/database";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
@@ -24,8 +27,8 @@ const profileFormSchema = z.object({
   profession: z.string().min(2, {
     message: "Profession must be at least 2 characters.",
   }),
-  experience: z.string().min(1, {
-    message: "Years of experience is required.",
+  experience: z.coerce.number().min(0, {
+    message: "Years of experience must be a non-negative number.",
   }),
   field: z.string().min(2, {
     message: "Field/Industry must be at least 2 characters.",
@@ -36,35 +39,52 @@ const profileFormSchema = z.object({
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileData = Database['public']['Tables']['profiles']['Row'];
 
-// This can be replaced with real data from the backend
-const defaultValues: Partial<ProfileFormValues> = {
-  name: "Thant Sin",
-  profession: "Fullstack Developer",
-  experience: "5 years",
-  field: "Software Engineering",
-  welcomeMessage:
-    "Hi, I'm {name}. I'm a {profession} with {experience} in {field}. How can I help you today?",
-};
+interface ProfileFormProps {
+  initialData?: ProfileData;
+}
 
-export function ProfileForm() {
-  const form = useForm<ProfileFormValues>({
+export function ProfileForm({ initialData }: ProfileFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const defaultValues = {
+    name: initialData?.full_name || "",
+    profession: initialData?.profession || "",
+    experience: initialData?.experience || 0,
+    field: initialData?.field || "",
+    welcomeMessage: initialData?.welcome_message ||
+      "Hi, I'm {name}. I'm a {profession} with {experience} years of experience in {field}. How can I help you today?",
+  };
+
+  const form = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  function onSubmit(data: ProfileFormValues) {
-    console.log(data);
-    // TODO: Submit data to backend
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
+  async function onSubmit(data: ProfileFormValues) {
+    setIsSubmitting(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+
+    try {
+      await updateProfile({
+        full_name: data.name,
+        profession: data.profession,
+        experience: data.experience,
+        field: data.field,
+        welcome_message: data.welcomeMessage,
+      });
+      setSuccessMessage("Profile updated successfully!");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to update profile. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -109,7 +129,7 @@ export function ProfileForm() {
               <FormItem>
                 <FormLabel>Years of Experience</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. 5 years" {...field} />
+                <Input type="number" placeholder="e.g. 5" {...field} value={field.value as number} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,7 +170,21 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Update Profile</Button>
+
+        {successMessage && (
+          <p className="text-sm text-green-600 dark:text-green-400">
+            {successMessage}
+          </p>
+        )}
+        {errorMessage && (
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {errorMessage}
+          </p>
+        )}
+
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Updating..." : "Update Profile"}
+        </Button>
       </form>
     </Form>
   );
