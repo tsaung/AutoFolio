@@ -53,12 +53,9 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
       </Avatar>
 
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">{profile.name}</h1>
-        {(profile.profession || profile.field) && (
-          <p className="text-sm text-muted-foreground font-medium">
+        {profile.profession && (
+          <p className="text-lg font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-2 duration-500">
             {profile.profession}
-            {profile.experience ? ` • ${profile.experience}+ Years` : ""}
-            {profile.field ? ` in ${profile.field}` : ""}
           </p>
         )}
       </div>

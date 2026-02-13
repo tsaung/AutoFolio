@@ -52,10 +52,20 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
   return (
     <div className="flex flex-col h-[100dvh] max-w-4xl mx-auto border-x bg-background overflow-hidden">
       <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10">
-        <h1 className="text-xl font-bold flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          BotFolio
-        </h1>
+        <div>
+          {profile ? (
+            <div className="flex flex-col justify-center h-full">
+              <h1 className="text-lg font-bold tracking-tight">
+                {profile.name}
+              </h1>
+            </div>
+          ) : (
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              BotFolio
+            </h1>
+          )}
+        </div>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6 min-h-0 flex flex-col">

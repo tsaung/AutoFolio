@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { ChatInterface } from "./chat-interface";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useChat } from "@ai-sdk/react";
@@ -91,5 +97,42 @@ describe("ChatInterface", () => {
 
     const sendButton = screen.getByTestId("submit-button");
     expect(sendButton).toBeDisabled();
+  });
+
+  it("renders profile name and profession in header when profile is provided", () => {
+    render(<ChatInterface profile={mockProfile} />);
+
+    const header = screen.getByRole("banner");
+
+    // Check within the header specifically
+    expect(
+      within(header).getByRole("heading", { name: "Test User" }),
+    ).toBeInTheDocument();
+
+    expect(
+      within(header).queryByRole("heading", { name: "BotFolio" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders professionally/YOE in hero but NOT name (since it is in header)", () => {
+    render(<ChatInterface profile={mockProfile} />);
+
+    // Name is in header, should NOT be in main hero content (which is not the banner)
+    const main = screen.queryByRole("main") || document.body;
+    // We expect the name to be in the header (banner)
+    const header = screen.getByRole("banner");
+    expect(within(header).getByText("Test User")).toBeInTheDocument();
+
+    // In the hero body, we expect Profession only (YOE removed)
+    expect(screen.getByText(/Developer/)).toBeInTheDocument();
+    expect(screen.queryByText(/5\+ YOE/)).not.toBeInTheDocument();
+  });
+
+  it("renders BotFolio branding in header when no profile is provided", () => {
+    render(<ChatInterface profile={null} />);
+    expect(
+      screen.getByRole("heading", { name: "BotFolio" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Test User")).not.toBeInTheDocument();
   });
 });
