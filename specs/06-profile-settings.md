@@ -20,6 +20,7 @@ The `profiles` table is being cleaned up to match the UI and remove unused field
   - `experience` (Integer)
   - `field` (Text)
   - `welcome_message` (Text)
+  - `professional_summary` (Text)
   - `avatar_url` (Text)
 
 ## UI Requirements
@@ -32,6 +33,7 @@ The `profiles` table is being cleaned up to match the UI and remove unused field
   - Profession
   - Experience
   - Field/Industry
+  - Professional Summary
   - Welcome Message
 - Actions: Save Profile.
 

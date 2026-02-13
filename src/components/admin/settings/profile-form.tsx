@@ -36,6 +36,9 @@ const profileFormSchema = z.object({
   welcomeMessage: z.string().max(300, {
     message: "Welcome message must not be longer than 300 characters.",
   }),
+  professionalSummary: z.string().min(10, {
+    message: "Professional summary must be at least 10 characters.",
+  }),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -61,6 +64,9 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     welcomeMessage:
       initialData?.welcome_message ||
       "I'm {name}, a {profession} with over {experience} years of experience in {field}. This is my personal AI assistant—feel free to ask it anything about my work or background.",
+    professionalSummary:
+      initialData?.professional_summary ||
+      "I'm {name}, a {profession} with over {experience} years of experience in {field}.",
   };
 
   const form = useForm({
@@ -81,6 +87,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
         experience: data.experience,
         field: data.field,
         welcome_message: data.welcomeMessage,
+        professional_summary: data.professionalSummary,
       });
       setSuccessMessage("Profile updated successfully!");
     } catch (error) {
@@ -167,6 +174,27 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="professionalSummary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Professional Summary</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Brief summary of your professional background..."
+                  className="resize-none h-32"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                This summary will be used by the AI to answer questions about
+                you when RAG data is not yet available.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="welcomeMessage"
