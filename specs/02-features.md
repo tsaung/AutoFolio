@@ -24,7 +24,13 @@
     - **Workflow:** Admin pastes raw notes/docs -> AI analyzes and drafts structured content -> Admin reviews/edits in Preview Pane -> Save to Knowledge Base.
     - **UI:** Split-pane layout (Chat Interface + Live Preview).
     - **Model Selector:** Dropdown to switch models (e.g., GPT-4o for reasoning, Flash for speed) during the session.
-  - **Model Settings:** Global configuration for the _public_ visitor chat.
+  - **Bot Settings (Public Agent):**
+    - **Purpose:** Configure the public-facing portfolio assistant.
+    - **Unified Form:** Single interface to manage:
+      - **Model:** Provider (OpenRouter) and Model ID (e.g., Gemini 2.0 Flash).
+      - **Persona:** System Prompt with variable injection support (`{name}`, `{profession}`, etc.).
+      - **Suggestions:** Manage predefined prompts (quick replies) for visitors.
+    - **Status:** Backend and UI implemented.
   - **Profile Settings:**
     - **Purpose:** Configure the bot's identity and core context.
     - **Fields:** Name, Profession, Experience (Years), Field/Industry, Welcome Message.
@@ -52,12 +58,12 @@
   - **Appearance:**
     - Search-box style input: Input and Send button housed within a single unified container.
     - Input field takes available space, button sits comfortably to the right.
-- **Model:** Configurable via Admin Dashboard (stored in `system_settings`).
-  - **Default:** `google/gemini-3-flash-preview` (if no config found).
-  - **System Prompt:** "You are Thant Sin's Portfolio Assistant. You are a helpful assistant that answers questions about Thant Sin's work and experience."
+- **Model:** Configurable via Admin Dashboard (stored in `bot_configs`).
+  - **Default:** `google/gemini-2.0-flash-001` (if no config found).
+  - **System Prompt:** Dynamic based on profile ("You are {name}'s Portfolio Assistant...").
 - **Backend:**
   - Uses Vercel AI SDK (`streamText`) with OpenRouter.
-  - Connects to `google/gemini-3-flash-preview` by default.
+  - Connects to the user-selected model.
 
 ## 4. UI/UX
 
