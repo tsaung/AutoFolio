@@ -83,6 +83,7 @@ describe("ChatInterface", () => {
       expect(mockSendMessage).toHaveBeenCalledWith({
         text: "Hello AI",
       });
+      expect(input).toHaveValue("");
     });
   });
 
@@ -97,6 +98,18 @@ describe("ChatInterface", () => {
 
     const sendButton = screen.getByTestId("submit-button");
     expect(sendButton).toBeDisabled();
+  });
+
+  it("renders typing indicator when streaming", () => {
+    vi.mocked(useChat).mockReturnValue({
+      ...defaultChatProps,
+      status: "streaming",
+    } as any);
+
+    const { container } = render(<ChatInterface profile={mockProfile} />);
+    // Check for the bouncing dots
+    const dots = container.getElementsByClassName("animate-bounce");
+    expect(dots.length).toBe(3);
   });
 
   it("renders profile name and profession in header when profile is provided", () => {

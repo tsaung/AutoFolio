@@ -39,8 +39,9 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
     e?.preventDefault();
     if (!input.trim()) return;
 
-    await sendMessage({ text: input });
+    const value = input;
     setInput("");
+    await sendMessage({ text: value });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -152,11 +153,34 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
             </div>
           ))
         )}
+        {status !== "ready" && status !== "error" && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] bg-muted rounded-lg px-4 py-2">
+              <div className="flex items-center space-x-1">
+                <div
+                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
+                  style={{ animationDelay: "0ms" }}
+                />
+                <div
+                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
+                  style={{ animationDelay: "150ms" }}
+                />
+                <div
+                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
+                  style={{ animationDelay: "300ms" }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
       <div className="p-4 border-t bg-background shrink-0">
-        <form onSubmit={onSubmit} className="flex gap-2 items-end">
+        <form
+          onSubmit={onSubmit}
+          className="relative flex items-end w-full p-2 rounded-md border border-input bg-transparent shadow-xs focus-within:ring-1 focus-within:ring-ring dark:bg-input/30"
+        >
           <TextareaAutosize
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -164,11 +188,7 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
             placeholder="Type your message..."
             minRows={1}
             maxRows={4}
-            className={cn(
-              "flex w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none dark:bg-input/30 md:text-sm",
-              // Mimic Input styles but allow for height change
-              "min-h-[36px]",
-            )}
+            className="flex-1 min-h-[44px] w-full resize-none border-0 bg-transparent p-2 placeholder:text-muted-foreground focus:ring-0 focus:outline-none md:text-sm"
           />
           <Button
             type="submit"
@@ -176,6 +196,7 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
             disabled={status !== "ready" || !input.trim()}
             aria-label="Send message"
             data-testid="submit-button"
+            className="mb-1 mr-1 shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white"
           >
             <Send className="w-4 h-4" />
           </Button>

@@ -40,8 +40,16 @@
     - User types a message or clicks a prompt.
     - AI responds with streaming text.
     - Support for Markdown rendering (bold, italics, code blocks).
-  - **Loading State:** Input is disabled while AI is "thinking".
+  - **Loading State:**
+    - Send button is disabled while AI is "thinking" to prevent double-submission.
+    - Input remains enabled for review/editing.
+    - **Typing Indicator:** A 3-dot bounce animation appears when the bot is processing/streaming.
+  - **Interaction:**
+    - **Optimistic UI:** Input field clears immediately upon hitting sending, does not wait for server response.
   - **History:** Chat history persists within the session (no need for long-term persistence yet).
+  - **Appearance:**
+    - Search-box style input: Input and Send button housed within a single unified container.
+    - Input field takes available space, button sits comfortably to the right.
 - **Model:** Configurable via Admin Dashboard (stored in `system_settings`).
   - **Default:** `google/gemini-3-flash-preview` (if no config found).
   - **System Prompt:** "You are Thant Sin's Portfolio Assistant. You are a helpful assistant that answers questions about Thant Sin's work and experience."
