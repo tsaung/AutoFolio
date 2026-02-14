@@ -1,5 +1,6 @@
-import { LogoutButton } from './logout-button'
-import { MobileNav } from './mobile-nav'
+import { LogoutButton } from "./logout-button";
+import { MobileNav } from "./mobile-nav";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function AdminHeader() {
   return (
@@ -10,7 +11,10 @@ export function AdminHeader() {
           {/* Search or Breadcrumbs could go here */}
         </div>
       </div>
-      <LogoutButton />
+      <div className="flex items-center gap-2">
+        <ModeToggle />
+        <LogoutButton />
+      </div>
     </header>
-  )
+  );
 }

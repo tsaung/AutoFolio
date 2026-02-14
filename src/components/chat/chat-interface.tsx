@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Bot, User, Sparkles } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/mode-toggle";
 
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { Database } from "@/types/database";
@@ -66,6 +67,7 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
             </h1>
           )}
         </div>
+        <ModeToggle />
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6 min-h-0 flex flex-col">
