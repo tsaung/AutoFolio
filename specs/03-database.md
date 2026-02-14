@@ -30,7 +30,7 @@
   - `provider` (Text, Default: 'openrouter')
   - `model` (Text, Default: 'google/gemini-2.0-flash-001')
   - `system_prompt` (Text, Nullable)
-  - `predefined_prompts` (JSONB, Nullable) - Array of suggested questions.
+  - `predefined_prompts` (JSONB, Default: Enforced at code level) - Array of suggested questions.
   - `created_at` (Timestamp)
   - `updated_at` (Timestamp)
 - **Constraints:** Unique(`user_id`, `type`).

@@ -13,9 +13,7 @@
 - **Structure**: A settings layout (`/admin/settings/layout.tsx`) containing a secondary sidebar for navigation.
 - **Routes**:
   - `/admin/settings/profile`: User profile (Name, Profession, YOE, Field) & Welcome Message.
-  - `/admin/settings/persona`: System prompt and behavioral settings.
-  - `/admin/settings/prompts`: Suggested prompts / conversation starters.
-  - `/admin/settings/model`: AI model configuration.
+  - `/admin/settings/bot`: Bot Configuration (Model, Persona, Prompts).
 - **Sidebar**:
   - Should be responsive (collapsible or hidden on mobile).
   - Links to the above routes.
