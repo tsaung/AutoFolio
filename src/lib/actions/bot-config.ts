@@ -36,6 +36,47 @@ export async function getBotConfig(type: "public_agent" | "admin_agent") {
   return data;
 }
 
+export async function getPublicBotConfig(userId?: string) {
+  const supabase = await createClient();
+
+  // If userId is provided, use it. Otherwise, try to infer from the single-tenant setup
+  // For now, we'll try to get the first user if not provided, or better, leverage getPublicProfile logic's user
+  // Actually, getPublicProfile gets the FIRST profile. We should mirror that logic.
+
+  let targetUserId = userId;
+
+  if (!targetUserId) {
+    // Determine user ID similar to getPublicProfile
+    // For single tenant, we might just query the first bot_config of type public_agent
+    const { data, error } = await supabase
+      .from("bot_configs")
+      .select("*")
+      .eq("type", "public_agent")
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Error fetching public bot config:", error);
+      return null;
+    }
+    return data;
+  }
+
+  const { data, error } = await supabase
+    .from("bot_configs")
+    .select("*")
+    .eq("user_id", targetUserId)
+    .eq("type", "public_agent")
+    .single();
+
+  if (error) {
+    console.error("Error fetching public bot config:", error);
+    return null;
+  }
+
+  return data;
+}
+
 export async function updateBotConfig(
   type: "public_agent" | "admin_agent",
   data: Partial<BotConfigUpdate>,

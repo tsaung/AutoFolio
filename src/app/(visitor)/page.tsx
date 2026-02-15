@@ -1,10 +1,12 @@
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { getPublicProfile } from "@/lib/actions/profile";
+import { getPublicBotConfig } from "@/lib/actions/bot-config";
 import { SetupChecklist } from "@/components/visitor/setup-checklist";
 import { adminClient } from "@/lib/db/admin";
 
 export default async function VisitorPage() {
   const profile = await getPublicProfile();
+  const botConfig = await getPublicBotConfig(profile?.id);
 
   // Check if any user exists in the system (using admin client since auth.users is protected)
   // We only need to know if count > 0
@@ -19,7 +21,7 @@ export default async function VisitorPage() {
   return (
     <main className="min-h-screen bg-background">
       {isReady ? (
-        <ChatInterface profile={profile} />
+        <ChatInterface profile={profile} botConfig={botConfig} />
       ) : (
         <SetupChecklist profile={profile} hasAnyUser={hasAnyUser} />
       )}

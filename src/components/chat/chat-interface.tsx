@@ -18,9 +18,10 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface ChatInterfaceProps {
   profile?: Profile | null;
+  botConfig?: Database["public"]["Tables"]["bot_configs"]["Row"] | null;
 }
 
-export function ChatInterface({ profile }: ChatInterfaceProps) {
+export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
   const { messages, status, sendMessage } = useChat();
   // Manual state management for input
   const [input, setInput] = useState("");
@@ -51,6 +52,13 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
     }
   };
 
+  const prompts = (botConfig?.predefined_prompts as string[]) || [
+    "Tell me about your experience",
+    "What are your skills?",
+    "Show me your projects",
+    "Contact info",
+  ];
+
   return (
     <div className="flex flex-col h-[100dvh] max-w-4xl mx-auto border-x bg-background overflow-hidden">
       <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10 relative">
@@ -80,12 +88,7 @@ export function ChatInterface({ profile }: ChatInterfaceProps) {
 
             {profile && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 w-full max-w-lg">
-                {[
-                  "Tell me about your experience",
-                  "What are your skills?",
-                  "Show me your projects",
-                  "Contact info",
-                ].map((prompt) => (
+                {prompts.map((prompt) => (
                   <button
                     key={prompt}
                     className="p-3 text-sm border rounded-lg hover:bg-muted/50 transition-colors text-left"
