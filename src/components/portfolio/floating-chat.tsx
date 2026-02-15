@@ -25,20 +25,18 @@ export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-    stop,
-    append,
-    reload,
-    setInput,
-  } = useChat({
-    // Updated useChat with Message type
-    api: "/api/chat",
-  });
+  const { messages, status, sendMessage } = useChat();
+
+  const [input, setInput] = useState("");
+
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!input.trim()) return;
+
+    const value = input;
+    setInput("");
+    await sendMessage({ text: value });
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -74,14 +72,10 @@ export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
               profile={profile}
               botConfig={botConfig}
               messages={messages}
-              input={input || ""}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-              stop={stop}
-              append={append}
-              reload={reload}
+              input={input}
               setInput={setInput}
+              onSend={handleSendMessage}
+              isLoading={status === "submitted" || status === "streaming"}
               onClose={() => setOpen(false)}
             />
           </div>
