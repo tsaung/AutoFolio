@@ -15,7 +15,7 @@ export default function AdminLayout({
   return (
     <AdminLayoutWrapper>
       <AdminHeader />
-      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto min-h-0">
         {children}
       </main>
     </AdminLayoutWrapper>

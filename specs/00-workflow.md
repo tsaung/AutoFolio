@@ -62,7 +62,7 @@ Every task, feature, or bug fix must follow this cycle:
 
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript (Strict mode)
-- **Styling:** Tailwind CSS + Shadcn UI
+- **Styling:** Tailwind CSS + Shadcn UI (Use `npx shadcn@latest add` - DO NOT install primitives directly)
 - **Database:** Supabase
 - **State Management:** Server Stats preferred; React Context for global UI state only.
 - **Testing:** Vitest (Logic/Components), Playwright (E2E).

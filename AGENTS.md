@@ -1,7 +1,7 @@
 # BotFolio - Collaborative Seniors
 
 > **Status:** Active Development
-> **Last Updated:** 2026-02-12
+> **Last Updated:** 2026-02-13
 
 ## 1. The Collaborative Seniors Model
 
@@ -15,8 +15,8 @@ This repository is built by a team of **autonomous Senior Developers** (both Hum
 - **Documentation Entry Point:** The `specs/` directory is the **Living Documentation** for this project. It is the starting point for every task.
 - **Single Source of Truth:** The `specs/` directory is the ONLY source of truth for feature specifications.
 - **Test-Driven Development (TDD):**
-  - **Logic:** Write a failing test BEFORE writing implementation code.
-  - **UI:** If strict TDD is too heavy, ensure you have a verification script or clear manual test steps.
+  - **Logic:** Write a failing test BEFORE writing implementation code. Use `npx vitest run` to run tests.
+  - **UI/E2E:** For complex UI interactions, use **Playwright**. If strict TDD is too heavy, ensure you have a verification script or clear manual test steps.
 - **Synchronization:** The Code, the Tests, and the Specs MUST NEVER diverge.
   - If you change the code, you **MUST** update the `specs/` and the tests.
 
@@ -44,8 +44,32 @@ To maintain a clean and conflict-free history:
 2.  **Merge Strategy:** If you must merge, use `git merge` (not rebase) to incorporate changes.
     - Focus on your specific task. Let the Human Lead handle complex integrations.
 
+## 5. UI Components
+
+- `src/components/ui/` is **reserved for Shadcn primitives only** (installed via `npx shadcn@latest add`).
+- Custom reusable components go in `src/components/` (e.g., `src/components/searchable-select.tsx`).
+
 ## 5. Interaction Style
 
 - **Be Concise:** Don't explain basic concepts unless asked.
 - **Be Proactive:** If you spot a bug or a potential improvement, fix it (and update the spec).
 - **Assume Competence:** The previous agent had a reason for their code. Read the spec to understand _why_ before deleting it.
+
+## 6. Database and Types
+
+- **Type Generation:** Run `npx supabase gen types typescript --local > src/types/database.ts` after any migration to keep TypeScript definitions in sync with the database schema.
+
+## 7. RAG Pipeline
+
+- **Location:** `src/lib/rag/` — chunker, embedder, and pipeline modules.
+- **Embedding Model:** `gemini-embedding-001` via `@ai-sdk/google` (`embedMany` from Vercel AI SDK). 1536 dimensions.
+- **API Key:** `GOOGLE_GENERATIVE_AI_API_KEY` (separate from OpenRouter).
+- **Chunking:** Recursive text splitting (~500 tokens/chunk, ~50 token overlap).
+- **Background Processing:** Uses Next.js `after()` in server actions — response returns immediately, chunking + embedding runs in background.
+- **Storage:** `knowledge_chunks` table via `adminClient` (service role, bypasses RLS).
+- **Task Types:** `RETRIEVAL_DOCUMENT` for storing chunks, `RETRIEVAL_QUERY` for searching.
+
+## 8. Temporary Files
+
+- **Scratchpad:** If you need to create temporary files (logs, data validation scripts, scratchpad code), **ALWAYS** use the `.ai/temp/` directory.
+- **Git Hygiene:** Do NOT commit files in `.ai/temp/` or any `*.tmp` files.
