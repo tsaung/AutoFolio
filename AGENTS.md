@@ -44,6 +44,11 @@ To maintain a clean and conflict-free history:
 2.  **Merge Strategy:** If you must merge, use `git merge` (not rebase) to incorporate changes.
     - Focus on your specific task. Let the Human Lead handle complex integrations.
 
+## 5. UI Components
+
+- `src/components/ui/` is **reserved for Shadcn primitives only** (installed via `npx shadcn@latest add`).
+- Custom reusable components go in `src/components/` (e.g., `src/components/searchable-select.tsx`).
+
 ## 5. Interaction Style
 
 - **Be Concise:** Don't explain basic concepts unless asked.

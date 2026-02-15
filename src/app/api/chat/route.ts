@@ -12,21 +12,24 @@ const openrouter = createOpenRouter({
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  // 1. Fetch the selected model from DB (using Service Role to bypass RLS)
-  const { data, error } = await adminClient
-    .from("system_settings")
-    .select("value")
-    .eq("key", "ai_model_config")
+  // 1. Fetch the bot config from the bot_configs table (public_agent)
+  const { data: botConfig, error: configError } = await adminClient
+    .from("bot_configs")
+    .select("*")
+    .eq("type", "public_agent")
+    .limit(1)
     .single();
 
-  let modelId = "google/gemini-3-flash-preview"; // Default fallback
+  let modelId = "google/gemini-2.0-flash-001"; // Default fallback
+  let systemPrompt = "";
 
-  if (data?.value?.modelId) {
-    modelId = data.value.modelId;
-  } else if (error) {
+  if (botConfig) {
+    modelId = botConfig.model || modelId;
+    systemPrompt = botConfig.system_prompt || "";
+  } else if (configError) {
     console.warn(
-      "Failed to fetch AI model config, using default:",
-      error.message,
+      "Failed to fetch bot config, using defaults:",
+      configError.message,
     );
   }
 
@@ -48,17 +51,34 @@ export async function POST(req: Request) {
   `
     : "";
 
+  // 3. Resolve the system prompt — use configured prompt with placeholder interpolation, or fall back to a default
+  let resolvedSystemPrompt: string;
+
+  if (systemPrompt) {
+    resolvedSystemPrompt = systemPrompt
+      .replace(/\{name\}/g, profile?.name || "the user")
+      .replace(/\{profession\}/g, profile?.profession || "a professional")
+      .replace(/\{experience\}/g, profile?.experience?.toString() || "several")
+      .replace(/\{field\}/g, profile?.field || "their field");
+
+    // Append profile context for additional grounding
+    resolvedSystemPrompt += `\n\n${profileContext}`;
+  } else {
+    resolvedSystemPrompt = `You are ${profile?.name || "the user"}'s Portfolio Assistant. You are a helpful assistant that answers questions about their work and experience.
+    
+    ${profileContext}
+    `;
+  }
+
   const modelMessages = [...(await convertToModelMessages(messages))];
-  // 2. Call the AI provider
+
+  // 4. Call the AI provider
   const result = streamText({
     model: openrouter.chat(modelId),
     messages: modelMessages,
-    system: `You are ${profile?.name || "the user"}'s Portfolio Assistant. You are a helpful assistant that answers questions about their work and experience.
-    
-    ${profileContext}
-    `,
+    system: resolvedSystemPrompt,
   });
 
-  // 3. Stream the response to the client
+  // 5. Stream the response to the client
   return result.toUIMessageStreamResponse();
 }

@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,12 +20,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { updateBotConfig } from "@/lib/actions/bot-config";
 import { Database } from "@/types/database";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/searchable-select";
+import type { OpenRouterModel } from "@/app/api/models/route";
 
 const botConfigFormSchema = z.object({
   systemPrompt: z.string().min(10, {
@@ -50,19 +48,67 @@ interface BotConfigFormProps {
   type: "public_agent" | "admin_agent";
 }
 
-const AVAILABLE_MODELS = [
+// Fallback models shown while loading or if fetch fails
+const FALLBACK_MODELS: OpenRouterModel[] = [
   {
-    value: "google/gemini-2.0-flash-001",
-    label: "Gemini 2.0 Flash (Recommended)",
+    id: "google/gemini-2.0-flash-001",
+    name: "Gemini 2.0 Flash",
+    context_length: 1048576,
+    pricing: { prompt: "0", completion: "0" },
   },
-  { value: "openai/gpt-4o-mini", label: "GPT-4o Mini" },
-  { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
+  {
+    id: "openai/gpt-4o-mini",
+    name: "GPT-4o Mini",
+    context_length: 128000,
+    pricing: { prompt: "0.00000015", completion: "0.0000006" },
+  },
+  {
+    id: "anthropic/claude-3-haiku",
+    name: "Claude 3 Haiku",
+    context_length: 200000,
+    pricing: { prompt: "0.00000025", completion: "0.00000125" },
+  },
 ];
+
+function formatContextLength(length: number): string {
+  if (length >= 1_000_000) return `${(length / 1_000_000).toFixed(0)}M`;
+  if (length >= 1_000) return `${(length / 1_000).toFixed(0)}K`;
+  return `${length}`;
+}
 
 export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [models, setModels] = useState<OpenRouterModel[]>(FALLBACK_MODELS);
+  const [modelsLoading, setModelsLoading] = useState(true);
+
+  // Fetch available models from OpenRouter
+  useEffect(() => {
+    async function fetchModels() {
+      try {
+        const res = await fetch("/api/models");
+        if (!res.ok) throw new Error("Failed to fetch models");
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          setModels(json.data);
+        }
+      } catch (err) {
+        console.warn("Using fallback models:", err);
+        // Keep fallback models
+      } finally {
+        setModelsLoading(false);
+      }
+    }
+    fetchModels();
+  }, []);
+
+  // Map models to SearchableSelect options
+  const modelOptions: SearchableSelectOption[] = models.map((m) => ({
+    value: m.id,
+    label: m.name,
+    description: `${m.id} · ${formatContextLength(m.context_length)} ctx`,
+  }));
 
   const defaultPrompts = (initialData?.predefined_prompts as string[]) || [
     "",
@@ -121,20 +167,8 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Provider</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a provider" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="openrouter">OpenRouter</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input value="OpenRouter" disabled className="bg-muted" />
+                  <input type="hidden" {...field} />
                   <FormDescription>
                     Currently only OpenRouter is supported.
                   </FormDescription>
@@ -146,25 +180,19 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
               control={form.control}
               name="model"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Model</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a model" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {AVAILABLE_MODELS.map((model) => (
-                        <SelectItem key={model.value} value={model.value}>
-                          {model.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={modelOptions}
+                      placeholder="Select a model"
+                      searchPlaceholder="Search models..."
+                      emptyMessage="No models found."
+                      loading={modelsLoading}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -190,7 +218,7 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
                   />
                 </FormControl>
                 <FormDescription>
-                  This serves as the "brain" of your bot. You can use
+                  This serves as the &quot;brain&quot; of your bot. You can use
                   placeholders like {"{name}"}, {"{profession}"},{" "}
                   {"{experience}"}, and {"{field}"} which will be replaced by
                   your profile data.

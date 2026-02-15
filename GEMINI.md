@@ -42,6 +42,7 @@ Your goal is to assist the user by writing high-quality, polished UI/UX and robu
 - **Conventions:**
   - `middleware.ts` is renamed to `proxy.ts` (Next.js 16+ convention).
   - `proxy.ts` must export a default function named `proxy`.
+  - `src/components/ui/` is **reserved for Shadcn primitives only** (installed via `npx shadcn@latest add`). Custom reusable components go in `src/components/`.
 
 ## 6. Interaction Style
 

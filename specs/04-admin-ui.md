@@ -8,8 +8,6 @@
 
 ## 2. Settings Page
 
-## 2. Settings Page
-
 - **Structure**: A settings layout (`/admin/settings/layout.tsx`) containing a secondary sidebar for navigation.
 - **Routes**:
   - `/admin/settings/profile`: User profile (Name, Profession, YOE, Field) & Welcome Message.
@@ -20,3 +18,15 @@
 - **UI**:
   - Use "Card" components for settings forms.
   - Ensure consistent layout with the main admin dashboard.
+
+### Bot Configuration (`/settings/bot`)
+
+- **Model Selection**:
+  - Models are fetched dynamically from the OpenRouter API via `GET /api/models`.
+  - The API route serves as a server-side proxy, filtering to text-capable chat models and caching results for 60 seconds.
+  - The dropdown uses a **searchable Combobox** (Popover + Command) since OpenRouter exposes hundreds of models.
+  - Each model displays its name, ID, and context length.
+  - If the API fetch fails, 3 fallback models are shown (Gemini 2.0 Flash, GPT-4o Mini, Claude 3 Haiku).
+- **Provider**: Currently locked to OpenRouter (disabled dropdown).
+- **System Prompt**: Supports `{name}`, `{profession}`, `{experience}`, `{field}` placeholders interpolated at runtime.
+- **Predefined Prompts**: Up to 4 quick-reply suggestions shown to visitors in the chat.

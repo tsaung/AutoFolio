@@ -43,6 +43,14 @@ The Visitor Chat interface allows site visitors to interact with the AI assistan
   - Streamed responses.
   - Loading state indication (or streamed output).
 
+## Backend
+
+- **Chat API** (`POST /api/chat`):
+  - Reads model and system prompt from `bot_configs` table (`type = 'public_agent'`) via `adminClient`.
+  - Interpolates profile placeholders (`{name}`, `{profession}`, `{experience}`, `{field}`) in the system prompt at runtime.
+  - Falls back to `google/gemini-2.0-flash-001` and a generic system prompt if no bot config is found.
+  - Streams responses via OpenRouter using the Vercel AI SDK.
+
 ## Mobile Responsiveness
 
 - Input area must remain accessible on mobile keyboards.
