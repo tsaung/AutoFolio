@@ -5,6 +5,8 @@
 - **Collapsible**: The sidebar should be collapsible to maximize screen real estate.
 - **State**: The collapsed state should be persisted (e.g., in localStorage) so the user preference is remembered.
 - **Responsiveness**: The sidebar is hidden on mobile and shown on desktop (lg breakpoint). On mobile, it should be accessible via a hamburger menu (already implemented in header?).
+- **Navigation Items**: Dashboard, Knowledge Base, Settings.
+  - **Phase 2:** "Improve with AI" will be added back. The page (`/improve`) is scaffolded but hidden from navigation.
 
 ## 2. Settings Page
 

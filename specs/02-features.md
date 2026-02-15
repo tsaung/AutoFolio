@@ -11,19 +11,12 @@
 
 - **Access:** Restricted to authenticated users (`/(admin)` routes).
 - **Layout:**
-  - Sidebar navigation (Dashboard, Knowledge Base, Improve with AI, AI Settings).
+  - Sidebar navigation (Dashboard, Knowledge Base, Settings).
   - Header with logout button.
   - Mobile-responsive.
 - **Features:**
   - **Overview:** Dashboard with key metrics (Knowledge Fragments, Chats).
-  - **Knowledge Base:** Manage RAG documents.
-    - **User Content:** Manually created documents (high confidence).
-    - **AI Generated:** Documents derived from other sources (lower confidence, reviewable).
-  - **Improve with AI (Content Studio):** An interactive "Canvas" for generating high-quality RAG content.
-    - **Concept:** Admin acts as Co-author, AI acts as Drafter/Editor.
-    - **Workflow:** Admin pastes raw notes/docs -> AI analyzes and drafts structured content -> Admin reviews/edits in Preview Pane -> Save to Knowledge Base.
-    - **UI:** Split-pane layout (Chat Interface + Live Preview).
-    - **Model Selector:** Dropdown to switch models (e.g., GPT-4o for reasoning, Flash for speed) during the session.
+  - **Knowledge Base:** Manage RAG documents (user-provided content only in Phase 1).
   - **Bot Settings (Public Agent):**
     - **Purpose:** Configure the public-facing portfolio assistant.
     - **Unified Form:** Single interface to manage:
@@ -75,8 +68,17 @@
       - **Desktop:** Standard left-aligned title.
       - **Mobile:** Centered title for app-like feel.Theme switcher remains on the right.
 
-## 5. Planned Features (The "Brain")
+## 5. Phase 2 — Planned Features (The "Brain")
 
+> [!NOTE]
+> The following features are **deferred to Phase 2**. The "Improve with AI" page (`/improve`) is scaffolded but hidden from the sidebar.
+
+- **Improve with AI (Content Studio):** An interactive "Canvas" for generating high-quality RAG content.
+  - **Concept:** Admin acts as Co-author, AI acts as Drafter/Editor.
+  - **Workflow:** Admin pastes raw notes/docs -> AI analyzes and drafts structured content -> Admin reviews/edits in Preview Pane -> Save to Knowledge Base.
+  - **UI:** Split-pane layout (Chat Interface + Live Preview).
+  - **Model Selector:** Dropdown to switch models during the session.
+- **AI-Generated Knowledge:** Documents derived from other sources (lower confidence, reviewable). Adds "AI Generated" tab and "Source" column to Knowledge Base.
 - **RAG Pipeline:** Vectorize documents (Markdown/Text) for retrieval.
 - **Enrichment Agent:** An "Admin Agent" that helps the owner generate high-quality RAG documents.
 - **Generative UI:** Dynamic widgets (`streamUI`) for project cards and contact forms.

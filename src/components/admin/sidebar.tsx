@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Settings,
   Database,
-  Wand2,
   ChevronLeft,
   ChevronRight,
   User,
@@ -25,11 +24,7 @@ const sidebarItems = [
     href: "/knowledge",
     icon: Database,
   },
-  {
-    title: "Improve with AI",
-    href: "/improve",
-    icon: Wand2,
-  },
+
   {
     title: "Settings",
     href: "/settings",
