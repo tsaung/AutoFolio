@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/db/server";
 import { Database } from "@/types/database"; // Correct import path
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { syncProjectsToKnowledge } from "@/lib/rag/portfolio-sync";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 type ProjectInsert = Database["public"]["Tables"]["projects"]["Insert"];
@@ -91,6 +93,8 @@ export async function createProject(
   }
 
   revalidatePath("/projects");
+  after(() => syncProjectsToKnowledge(user.id));
+
   return data;
 }
 
@@ -125,6 +129,8 @@ export async function updateProject(
   }
 
   revalidatePath("/projects");
+  after(() => syncProjectsToKnowledge(user.id));
+
   return data;
 }
 
@@ -151,6 +157,7 @@ export async function deleteProject(id: string): Promise<void> {
   }
 
   revalidatePath("/projects");
+  after(() => syncProjectsToKnowledge(user.id));
 }
 
 export async function reorderProjects(
@@ -189,6 +196,7 @@ export async function reorderProjects(
   }
 
   revalidatePath("/projects");
+  after(() => syncProjectsToKnowledge(user.id));
 }
 
 /**

@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/db/server";
 import { Database } from "@/types/database";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { syncExperiencesToKnowledge } from "@/lib/rag/portfolio-sync";
 
 type Experience = Database["public"]["Tables"]["experiences"]["Row"];
 type ExperienceInsert = Database["public"]["Tables"]["experiences"]["Insert"];
@@ -34,7 +36,6 @@ export async function getExperiences(): Promise<Experience[]> {
     return [];
   }
 
-  return data ?? [];
   return data ?? [];
 }
 
@@ -92,6 +93,7 @@ export async function createExperience(
   }
 
   revalidatePath("/experiences");
+  after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
 
@@ -126,6 +128,7 @@ export async function updateExperience(
   }
 
   revalidatePath("/experiences");
+  after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
 
@@ -152,6 +155,7 @@ export async function deleteExperience(id: string): Promise<void> {
   }
 
   revalidatePath("/experiences");
+  after(() => syncExperiencesToKnowledge(user.id));
 }
 
 export async function reorderExperiences(
@@ -184,6 +188,7 @@ export async function reorderExperiences(
   }
 
   revalidatePath("/experiences");
+  after(() => syncExperiencesToKnowledge(user.id));
 }
 
 /**

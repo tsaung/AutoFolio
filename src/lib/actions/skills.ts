@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/db/server";
 import { Database } from "@/types/database";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { syncSkillsToKnowledge } from "@/lib/rag/portfolio-sync";
 
 type Skill = Database["public"]["Tables"]["skills"]["Row"];
 type SkillInsert = Database["public"]["Tables"]["skills"]["Insert"];
@@ -34,7 +36,6 @@ export async function getSkills(): Promise<Skill[]> {
     return [];
   }
 
-  return data ?? [];
   return data ?? [];
 }
 
@@ -92,6 +93,7 @@ export async function createSkill(
   }
 
   revalidatePath("/skills");
+  after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
 
@@ -126,6 +128,7 @@ export async function updateSkill(
   }
 
   revalidatePath("/skills");
+  after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
 
@@ -152,6 +155,7 @@ export async function deleteSkill(id: string): Promise<void> {
   }
 
   revalidatePath("/skills");
+  after(() => syncSkillsToKnowledge(user.id));
 }
 
 export async function reorderSkills(
@@ -184,6 +188,7 @@ export async function reorderSkills(
   }
 
   revalidatePath("/skills");
+  after(() => syncSkillsToKnowledge(user.id));
 }
 
 /**
