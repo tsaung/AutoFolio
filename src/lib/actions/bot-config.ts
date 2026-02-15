@@ -4,7 +4,7 @@ import { createClient } from "@/lib/db/server";
 import { Database } from "@/types/database";
 import { revalidatePath } from "next/cache";
 
-type BotConfig = Database["public"]["Tables"]["bot_configs"]["Row"];
+export type BotConfig = Database["public"]["Tables"]["bot_configs"]["Row"];
 type BotConfigInsert = Database["public"]["Tables"]["bot_configs"]["Insert"];
 type BotConfigUpdate = Database["public"]["Tables"]["bot_configs"]["Update"];
 

@@ -1,31 +1,60 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useEffect, useRef, useState } from "react";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Send, Bot, User, Sparkles, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
-
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { Database } from "@/types/database";
+import { ChatRequestOptions } from "ai";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface ChatInterfaceProps {
   profile?: Profile | null;
   botConfig?: Database["public"]["Tables"]["bot_configs"]["Row"] | null;
+  messages: any[];
+  input: string;
+  handleInputChange: (
+    e:
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.ChangeEvent<HTMLInputElement>,
+  ) => void;
+  handleSubmit: (
+    e: React.FormEvent<HTMLFormElement>,
+    chatRequestOptions?: ChatRequestOptions,
+  ) => void;
+  isLoading: boolean;
+  stop: () => void;
+  append: (
+    message: any | { role: "user"; content: string },
+  ) => Promise<string | null | undefined>;
+  reload: (
+    chatRequestOptions?: ChatRequestOptions,
+  ) => Promise<string | null | undefined>;
+  setInput: (value: string) => void;
+  onClose?: () => void;
 }
 
-export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
-  const { messages, status, sendMessage } = useChat();
-  // Manual state management for input
-  const [input, setInput] = useState("");
-
+export function ChatInterface({
+  profile,
+  botConfig,
+  messages,
+  input = "",
+  handleInputChange,
+  handleSubmit,
+  isLoading,
+  stop,
+  append,
+  reload,
+  setInput,
+  onClose,
+}: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,22 +62,23 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
   }, [messages]);
 
   const handlePromptClick = async (prompt: string) => {
-    await sendMessage({ text: prompt });
+    // append handles sending the message
+    await append({ role: "user", content: prompt });
   };
 
-  const onSubmit = async (e?: React.FormEvent) => {
+  const onFormSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!input.trim()) return;
-
-    const value = input;
-    setInput("");
-    await sendMessage({ text: value });
+    // handleSubmit from useChat handles the submission
+    handleSubmit(e as React.FormEvent<HTMLFormElement>);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onSubmit();
+      // We need to trigger form submission
+      const form = e.currentTarget.closest("form");
+      if (form) form.requestSubmit();
     }
   };
 
@@ -60,38 +90,57 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
   ];
 
   return (
-    <div className="flex flex-col h-[100dvh] max-w-4xl mx-auto border-x bg-background overflow-hidden">
-      <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10 relative">
-        <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:left-auto">
+    <div className="flex flex-col h-full w-full bg-background overflow-hidden relative">
+      <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10 relative shadow-sm">
+        <div className="flex items-center gap-2">
           {profile ? (
-            <div className="flex flex-col justify-center h-full">
-              <h1 className="text-lg font-bold tracking-tight">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={profile.avatar_url || "/avatar.jpg"} />
+                <AvatarFallback>
+                  {profile.name?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <h1 className="text-sm font-bold tracking-tight line-clamp-1">
                 {profile.name}
               </h1>
             </div>
           ) : (
-            <h1 className="text-xl font-bold flex items-center gap-2">
+            <h1 className="text-lg font-bold flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
               BotFolio
             </h1>
           )}
         </div>
-        <div className="ml-auto">
+
+        <div className="flex items-center gap-2">
           <ModeToggle />
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              aria-label="Close chat"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 min-h-0 flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 min-h-0 flex flex-col scroll-smooth">
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
-            <ProfileHero profile={profile || null} />
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in duration-500">
+            <div className="scale-75 origin-center">
+              <ProfileHero profile={profile || null} />
+            </div>
 
             {profile && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 w-full max-w-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg px-4">
                 {prompts.map((prompt) => (
                   <button
                     key={prompt}
-                    className="p-3 text-sm border rounded-lg hover:bg-muted/50 transition-colors text-left"
+                    className="p-3 text-sm font-medium border rounded-xl hover:bg-muted/50 hover:scale-105 transition-all text-left shadow-sm bg-card"
                     onClick={() => handlePromptClick(prompt)}
                   >
                     {prompt}
@@ -105,11 +154,11 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
             <div
               key={m.id}
               className={cn(
-                "flex gap-3 max-w-[80%]",
+                "flex gap-3 max-w-[85%] md:max-w-[75%]",
                 m.role === "user" ? "ml-auto flex-row-reverse" : "",
               )}
             >
-              <Avatar className="w-8 h-8 mt-1 shrink-0">
+              <Avatar className="w-8 h-8 mt-1 shrink-0 border shadow-sm">
                 {m.role === "user" ? (
                   <>
                     <AvatarImage src="" />
@@ -119,7 +168,9 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
                   </>
                 ) : (
                   <>
-                    <AvatarImage src="/bot-avatar.png" />
+                    <AvatarImage
+                      src={profile?.avatar_url || "/bot-avatar.png"}
+                    />
                     <AvatarFallback className="bg-muted">
                       <Bot className="w-4 h-4" />
                     </AvatarFallback>
@@ -128,13 +179,13 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
               </Avatar>
               <div
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm",
+                  "rounded-2xl px-4 py-2.5 text-sm shadow-sm",
                   m.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-foreground",
+                    ? "bg-primary text-primary-foreground rounded-tr-none"
+                    : "bg-muted text-foreground rounded-tl-none border",
                 )}
               >
-                <div className="prose dark:prose-invert prose-sm break-words">
+                <div className="prose dark:prose-invert prose-sm break-words max-w-none">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -158,39 +209,28 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
             </div>
           ))
         )}
-        {status !== "ready" && status !== "error" && (
+        {isLoading && (
           <div className="flex justify-start">
-            <div className="max-w-[80%] bg-muted rounded-lg px-4 py-2">
-              <div className="flex items-center space-x-1">
-                <div
-                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                />
-                <div
-                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
-                  style={{ animationDelay: "150ms" }}
-                />
-                <div
-                  className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
-                  style={{ animationDelay: "300ms" }}
-                />
-              </div>
+            <div className="flex items-center space-x-2 bg-muted rounded-full px-4 py-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="h-px w-full" />
       </div>
 
-      <div className="p-4 border-t bg-background shrink-0">
+      <div className="p-4 border-t bg-background/80 backdrop-blur-sm shrink-0">
         <form
-          onSubmit={onSubmit}
-          className="relative flex items-end w-full p-2 rounded-md border border-input bg-transparent shadow-xs focus-within:ring-1 focus-within:ring-ring dark:bg-input/30"
+          onSubmit={onFormSubmit}
+          className="relative flex items-end w-full p-2 rounded-2xl border bg-background shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all"
         >
           <TextareaAutosize
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
+            placeholder={`Ask ${profile?.name?.split(" ")[0] || "AI"} anything...`}
             minRows={1}
             maxRows={4}
             className="flex-1 min-h-[44px] w-full resize-none border-0 bg-transparent p-2 placeholder:text-muted-foreground focus:ring-0 focus:outline-none md:text-sm"
@@ -198,12 +238,20 @@ export function ChatInterface({ profile, botConfig }: ChatInterfaceProps) {
           <Button
             type="submit"
             size="icon"
-            disabled={status !== "ready" || !input.trim()}
+            disabled={isLoading || !input.trim()}
             aria-label="Send message"
-            data-testid="submit-button"
-            className="mb-1 mr-1 shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white"
+            className={cn(
+              "mb-1 mr-1 shrink-0 rounded-xl transition-all",
+              input.trim()
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground",
+            )}
           >
-            <Send className="w-4 h-4" />
+            {isLoading ? (
+              <span className="animate-spin">⟳</span>
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </form>
       </div>

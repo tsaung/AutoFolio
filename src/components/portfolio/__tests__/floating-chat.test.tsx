@@ -1,0 +1,44 @@
+import { render, screen, fireEvent } from "@testing-library/react";
+import { FloatingChat } from "../floating-chat";
+import { describe, it, expect, vi } from "vitest";
+
+// Mock ChatInterface as it has complex dependencies
+vi.mock("@/components/chat/chat-interface", () => ({
+  ChatInterface: () => <div data-testid="chat-interface">Chat Interface</div>,
+}));
+
+// Mock Sheet components to simplify testing
+vi.mock("@/components/ui/sheet", () => ({
+  Sheet: ({ children, open, onOpenChange }: any) => (
+    <div data-testid="sheet" data-state={open ? "open" : "closed"}>
+      {open && <button onClick={() => onOpenChange(false)}>Close</button>}
+      {children}
+    </div>
+  ),
+  SheetTrigger: ({ children, asChild }: any) => (
+    <button data-testid="sheet-trigger">{children}</button>
+  ),
+  SheetContent: ({ children }: any) => (
+    <div data-testid="sheet-content">{children}</div>
+  ),
+  SheetHeader: ({ children }: any) => <div>{children}</div>,
+  SheetTitle: ({ children }: any) => <div>{children}</div>,
+}));
+
+describe("FloatingChat", () => {
+  const mockProfile: any = { id: "1", name: "Test User" };
+  const mockBotConfig: any = { id: "1", model: "gpt-4" };
+
+  it("renders the floating button", () => {
+    render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
+    expect(screen.getByTestId("sheet-trigger")).toBeDefined();
+  });
+
+  it("renders chat interface inside sheet content", () => {
+    render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
+    // In our mock, content is always rendered but usually hidden.
+    // We just check if standard structure exists
+    expect(screen.getByTestId("sheet-content")).toBeDefined();
+    expect(screen.getByTestId("chat-interface")).toBeDefined();
+  });
+});
