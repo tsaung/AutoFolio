@@ -88,22 +88,6 @@ export default async function VisitorPage() {
             <ExperienceTimeline experiences={experiences} />
           </section>
         )}
-
-        {/* Skills Section */}
-        {skills.length > 0 && (
-          <section id="skills" className="space-y-8 scroll-mt-24">
-            <div className="space-y-2 text-center">
-              <h2 className="text-3xl font-bold tracking-tight">
-                Technical Skills
-              </h2>
-              <p className="text-muted-foreground">
-                Technologies and tools I work with
-              </p>
-            </div>
-            <Separator className="max-w-xs mx-auto" />
-            <SkillsGrid skills={skills} />
-          </section>
-        )}
       </div>
 
       <FloatingChat profile={profile} botConfig={botConfig} />

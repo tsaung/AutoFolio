@@ -123,37 +123,73 @@ export function ProfileHero({
         )}
 
         {/* Tech Stack Icons */}
-        {(() => {
-          const topSkills = skills
-            .filter((s) => (s.proficiency ?? 0) >= 4)
-            .slice(0, 6);
-
-          if (topSkills.length > 0) {
-            return (
-              <div className="flex flex-wrap items-center justify-center gap-4 py-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                {topSkills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="flex flex-col items-center gap-1 group"
-                  >
-                    <div className="p-3 bg-secondary/30 rounded-2xl group-hover:bg-secondary/60 transition-colors">
-                      <TechIcon name={skill.name} className="w-8 h-8" />
+        {skills.length > 0 ? (
+          <div className="w-full max-w-3xl pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left">
+              {Object.entries(
+                skills.reduce(
+                  (acc, skill) => {
+                    const category = skill.category || "Other";
+                    if (!acc[category]) acc[category] = [];
+                    acc[category].push(skill);
+                    return acc;
+                  },
+                  {} as Record<string, Skill[]>,
+                ),
+              )
+                .sort(([a], [b]) => {
+                  const order = [
+                    "Frontend",
+                    "Backend",
+                    "Database",
+                    "DevOps",
+                    "Tools",
+                    "Design",
+                    "Other",
+                  ];
+                  const indexA = order.indexOf(a);
+                  const indexB = order.indexOf(b);
+                  // If both are in the known list, sort by index
+                  if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                  // If only A is known, it comes first
+                  if (indexA !== -1) return -1;
+                  // If only B is known, it comes first
+                  if (indexB !== -1) return 1;
+                  // Otherwise sort alphabetically
+                  return a.localeCompare(b);
+                })
+                .map(([category, categorySkills]) => (
+                  <div key={category} className="space-y-3 p-2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-widest text-center">
+                      {category}
+                    </h3>
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {categorySkills.map((skill) => (
+                        <div
+                          key={skill.id}
+                          className="group relative flex items-center justify-center p-2 rounded-xl hover:bg-muted/50 transition-all duration-300 hover:scale-110 cursor-help"
+                        >
+                          <TechIcon
+                            name={skill.name}
+                            className="w-10 h-10 md:w-12 md:h-12"
+                          />
+                          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-sm z-50">
+                            {skill.name}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                    <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6">
-                      {skill.name}
-                    </span>
                   </div>
                 ))}
-              </div>
-            );
-          }
-
-          return profile.profession ? (
+            </div>
+          </div>
+        ) : (
+          profile.profession && (
             <p className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent pt-2">
               {profile.profession}
             </p>
-          ) : null;
-        })()}
+          )
+        )}
       </div>
     </div>
   );
