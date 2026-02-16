@@ -29,38 +29,45 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
       {projects.map((project) => (
         <Card
           key={project.id}
-          className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 border-muted"
+          className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 border-muted p-0 gap-0"
         >
-          <div className="relative w-full h-48 bg-muted">
-            {project.image_url ? (
-              <img
-                src={project.image_url}
-                alt={project.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center w-full h-full text-muted-foreground">
-                <span className="text-4xl">🚀</span>
-              </div>
-            )}
-          </div>
-          <CardHeader>
-            <CardTitle>{project.title}</CardTitle>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {project.tags &&
-                project.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
+          <Link
+            href={`/projects/${project.id}`}
+            className="flex flex-col flex-1 group"
+          >
+            <div className="relative w-full h-48 bg-muted flex-none">
+              {project.image_url ? (
+                <img
+                  src={project.image_url}
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full text-muted-foreground">
+                  <span className="text-4xl">🚀</span>
+                </div>
+              )}
             </div>
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <CardDescription className="line-clamp-3">
-              {project.description}
-            </CardDescription>
-          </CardContent>
-          <CardFooter className="flex gap-2">
+            <CardHeader className="flex-none pt-4">
+              <CardTitle className="group-hover:text-primary transition-colors">
+                {project.title}
+              </CardTitle>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {project.tags &&
+                  project.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+              </div>
+            </CardHeader>
+            <CardContent className="flex-grow pb-4">
+              <CardDescription className="line-clamp-3">
+                {project.description}
+              </CardDescription>
+            </CardContent>
+          </Link>
+          <CardFooter className="flex gap-2 p-6 pt-0 mt-auto">
             {project.live_url && (
               <Button asChild variant="outline" size="sm" className="flex-1">
                 <Link

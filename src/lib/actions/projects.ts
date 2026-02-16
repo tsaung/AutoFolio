@@ -220,3 +220,20 @@ export async function getPublicProjects(userId: string): Promise<Project[]> {
 
   return data ?? [];
 }
+export async function getPublicProject(id: string): Promise<Project | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", id)
+    .eq("status", "published")
+    .single();
+
+  if (error) {
+    console.error("Error fetching public project:", error);
+    return null;
+  }
+
+  return data;
+}

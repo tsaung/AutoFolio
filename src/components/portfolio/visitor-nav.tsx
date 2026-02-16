@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -17,6 +18,8 @@ export function VisitorNav({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,19 +33,20 @@ export function VisitorNav({
     e: React.MouseEvent<HTMLAnchorElement>,
     id: string,
   ) => {
-    e.preventDefault();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsOpen(false);
+    if (isHome) {
+      e.preventDefault();
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        setIsOpen(false);
+      }
     }
   };
 
   const navLinks = [
-    { href: "#about", label: "About" },
-    { href: "#projects", label: "Projects" },
-    { href: "#experience", label: "Experience" },
-    { href: "#skills", label: "Skills" },
+    { href: isHome ? "#about" : "/#about", label: "About" },
+    { href: isHome ? "#projects" : "/#projects", label: "Projects" },
+    { href: isHome ? "#experience" : "/#experience", label: "Experience" },
   ];
 
   return (
@@ -60,7 +64,9 @@ export function VisitorNav({
             href="/"
             className={cn(
               "flex items-center gap-2 hover:opacity-80 transition-all duration-300",
-              !scrolled && "opacity-0 -translate-x-4 pointer-events-none",
+              !scrolled &&
+                isHome &&
+                "opacity-0 -translate-x-4 pointer-events-none",
             )}
             onClick={(e) => scrollToSection(e, "about")}
           >
