@@ -49,15 +49,15 @@ export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
       <SheetTrigger asChild>
         <Button
           size="icon"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 animate-in fade-in zoom-in duration-300 hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl z-50 animate-in fade-in zoom-in duration-300 hover:scale-110 transition-all active:scale-95 bg-primary hover:bg-primary/90 border-none group"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-6 w-6 text-primary-foreground group-hover:rotate-12 transition-transform" />
           <span className="sr-only">Chat with AI</span>
         </Button>
       </SheetTrigger>
       <SheetContent
-        side="right"
-        className="w-full h-full p-0 border-none shadow-none sm:max-w-none"
+        side="bottom"
+        className="w-full h-full p-0 border-none shadow-none sm:max-w-none origin-bottom"
         // Hide default close button as we have one in the header
         onOpenAutoFocus={(e) => e.preventDefault()}
       >

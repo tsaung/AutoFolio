@@ -18,8 +18,10 @@ vi.mock("@/components/ui/sheet", () => ({
   SheetTrigger: ({ children, asChild }: any) => (
     <button data-testid="sheet-trigger">{children}</button>
   ),
-  SheetContent: ({ children }: any) => (
-    <div data-testid="sheet-content">{children}</div>
+  SheetContent: ({ children, side }: any) => (
+    <div data-testid="sheet-content" data-side={side}>
+      {children}
+    </div>
   ),
   SheetHeader: ({ children }: any) => <div>{children}</div>,
   SheetTitle: ({ children }: any) => <div>{children}</div>,
@@ -34,11 +36,10 @@ describe("FloatingChat", () => {
     expect(screen.getByTestId("sheet-trigger")).toBeDefined();
   });
 
-  it("renders chat interface inside sheet content", () => {
+  it("renders chat interface inside sheet content with side='bottom'", () => {
     render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
-    // In our mock, content is always rendered but usually hidden.
-    // We just check if standard structure exists
-    expect(screen.getByTestId("sheet-content")).toBeDefined();
+    const content = screen.getByTestId("sheet-content");
+    expect(content.getAttribute("data-side")).toBe("bottom");
     expect(screen.getByTestId("chat-interface")).toBeDefined();
   });
 });
