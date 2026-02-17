@@ -1,3 +1,5 @@
+"use client";
+
 import { Database } from "@/types/database";
 import {
   Card,
@@ -25,75 +27,95 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {projects.map((project) => (
-        <Card
+        <div
           key={project.id}
-          className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 border-muted p-0 gap-0"
+          className="group relative flex flex-col h-full rounded-2xl overflow-hidden bg-card border border-border/40 hover:border-border/60 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
         >
+          {/* Main Click Area */}
           <Link
             href={`/projects/${project.id}`}
-            className="flex flex-col flex-1 group"
+            className="flex-1 flex flex-col"
           >
-            <div className="relative w-full h-48 bg-muted flex-none">
+            {/* Image Container */}
+            <div className="relative w-full aspect-video bg-muted overflow-hidden">
               {project.image_url ? (
                 <img
                   src={project.image_url}
                   alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="flex items-center justify-center w-full h-full text-muted-foreground">
-                  <span className="text-4xl">🚀</span>
+                <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/50">
+                  <span className="text-4xl filter grayscale opacity-50">
+                    🚀
+                  </span>
                 </div>
               )}
+              {/* Overlay Gradient on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
-            <CardHeader className="flex-none pt-4">
-              <CardTitle className="group-hover:text-primary transition-colors">
-                {project.title}
-              </CardTitle>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {project.tags &&
-                  project.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
+
+            {/* Content Body */}
+            <div className="flex flex-col flex-1 p-5 space-y-3">
+              <div className="space-y-1">
+                <h3 className="font-bold text-xl leading-tight group-hover:text-primary transition-colors line-clamp-1">
+                  {project.title}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags &&
+                    project.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-medium text-muted-foreground/80 bg-secondary/50 px-2 py-0.5 rounded-md"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  {project.tags && project.tags.length > 3 && (
+                    <span className="text-xs text-muted-foreground/60 px-1 py-0.5">
+                      +{project.tags.length - 3}
+                    </span>
+                  )}
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="flex-grow pb-4">
-              <CardDescription className="line-clamp-3">
+              <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
                 {project.description}
-              </CardDescription>
-            </CardContent>
+              </p>
+            </div>
           </Link>
-          <CardFooter className="flex gap-2 p-6 pt-0 mt-auto">
-            {project.live_url && (
-              <Button asChild variant="outline" size="sm" className="flex-1">
+
+          {/* Footer Actions (Subtle) */}
+          {(project.live_url || project.repo_url) && (
+            <div className="px-5 pb-5 pt-0 flex gap-3 mt-auto">
+              {project.live_url && (
                 <Link
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="text-xs font-medium flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Demo
+                  <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                  Live Demo
                 </Link>
-              </Button>
-            )}
-            {project.repo_url && (
-              <Button asChild variant="outline" size="sm" className="flex-1">
+              )}
+              {project.repo_url && (
                 <Link
                   href={project.repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="text-xs font-medium flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Github className="w-4 h-4 mr-2" />
-                  Code
+                  <Github className="w-3.5 h-3.5 mr-1.5" />
+                  Source Code
                 </Link>
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
+              )}
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
