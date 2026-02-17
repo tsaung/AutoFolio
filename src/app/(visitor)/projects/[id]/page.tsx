@@ -93,7 +93,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         {/* Hero Image */}
         {project.image_url && (
-          <div className="max-w-5xl mx-auto rounded-2xl overflow-hidden border shadow-2xl bg-muted">
+          <div className="max-w-5xl mx-auto bg-muted">
             <img
               src={project.image_url}
               alt={project.title}

@@ -11,6 +11,7 @@ import {
   ChevronRight,
   User,
   Briefcase,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -29,6 +30,11 @@ const sidebarItems = [
     title: "Settings",
     href: "/settings",
     icon: Settings,
+  },
+  {
+    title: "View Site",
+    href: "/",
+    icon: Globe,
   },
 ];
 
@@ -85,10 +91,13 @@ export function SidebarContent({
         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
           {sidebarItems.map((item) => {
             const isActive = pathname === item.href;
+            const isExternal = item.href === "/";
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                   isActive ? "bg-muted text-primary" : "text-muted-foreground",

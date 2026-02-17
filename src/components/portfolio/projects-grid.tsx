@@ -39,7 +39,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             className="flex-1 flex flex-col"
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-video bg-muted overflow-hidden">
+            <div className="relative w-full aspect-[4/3] bg-muted overflow-hidden">
               {project.image_url ? (
                 <img
                   src={project.image_url}
