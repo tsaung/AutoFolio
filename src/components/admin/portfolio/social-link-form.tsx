@@ -39,6 +39,8 @@ type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
 
 interface SocialLinkFormProps {
   initialData?: SocialLink;
+  onSuccess?: () => void;
+  isDialog?: boolean;
 }
 
 const COMMON_PLATFORMS = [
@@ -53,7 +55,11 @@ const COMMON_PLATFORMS = [
   "Other",
 ];
 
-export function SocialLinkForm({ initialData }: SocialLinkFormProps) {
+export function SocialLinkForm({
+  initialData,
+  onSuccess,
+  isDialog = false,
+}: SocialLinkFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -78,8 +84,14 @@ export function SocialLinkForm({ initialData }: SocialLinkFormProps) {
         });
         toast.success("Social link created successfully");
       }
-      router.push("/portfolio/social-links");
-      router.refresh();
+
+      if (onSuccess) {
+        onSuccess();
+        router.refresh();
+      } else {
+        router.push("/portfolio/social-links");
+        router.refresh();
+      }
     } catch (error) {
       console.error("Failed to submit social link:", error);
       toast.error("Failed to save social link");
@@ -90,19 +102,21 @@ export function SocialLinkForm({ initialData }: SocialLinkFormProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => router.back()}
-          className="h-8 w-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {initialData ? "Edit Social Link" : "New Social Link"}
-        </h1>
-      </div>
+      {!isDialog && (
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.back()}
+            className="h-8 w-8"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {initialData ? "Edit Social Link" : "New Social Link"}
+          </h1>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

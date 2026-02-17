@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress"; // Using Progress for proficiency visual
 import { toast } from "sonner";
 
+import { SkillForm } from "@/components/admin/portfolio/skill-form";
+
 type Skill = Database["public"]["Tables"]["skills"]["Row"];
 
 interface SkillsListProps {
@@ -28,6 +30,7 @@ interface SkillsListProps {
 export function SkillsList({ initialSkills }: SkillsListProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [deletingSkill, setDeletingSkill] = useState<Skill | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
@@ -95,7 +98,7 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
             Manage your technical skills and proficiencies.
           </p>
         </div>
-        <Button onClick={() => router.push("/portfolio/skills/new")}>
+        <Button onClick={() => setAddDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Skill
         </Button>
@@ -214,6 +217,12 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
         </table>
       </div>
 
+      <button
+        className="hidden" // Hidden button to prevent form submission on enter
+        type="submit"
+        disabled={isDeleting}
+      />
+
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
@@ -240,6 +249,19 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Skill Dialog */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add New Skill</DialogTitle>
+            <DialogDescription>
+              Add a technical skill to your portfolio.
+            </DialogDescription>
+          </DialogHeader>
+          <SkillForm isDialog onSuccess={() => setAddDialogOpen(false)} />
         </DialogContent>
       </Dialog>
     </div>

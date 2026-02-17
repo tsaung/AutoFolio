@@ -167,7 +167,7 @@ export function ProfileHero({
                       {categorySkills.map((skill) => (
                         <div
                           key={skill.id}
-                          className="group relative flex items-center justify-center p-2 rounded-xl hover:bg-muted/50 transition-all duration-300 hover:scale-110 cursor-help"
+                          className="group relative flex items-center justify-center p-2 rounded-xl hover:bg-muted/50 transition-all duration-300 hover:scale-110 cursor-default hover:z-50"
                         >
                           <TechIcon
                             name={skill.name}

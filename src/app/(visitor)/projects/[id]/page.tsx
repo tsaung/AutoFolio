@@ -1,7 +1,9 @@
 import { getPublicProject } from "@/lib/actions/projects";
 import { getPublicProfile } from "@/lib/actions/profile";
 import { getPublicBotConfig } from "@/lib/actions/bot-config";
+import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
+import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 import { FloatingChat } from "@/components/portfolio/floating-chat";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,7 +30,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const botConfig = await getPublicBotConfig(profile?.id);
+  const [botConfig, socialLinks] = await Promise.all([
+    getPublicBotConfig(profile?.id),
+    profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
+  ]);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -108,6 +113,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </div>
 
+      <VisitorFooter profile={profile} socialLinks={socialLinks} />
       <FloatingChat profile={profile} botConfig={botConfig} />
     </main>
   );

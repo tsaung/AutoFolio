@@ -27,6 +27,7 @@ import {
 } from "@/lib/actions/social-links";
 import { toast } from "sonner";
 import Link from "next/link";
+import { SocialLinkForm } from "@/components/admin/portfolio/social-link-form";
 
 type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
 
@@ -37,6 +38,7 @@ interface SocialLinksListProps {
 export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [deletingLink, setDeletingLink] = useState<SocialLink | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
@@ -104,7 +106,7 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
             Manage your social media profiles and external links.
           </p>
         </div>
-        <Button onClick={() => router.push("/portfolio/social-links/new")}>
+        <Button onClick={() => setAddDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Link
         </Button>
@@ -216,6 +218,12 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
         </table>
       </div>
 
+      <button
+        className="hidden" // Hidden button to prevent form submission on enter
+        type="submit"
+        disabled={isDeleting}
+      />
+
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
@@ -242,6 +250,19 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Social Link Dialog */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add New Social Link</DialogTitle>
+            <DialogDescription>
+              Add a link to your social media profile or external site.
+            </DialogDescription>
+          </DialogHeader>
+          <SocialLinkForm isDialog onSuccess={() => setAddDialogOpen(false)} />
         </DialogContent>
       </Dialog>
     </div>

@@ -41,6 +41,8 @@ type SkillFormValues = z.infer<typeof skillSchema>;
 
 interface SkillFormProps {
   initialData?: Skill;
+  onSuccess?: () => void;
+  isDialog?: boolean;
 }
 
 const CATEGORIES = [
@@ -53,7 +55,11 @@ const CATEGORIES = [
   "Other",
 ];
 
-export function SkillForm({ initialData }: SkillFormProps) {
+export function SkillForm({
+  initialData,
+  onSuccess,
+  isDialog = false,
+}: SkillFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,8 +85,14 @@ export function SkillForm({ initialData }: SkillFormProps) {
         });
         toast.success("Skill created successfully");
       }
-      router.push("/portfolio/skills");
-      router.refresh();
+
+      if (onSuccess) {
+        onSuccess();
+        router.refresh();
+      } else {
+        router.push("/portfolio/skills");
+        router.refresh();
+      }
     } catch (error) {
       console.error("Failed to submit skill:", error);
       toast.error("Failed to save skill");
@@ -91,19 +103,21 @@ export function SkillForm({ initialData }: SkillFormProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => router.back()}
-          className="h-8 w-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {initialData ? "Edit Skill" : "New Skill"}
-        </h1>
-      </div>
+      {!isDialog && (
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.back()}
+            className="h-8 w-8"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {initialData ? "Edit Skill" : "New Skill"}
+          </h1>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
