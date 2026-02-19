@@ -38,12 +38,12 @@ describe("ExperienceTimeline", () => {
   it("renders experiences correctly", () => {
     render(<ExperienceTimeline experiences={mockExperiences} />);
 
-    expect(screen.getByText("@Tech Corp")).toBeDefined();
+    expect(screen.getByText("Tech Corp")).toBeDefined();
     expect(screen.getByText("Senior Developer")).toBeDefined();
     expect(screen.getByText(/Present/)).toBeDefined();
     expect(screen.getByText("Built amazing things.")).toBeDefined();
 
-    expect(screen.getByText("@Startup Inc")).toBeDefined();
+    expect(screen.getByText("Startup Inc")).toBeDefined();
     expect(screen.getByText("Junior Developer")).toBeDefined();
     expect(screen.getByText(/2020/)).toBeDefined();
     expect(screen.getByText(/2021/)).toBeDefined();

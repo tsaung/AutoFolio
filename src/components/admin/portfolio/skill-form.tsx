@@ -26,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/searchable-select";
+import { TECH_OPTIONS } from "@/components/portfolio/tech-icons";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
@@ -129,7 +131,14 @@ export function SkillForm({
                 <FormItem>
                   <FormLabel>Skill Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="React, Python, etc." {...field} />
+                    <SearchableSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={TECH_OPTIONS}
+                      placeholder="Select a tech skill"
+                      searchPlaceholder="Search skills..."
+                      emptyMessage="No skill found."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
