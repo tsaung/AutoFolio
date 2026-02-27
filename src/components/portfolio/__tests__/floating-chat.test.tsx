@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { FloatingChat } from "../floating-chat";
 import { describe, it, expect, vi } from "vitest";
 
@@ -36,10 +36,17 @@ describe("FloatingChat", () => {
     expect(screen.getByTestId("sheet-trigger")).toBeDefined();
   });
 
-  it("renders chat interface inside sheet content with side='bottom'", () => {
+  it("renders sheet content with side='bottom'", () => {
     render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
     const content = screen.getByTestId("sheet-content");
     expect(content.getAttribute("data-side")).toBe("bottom");
-    expect(screen.getByTestId("chat-interface")).toBeDefined();
+  });
+
+  it("renders chat interface inside sheet content", async () => {
+    render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
+    // ChatInterface is dynamically imported, so wait for it to load
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-interface")).toBeDefined();
+    });
   });
 });

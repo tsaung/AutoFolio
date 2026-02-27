@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
@@ -8,53 +9,42 @@ import { useEffect, useRef } from "react";
 import { Send, Bot, User, Sparkles, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
-import { ProfileHero } from "@/components/visitor/profile-hero";
 import { Database } from "@/types/database";
-import { ChatRequestOptions } from "ai";
+import { useChat } from "@ai-sdk/react";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface ChatInterfaceProps {
   profile?: Profile | null;
   botConfig?: Database["public"]["Tables"]["bot_configs"]["Row"] | null;
-  messages: any[];
-  input: string;
-  setInput: (value: string) => void;
-  onSend: (e?: React.FormEvent) => Promise<void>;
-  onSendDirect?: (text: string) => Promise<void>;
-  isLoading: boolean;
   onClose?: () => void;
 }
 
 export function ChatInterface({
   profile,
   botConfig,
-  messages,
-  input = "",
-  setInput,
-  onSend,
-  onSendDirect,
-  isLoading,
   onClose,
 }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { messages, status, sendMessage } = useChat();
+  const [input, setInput] = useState("");
+
+  const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handlePromptClick = async (prompt: string) => {
-    if (onSendDirect) {
-      await onSendDirect(prompt);
-    } else {
-      setInput(prompt);
-    }
+    await sendMessage({ text: prompt });
   };
 
   const onFormSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!input.trim()) return;
-    await onSend(e);
+    const value = input;
+    setInput("");
+    await sendMessage({ text: value });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

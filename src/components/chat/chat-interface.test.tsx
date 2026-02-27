@@ -18,9 +18,8 @@ describe("ChatInterface", () => {
   const mockSendMessage = vi.fn();
 
   // Default return value helper
-  const defaultChatProps = {
+  const defaultChatReturn = {
     messages: [],
-    input: "",
     sendMessage: mockSendMessage,
     status: "ready",
   };
@@ -41,83 +40,39 @@ describe("ChatInterface", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset the mock implementation before each test
-    vi.mocked(useChat).mockReturnValue(defaultChatProps as any);
+    vi.mocked(useChat).mockReturnValue(defaultChatReturn as any);
 
     // Mock scrollIntoView
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
 
   it("renders welcome screen initially", () => {
-    render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={false}
-      />,
-    );
+    render(<ChatInterface profile={mockProfile} />);
     expect(screen.getByText("Welcome!")).toBeInTheDocument();
   });
 
   it("renders suggested prompts", () => {
-    render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={false}
-      />,
-    );
+    render(<ChatInterface profile={mockProfile} />);
     expect(
       screen.getByText("Tell me about your experience"),
     ).toBeInTheDocument();
   });
 
   it("clicking a prompt triggers sendMessage", async () => {
-    render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={mockSendMessage}
-        isLoading={false}
-        onSendDirect={mockSendMessage}
-      />,
-    );
+    render(<ChatInterface profile={mockProfile} />);
     const experiencePrompt = screen.getByText("Tell me about your experience");
 
     fireEvent.click(experiencePrompt);
 
     await waitFor(() => {
-      expect(mockSendMessage).toHaveBeenCalledWith(
-        "Tell me about your experience",
-      );
+      expect(mockSendMessage).toHaveBeenCalledWith({
+        text: "Tell me about your experience",
+      });
     });
   });
 
   it("typing and sending a message calls sendMessage", async () => {
-    // Instead of full component, let's just make a simple wrapper
-    const StateWrapper = () => {
-      const { useState } = require("react");
-      const [val, setVal] = useState("");
-      return (
-        <ChatInterface
-          profile={mockProfile}
-          messages={[]}
-          input={val}
-          setInput={setVal}
-          onSend={mockSendMessage}
-          isLoading={false}
-        />
-      );
-    };
-
-    render(<StateWrapper />);
+    render(<ChatInterface profile={mockProfile} />);
     const input = screen.getByPlaceholderText("Ask Test anything...");
     const sendButton = screen.getByRole("button", { name: "Send message" });
 
@@ -125,27 +80,18 @@ describe("ChatInterface", () => {
     fireEvent.click(sendButton);
 
     await waitFor(() => {
-      expect(mockSendMessage).toHaveBeenCalled();
+      expect(mockSendMessage).toHaveBeenCalledWith({ text: "Hello AI" });
     });
   });
 
   it("disables input when streaming", () => {
     // Override mock for this test
     vi.mocked(useChat).mockReturnValue({
-      ...defaultChatProps,
+      ...defaultChatReturn,
       status: "streaming",
     } as any);
 
-    render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={true}
-      />,
-    );
+    render(<ChatInterface profile={mockProfile} />);
 
     const sendButton = screen.getByRole("button", { name: "Send message" });
     expect(sendButton).toBeDisabled();
@@ -153,36 +99,18 @@ describe("ChatInterface", () => {
 
   it("renders typing indicator when streaming", () => {
     vi.mocked(useChat).mockReturnValue({
-      ...defaultChatProps,
+      ...defaultChatReturn,
       status: "streaming",
     } as any);
 
-    const { container } = render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={true}
-      />,
-    );
+    const { container } = render(<ChatInterface profile={mockProfile} />);
     // Check for the bouncing dots
     const dots = container.getElementsByClassName("animate-bounce");
     expect(dots.length).toBe(3);
   });
 
   it("renders profile name and profession in header when profile is provided", () => {
-    render(
-      <ChatInterface
-        profile={mockProfile}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={false}
-      />,
-    );
+    render(<ChatInterface profile={mockProfile} />);
 
     const header = screen.getByRole("banner");
 
@@ -197,16 +125,7 @@ describe("ChatInterface", () => {
   });
 
   it("renders BotFolio branding in header when no profile is provided", () => {
-    render(
-      <ChatInterface
-        profile={null}
-        messages={[]}
-        input=""
-        setInput={() => {}}
-        onSend={async () => {}}
-        isLoading={false}
-      />,
-    );
+    render(<ChatInterface profile={null} />);
     expect(
       screen.getByRole("heading", { name: "BotFolio" }),
     ).toBeInTheDocument();

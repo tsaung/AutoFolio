@@ -8,11 +8,16 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { MessageCircle, X } from "lucide-react";
-import { ChatInterface } from "@/components/chat/chat-interface";
-import { useChat } from "@ai-sdk/react";
+import { MessageCircle } from "lucide-react";
+import dynamic from "next/dynamic";
 import { Database } from "@/types/database";
 import { BotConfig } from "@/lib/actions/bot-config";
+
+const ChatInterface = dynamic(
+  () =>
+    import("@/components/chat/chat-interface").then((mod) => mod.ChatInterface),
+  { ssr: false },
+);
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -24,19 +29,6 @@ interface FloatingChatProps {
 export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-
-  const { messages, status, sendMessage } = useChat();
-
-  const [input, setInput] = useState("");
-
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!input.trim()) return;
-
-    const value = input;
-    setInput("");
-    await sendMessage({ text: value });
-  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -71,14 +63,6 @@ export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
             <ChatInterface
               profile={profile}
               botConfig={botConfig}
-              messages={messages}
-              input={input}
-              setInput={setInput}
-              onSend={handleSendMessage}
-              onSendDirect={async (text: string) => {
-                await sendMessage({ text });
-              }}
-              isLoading={status === "submitted" || status === "streaming"}
               onClose={() => setOpen(false)}
             />
           </div>
