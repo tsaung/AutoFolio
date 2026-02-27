@@ -13,7 +13,11 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import { TechIcon } from "@/components/portfolio/tech-icons";
+import dynamic from "next/dynamic";
+
+const TechIcon = dynamic(() =>
+  import("@/components/portfolio/tech-icons").then((mod) => mod.TechIcon),
+);
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
@@ -37,9 +41,9 @@ export function ProfileHero({
           <Image
             src="/avatar.jpg"
             alt="Default Profile"
-            fill
+            width={128}
+            height={128}
             className="object-cover"
-            sizes="128px"
             priority
           />
         </div>
@@ -87,9 +91,9 @@ export function ProfileHero({
             gravity: "face",
           })}
           alt={profile.name || "Profile"}
-          fill
+          width={160}
+          height={160}
           className="object-cover"
-          sizes="(max-width: 768px) 128px, 160px"
           priority
         />
         <AvatarFallback className="bg-muted text-4xl">
@@ -138,6 +142,9 @@ export function ProfileHero({
         {/* Tech Stack Icons */}
         {skills.length > 0 ? (
           <div className="w-full max-w-3xl pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+            <h2 className="text-2xl font-bold tracking-tight text-center mb-6">
+              Tech Stack
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left">
               {Object.entries(
                 skills.reduce(

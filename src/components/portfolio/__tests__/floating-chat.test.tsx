@@ -11,6 +11,9 @@ vi.mock("@/components/chat/chat-interface", () => ({
 vi.mock("@/components/ui/sheet", () => ({
   Sheet: ({ children, open, onOpenChange }: any) => (
     <div data-testid="sheet" data-state={open ? "open" : "closed"}>
+      <button data-testid="test-open-btn" onClick={() => onOpenChange(true)}>
+        Open
+      </button>
       {open && <button onClick={() => onOpenChange(false)}>Close</button>}
       {children}
     </div>
@@ -42,9 +45,13 @@ describe("FloatingChat", () => {
     expect(content.getAttribute("data-side")).toBe("bottom");
   });
 
-  it("renders chat interface inside sheet content", async () => {
+  it("renders chat interface inside sheet content when opened", async () => {
     render(<FloatingChat profile={mockProfile} botConfig={mockBotConfig} />);
-    // ChatInterface is dynamically imported, so wait for it to load
+
+    // Open the sheet using our test button (since internal Radix logic is mocked)
+    fireEvent.click(screen.getByTestId("test-open-btn"));
+
+    // ChatInterface is dynamically imported and conditionally rendered, so wait for it
     await waitFor(() => {
       expect(screen.getByTestId("chat-interface")).toBeDefined();
     });

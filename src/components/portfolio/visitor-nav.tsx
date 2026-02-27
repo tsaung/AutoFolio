@@ -9,7 +9,12 @@ import { Menu, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
-import { ModeToggle } from "@/components/mode-toggle";
+import dynamic from "next/dynamic";
+
+const ModeToggle = dynamic(
+  () => import("@/components/mode-toggle").then((mod) => mod.ModeToggle),
+  { ssr: false },
+);
 
 export function VisitorNav({
   name,
@@ -102,9 +107,9 @@ export function VisitorNav({
                   gravity: "face",
                 })}
                 alt={name || "Profile"}
-                fill
+                width={32}
+                height={32}
                 className="object-cover rounded-full"
-                sizes="32px"
               />
               <AvatarFallback>
                 {name?.slice(0, 2).toUpperCase() || "BF"}

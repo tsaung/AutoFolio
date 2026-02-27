@@ -8,10 +8,14 @@ import { SetupChecklist } from "@/components/visitor/setup-checklist";
 import { adminClient } from "@/lib/db/admin";
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
-import { ExperienceTimeline } from "@/components/portfolio/experience-timeline";
 import dynamic from "next/dynamic";
-import { SkillsGrid } from "@/components/portfolio/skills-grid";
 import { Separator } from "@/components/ui/separator";
+
+const ExperienceTimeline = dynamic(() =>
+  import("@/components/portfolio/experience-timeline").then(
+    (mod) => mod.ExperienceTimeline,
+  ),
+);
 
 const FloatingChat = dynamic(() =>
   import("@/components/portfolio/floating-chat").then(
@@ -94,17 +98,6 @@ export default async function VisitorPage() {
             </div>
             <Separator className="max-w-xs mx-auto" />
             <ExperienceTimeline experiences={experiences} />
-          </section>
-        )}
-        {/* Skills Section */}
-        {skills.length > 0 && (
-          <section id="skills" className="space-y-8 scroll-mt-24">
-            <div className="space-y-2 text-center">
-              <h2 className="text-3xl font-bold tracking-tight">Skills</h2>
-              <p className="text-muted-foreground">My technical expertise</p>
-            </div>
-            <Separator className="max-w-xs mx-auto" />
-            <SkillsGrid skills={skills} />
           </section>
         )}
       </div>

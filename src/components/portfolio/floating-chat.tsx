@@ -60,11 +60,13 @@ export function FloatingChat({ profile, botConfig }: FloatingChatProps) {
           </SheetTitle>
 
           <div className="flex-1 overflow-hidden relative">
-            <ChatInterface
-              profile={profile}
-              botConfig={botConfig}
-              onClose={() => setOpen(false)}
-            />
+            {open && (
+              <ChatInterface
+                profile={profile}
+                botConfig={botConfig}
+                onClose={() => setOpen(false)}
+              />
+            )}
           </div>
         </div>
       </SheetContent>
