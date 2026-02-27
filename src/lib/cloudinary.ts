@@ -78,3 +78,12 @@ export function cloudinaryUrl(
 export function getCloudName(): string | undefined {
   return CLOUD_NAME;
 }
+
+/**
+ * Cloudinary loader for Next.js Image component.
+ */
+import { ImageLoaderProps } from "next/image";
+
+export const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
+  return cloudinaryUrl(src, { width, quality: quality || "auto" });
+};

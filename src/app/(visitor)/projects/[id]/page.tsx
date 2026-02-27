@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
+import Image from "next/image";
 
 interface ProjectPageProps {
   params: Promise<{
@@ -104,12 +105,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 undefined
               }
             >
-              <img
-                src={cloudinaryUrl(project.image_url, {
-                  width: 1200,
-                  crop: "limit",
-                })}
+              <Image
+                loader={cloudinaryLoader}
+                src={project.image_url}
                 alt={project.title}
+                width={1200}
+                height={900}
+                sizes="(max-width: 1200px) 100vw, 1200px"
                 className="w-full h-auto object-contain block"
               />
             </BrowserMockup>

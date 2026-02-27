@@ -9,6 +9,7 @@ import { Menu, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import dynamic from "next/dynamic";
 
 const ModeToggle = dynamic(
@@ -111,12 +112,8 @@ export function VisitorNav({
             >
               <Avatar className="h-8 w-8">
                 <Image
-                  src={cloudinaryUrl(avatarUrl || "/avatar.jpg", {
-                    width: 64,
-                    height: 64,
-                    crop: "fill",
-                    gravity: "face",
-                  })}
+                  loader={cloudinaryLoader}
+                  src={avatarUrl || "/avatar.jpg"}
                   alt={name || "Profile"}
                   width={32}
                   height={32}

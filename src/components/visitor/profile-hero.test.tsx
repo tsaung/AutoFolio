@@ -19,6 +19,7 @@ vi.mock("next/image", () => ({
 // Mock cloudinaryUrl to passthrough (non-Cloudinary URLs are unchanged)
 vi.mock("@/lib/cloudinary", () => ({
   cloudinaryUrl: (url: string) => url,
+  cloudinaryLoader: ({ src }: any) => src,
 }));
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];

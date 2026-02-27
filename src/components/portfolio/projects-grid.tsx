@@ -13,7 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import { BrowserMockup } from "@/components/portfolio/browser-mockup";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
@@ -46,14 +48,14 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   url={project.live_url || project.repo_url || undefined}
                   className="w-full h-full shadow-sm"
                 >
-                  <img
-                    src={cloudinaryUrl(project.image_url, {
-                      width: 600,
-                      height: 450,
-                      crop: "fill",
-                    })}
+                  <Image
+                    loader={cloudinaryLoader}
+                    src={project.image_url}
                     alt={project.title}
-                    className="w-full object-cover"
+                    width={600}
+                    height={450}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="w-full h-full object-cover"
                   />
                 </BrowserMockup>
               ) : (

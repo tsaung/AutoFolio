@@ -2,6 +2,7 @@ import { Database } from "@/types/database";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import {
   Bot,
   Github,
@@ -84,17 +85,13 @@ export function ProfileHero({
     <div className="flex flex-col items-center justify-center space-y-6 text-center py-12 md:py-20 animate-in fade-in zoom-in duration-500">
       <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-background shadow-2xl ring-4 ring-primary/10">
         <Image
-          src={cloudinaryUrl(profile.avatar_url || "/avatar.jpg", {
-            width: 320,
-            height: 320,
-            crop: "fill",
-            gravity: "face",
-          })}
-          alt={profile.name || "Profile"}
-          width={160}
-          height={160}
-          className="object-cover"
+          loader={cloudinaryLoader}
+          src={profile.avatar_url || "/avatar.jpg"}
+          alt={`${profile.name}'s avatar`}
+          width={220}
+          height={220}
           priority
+          className="w-full h-full object-cover"
         />
         <AvatarFallback className="bg-muted text-4xl">
           {profile.name?.slice(0, 2).toUpperCase() || (
