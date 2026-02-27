@@ -29,6 +29,7 @@ The `profiles` table is being cleaned up to match the UI and remove unused field
 
 - Fields:
   - Email (Read-Only, from Auth)
+  - Avatar URL (Maps to `avatar_url`)
   - Name (Maps to `name`)
   - Profession
   - Experience

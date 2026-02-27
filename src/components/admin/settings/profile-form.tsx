@@ -21,6 +21,11 @@ import { updateProfile } from "@/lib/actions/profile";
 import { Database } from "@/types/database";
 
 const profileFormSchema = z.object({
+  avatarUrl: z
+    .string()
+    .url({ message: "Please enter a valid URL." })
+    .optional()
+    .or(z.literal("")),
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
@@ -62,6 +67,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const defaultValues = {
+    avatarUrl: initialData?.avatar_url || "",
     name: initialData?.name || "",
     email: initialData?.email || "",
     profession: initialData?.profession || "",
@@ -91,6 +97,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
     try {
       await updateProfile({
+        avatar_url: data.avatarUrl || null,
         name: data.name,
         profession: data.profession,
         experience: data.experience,
@@ -137,6 +144,25 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             Your email address is managed by your authentication provider.
           </FormDescription>
         </FormItem>
+        <FormField
+          control={form.control}
+          name="avatarUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profile Image URL</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://example.com/avatar.jpg"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Provide a URL to your public profile image.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="profession"
