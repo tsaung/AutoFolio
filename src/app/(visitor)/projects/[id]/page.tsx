@@ -5,6 +5,7 @@ import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 import { FloatingChat } from "@/components/portfolio/floating-chat";
+import { BrowserMockup } from "@/components/portfolio/browser-mockup";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, ArrowLeft } from "lucide-react";
@@ -94,15 +95,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         {/* Hero Image */}
         {project.image_url && (
-          <div className="max-w-5xl mx-auto bg-muted">
-            <img
-              src={cloudinaryUrl(project.image_url, {
-                width: 1200,
-                crop: "limit",
-              })}
-              alt={project.title}
-              className="w-full h-auto object-contain block"
-            />
+          <div className="max-w-5xl mx-auto">
+            <BrowserMockup
+              url={
+                project.live_url ||
+                project.repo_url ||
+                new URL(project.image_url).hostname ||
+                undefined
+              }
+            >
+              <img
+                src={cloudinaryUrl(project.image_url, {
+                  width: 1200,
+                  crop: "limit",
+                })}
+                alt={project.title}
+                className="w-full h-auto object-contain block"
+              />
+            </BrowserMockup>
           </div>
         )}
 
