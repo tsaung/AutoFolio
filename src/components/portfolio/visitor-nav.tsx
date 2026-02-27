@@ -29,6 +29,17 @@ export function VisitorNav({
   const isHome = pathname === "/";
 
   useEffect(() => {
+    // Hacky fix for Next.js mobile scroll bug on refresh
+    if (typeof window !== "undefined") {
+      window.history.scrollRestoration = "manual";
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         // If the 1px sentinel is NO LONGER intersecting (we scrolled past it), set scrolled to true
@@ -71,101 +82,108 @@ export function VisitorNav({
   ];
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
-        scrolled
-          ? "bg-background/80 backdrop-blur-md shadow-sm border-b"
-          : "bg-transparent",
-      )}
-    >
+    <>
       {/* Sentinel element for IntersectionObserver (placed absolute top so it stays at the top of the DOCUMENT, not the sticky header) */}
       <div
         id="nav-sentinel"
         className="absolute top-0 left-0 w-full h-5 pointer-events-none invisible"
         style={{ top: "-20px" }}
       />
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+          scrolled
+            ? "bg-background/80 backdrop-blur-md shadow-sm border-b"
+            : "bg-transparent",
+        )}
+      >
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className={cn(
+                "flex items-center gap-2 hover:opacity-80 transition-all duration-300",
+                !scrolled &&
+                  isHome &&
+                  "opacity-0 -translate-x-4 pointer-events-none",
+              )}
+              onClick={(e) => scrollToSection(e, "about")}
+            >
+              <Avatar className="h-8 w-8">
+                <Image
+                  src={cloudinaryUrl(avatarUrl || "/avatar.jpg", {
+                    width: 64,
+                    height: 64,
+                    crop: "fill",
+                    gravity: "face",
+                  })}
+                  alt={name || "Profile"}
+                  width={32}
+                  height={32}
+                  className="object-cover rounded-full"
+                />
+                <AvatarFallback>
+                  {name?.slice(0, 2).toUpperCase() || "BF"}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-lg font-bold tracking-tight">
+                {name || "BotFolio"}
+              </span>
+            </Link>
+          </div>
 
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className={cn(
-              "flex items-center gap-2 hover:opacity-80 transition-all duration-300",
-              !scrolled &&
-                isHome &&
-                "opacity-0 -translate-x-4 pointer-events-none",
-            )}
-            onClick={(e) => scrollToSection(e, "about")}
-          >
-            <Avatar className="h-8 w-8">
-              <Image
-                src={cloudinaryUrl(avatarUrl || "/avatar.jpg", {
-                  width: 64,
-                  height: 64,
-                  crop: "fill",
-                  gravity: "face",
-                })}
-                alt={name || "Profile"}
-                width={32}
-                height={32}
-                className="object-cover rounded-full"
-              />
-              <AvatarFallback>
-                {name?.slice(0, 2).toUpperCase() || "BF"}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-lg font-bold tracking-tight">
-              {name || "BotFolio"}
-            </span>
-          </Link>
+          <div className="flex items-center gap-4">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex gap-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) =>
+                    scrollToSection(e, link.href.replace("#", ""))
+                  }
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            <ModeToggle />
+
+            {/* Mobile Nav Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
+              {isOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex gap-6">
+        {/* Mobile Nav Menu */}
+        {isOpen && (
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b shadow-lg p-4 flex flex-col gap-4 animate-in slide-in-from-top-2">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => scrollToSection(e, link.href.replace("#", ""))}
-                className="text-sm font-medium hover:text-primary transition-colors"
+                className="text-base font-medium p-2 hover:bg-muted rounded-md transition-colors"
               >
                 {link.label}
               </a>
             ))}
-          </nav>
-
-          <ModeToggle />
-
-          {/* Mobile Nav Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile Nav Menu */}
-      {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b shadow-lg p-4 flex flex-col gap-4 animate-in slide-in-from-top-2">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => scrollToSection(e, link.href.replace("#", ""))}
-              className="text-base font-medium p-2 hover:bg-muted rounded-md transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      )}
-    </header>
+          </div>
+        )}
+      </header>
+    </>
   );
 }
