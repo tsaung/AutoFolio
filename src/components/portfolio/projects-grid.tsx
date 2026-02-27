@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { BrowserMockup } from "@/components/portfolio/browser-mockup";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 
@@ -39,17 +40,22 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             className="flex-1 flex flex-col"
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-[4/3] bg-muted overflow-hidden">
+            <div className="relative w-full aspect-[4/3] bg-muted/30 p-2 sm:p-3 flex items-start justify-center overflow-hidden">
               {project.image_url ? (
-                <img
-                  src={cloudinaryUrl(project.image_url, {
-                    width: 600,
-                    height: 450,
-                    crop: "fill",
-                  })}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                />
+                <BrowserMockup
+                  url={project.live_url || project.repo_url || undefined}
+                  className="w-full h-full shadow-sm"
+                >
+                  <img
+                    src={cloudinaryUrl(project.image_url, {
+                      width: 600,
+                      height: 450,
+                      crop: "fill",
+                    })}
+                    alt={project.title}
+                    className="w-full object-cover"
+                  />
+                </BrowserMockup>
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/50">
                   <span className="text-4xl filter grayscale opacity-50">
