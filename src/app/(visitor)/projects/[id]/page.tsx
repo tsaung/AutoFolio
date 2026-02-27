@@ -11,6 +11,7 @@ import { ExternalLink, Github, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface ProjectPageProps {
   params: Promise<{
@@ -95,7 +96,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {project.image_url && (
           <div className="max-w-5xl mx-auto bg-muted">
             <img
-              src={project.image_url}
+              src={cloudinaryUrl(project.image_url, {
+                width: 1200,
+                crop: "limit",
+              })}
               alt={project.title}
               className="w-full h-auto object-contain block"
             />

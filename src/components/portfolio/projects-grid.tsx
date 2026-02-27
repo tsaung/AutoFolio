@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 
@@ -42,7 +42,11 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             <div className="relative w-full aspect-[4/3] bg-muted overflow-hidden">
               {project.image_url ? (
                 <img
-                  src={project.image_url}
+                  src={cloudinaryUrl(project.image_url, {
+                    width: 600,
+                    height: 450,
+                    crop: "fill",
+                  })}
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />
@@ -68,13 +72,13 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                     project.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-medium text-muted-foreground/80 bg-secondary/50 px-2 py-0.5 rounded-md"
+                        className="text-xs font-medium text-secondary-foreground bg-secondary px-2 py-0.5 rounded-md"
                       >
                         {tag}
                       </span>
                     ))}
                   {project.tags && project.tags.length > 3 && (
-                    <span className="text-xs text-muted-foreground/60 px-1 py-0.5">
+                    <span className="text-xs text-muted-foreground px-1 py-0.5">
                       +{project.tags.length - 3}
                     </span>
                   )}
@@ -94,10 +98,10 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                  <ExternalLink className="w-3.5 h-3.5" />
                   Live Demo
                 </Link>
               )}
@@ -106,10 +110,10 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   href={project.repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Github className="w-3.5 h-3.5 mr-1.5" />
+                  <Github className="w-3.5 h-3.5" />
                   Source Code
                 </Link>
               )}

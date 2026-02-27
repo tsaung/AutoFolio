@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 import { ModeToggle } from "@/components/mode-toggle";
 
 export function VisitorNav({
@@ -22,11 +24,25 @@ export function VisitorNav({
   const isHome = pathname === "/";
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // If the 1px sentinel is NO LONGER intersecting (we scrolled past it), set scrolled to true
+        setScrolled(!entry.isIntersecting);
+      },
+      { root: null, rootMargin: "0px", threshold: 0 },
+    );
+
+    const sentinel = document.getElementById("nav-sentinel");
+    if (sentinel) {
+      observer.observe(sentinel);
+    }
+
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+      observer.disconnect();
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (
@@ -58,6 +74,13 @@ export function VisitorNav({
           : "bg-transparent",
       )}
     >
+      {/* Sentinel element for IntersectionObserver (placed absolute top so it stays at the top of the DOCUMENT, not the sticky header) */}
+      <div
+        id="nav-sentinel"
+        className="absolute top-0 left-0 w-full h-5 pointer-events-none invisible"
+        style={{ top: "-20px" }}
+      />
+
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link
@@ -71,7 +94,18 @@ export function VisitorNav({
             onClick={(e) => scrollToSection(e, "about")}
           >
             <Avatar className="h-8 w-8">
-              <AvatarImage src={avatarUrl || "/avatar.jpg"} />
+              <Image
+                src={cloudinaryUrl(avatarUrl || "/avatar.jpg", {
+                  width: 64,
+                  height: 64,
+                  crop: "fill",
+                  gravity: "face",
+                })}
+                alt={name || "Profile"}
+                fill
+                className="object-cover rounded-full"
+                sizes="32px"
+              />
               <AvatarFallback>
                 {name?.slice(0, 2).toUpperCase() || "BF"}
               </AvatarFallback>
@@ -105,6 +139,7 @@ export function VisitorNav({
             size="icon"
             className="md:hidden"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>

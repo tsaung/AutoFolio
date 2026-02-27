@@ -9,11 +9,16 @@ import { adminClient } from "@/lib/db/admin";
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
 import { ExperienceTimeline } from "@/components/portfolio/experience-timeline";
+import dynamic from "next/dynamic";
 import { SkillsGrid } from "@/components/portfolio/skills-grid";
-import { FloatingChat } from "@/components/portfolio/floating-chat";
 import { Separator } from "@/components/ui/separator";
+
+const FloatingChat = dynamic(() =>
+  import("@/components/portfolio/floating-chat").then(
+    (mod) => mod.FloatingChat,
+  ),
+);
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
-import { ScrollRestoration } from "@/components/portfolio/scroll-restoration";
 
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 
@@ -44,7 +49,6 @@ export default async function VisitorPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground flex flex-col">
-      <ScrollRestoration />
       <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} />
 
       <div className="container mx-auto px-4 pb-24 space-y-24 pt-16 flex-grow">
@@ -90,6 +94,17 @@ export default async function VisitorPage() {
             </div>
             <Separator className="max-w-xs mx-auto" />
             <ExperienceTimeline experiences={experiences} />
+          </section>
+        )}
+        {/* Skills Section */}
+        {skills.length > 0 && (
+          <section id="skills" className="space-y-8 scroll-mt-24">
+            <div className="space-y-2 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">Skills</h2>
+              <p className="text-muted-foreground">My technical expertise</p>
+            </div>
+            <Separator className="max-w-xs mx-auto" />
+            <SkillsGrid skills={skills} />
           </section>
         )}
       </div>

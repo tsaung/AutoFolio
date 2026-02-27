@@ -3,15 +3,22 @@ import { describe, it, expect, vi } from "vitest";
 import { ProfileHero } from "./profile-hero";
 import { Database } from "@/types/database";
 
-// Mock the Avatar components to avoid Radix UI image loading issues in JSDOM
+// Mock the Avatar components (no longer using AvatarImage)
 vi.mock("@/components/ui/avatar", () => ({
   Avatar: ({ children, className }: any) => (
     <div className={className}>{children}</div>
   ),
-  AvatarImage: ({ src, alt, className }: any) => (
-    <img src={src} alt={alt} className={className} />
-  ),
   AvatarFallback: ({ children }: any) => <div>{children}</div>,
+}));
+
+// Mock next/image to render a simple img
+vi.mock("next/image", () => ({
+  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} />,
+}));
+
+// Mock cloudinaryUrl to passthrough (non-Cloudinary URLs are unchanged)
+vi.mock("@/lib/cloudinary", () => ({
+  cloudinaryUrl: (url: string) => url,
 }));
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];

@@ -60,13 +60,13 @@ export function VisitorFooter({ profile, socialLinks }: VisitorFooterProps) {
           <p className="text-sm text-muted-foreground">
             &copy; {currentYear} {profile?.name || "Portfolio"}
           </p>
-          <p className="text-xs text-muted-foreground/60 flex items-center justify-center gap-1">
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
             Built with{" "}
             <Link
               href="https://github.com/tsaung/botfolio"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary/80 hover:text-primary font-medium transition-colors"
+              className="text-primary hover:text-primary/80 font-medium transition-colors"
             >
               BotFolio
             </Link>
