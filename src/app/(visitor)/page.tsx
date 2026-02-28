@@ -10,6 +10,7 @@ import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
 import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const ExperienceTimeline = dynamic(() =>
   import("@/components/portfolio/experience-timeline").then(

@@ -34,7 +34,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
       {projects.map((project) => (
         <div
           key={project.id}
-          className="group relative flex flex-col h-full rounded-2xl overflow-hidden bg-card border border-border/40 hover:border-border/60 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          className="group relative flex flex-col h-full bg-transparent"
         >
           {/* Main Click Area */}
           <Link
@@ -42,11 +42,11 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             className="flex-1 flex flex-col"
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-[4/3] bg-muted/30 p-2 sm:p-3 flex items-start justify-center overflow-hidden">
+            <div className="relative w-full aspect-[4/3] mb-6 flex items-start justify-center">
               {project.image_url ? (
                 <BrowserMockup
                   url={project.live_url || project.repo_url || undefined}
-                  className="w-full h-full shadow-sm"
+                  className="w-full h-full"
                 >
                   <Image
                     loader={cloudinaryLoader}
@@ -59,20 +59,18 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   />
                 </BrowserMockup>
               ) : (
-                <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/50">
+                <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/20 rounded-xl border border-border/20 shadow-sm transition-transform duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl">
                   <span className="text-4xl filter grayscale opacity-50">
                     🚀
                   </span>
                 </div>
               )}
-              {/* Overlay Gradient on Hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
 
             {/* Content Body */}
-            <div className="flex flex-col flex-1 p-5 space-y-3">
-              <div className="space-y-1">
-                <h3 className="font-bold text-xl leading-tight group-hover:text-primary transition-colors line-clamp-1">
+            <div className="flex flex-col flex-1 space-y-4 px-1">
+              <div className="space-y-2.5">
+                <h3 className="font-bold text-2xl tracking-tight group-hover:text-primary transition-colors line-clamp-1">
                   {project.title}
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -100,13 +98,13 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
 
           {/* Footer Actions (Subtle) */}
           {(project.live_url || project.repo_url) && (
-            <div className="px-5 pb-5 pt-0 flex gap-3 mt-auto">
+            <div className="px-1 pb-2 pt-6 flex gap-4 mt-auto">
               {project.live_url && (
                 <Link
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
+                  className="text-sm font-medium flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -118,7 +116,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   href={project.repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
+                  className="text-sm font-medium flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Github className="w-3.5 h-3.5" />

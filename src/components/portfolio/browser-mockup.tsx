@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -16,13 +15,11 @@ export function BrowserMockup({
   url,
 }: BrowserMockupProps) {
   return (
-    <motion.div
+    <div
       className={cn(
-        "relative w-full flex flex-col rounded-md overflow-hidden border border-border/50 bg-background shadow-md",
+        "relative w-full flex flex-col rounded-xl overflow-hidden border border-border/20 bg-background shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]",
         className,
       )}
-      whileHover={{ scale: 1.02, y: -2 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       {/* Browser Chrome Header */}
       <div className="flex items-center px-3 py-2 bg-muted/40 border-b border-border/40 gap-3 max-h-[32px]">
@@ -45,6 +42,6 @@ export function BrowserMockup({
       <div className="relative flex-1 bg-muted/10 overflow-hidden">
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }
