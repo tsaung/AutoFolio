@@ -1,16 +1,7 @@
 "use client";
 
 import { Database } from "@/types/database";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,7 +25,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
       {projects.map((project) => (
         <div
           key={project.id}
-          className="group relative flex flex-col h-full bg-transparent"
+          className="group relative flex flex-col h-full bg-transparent transition-all duration-300"
         >
           {/* Main Click Area */}
           <Link
@@ -42,11 +33,11 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             className="flex-1 flex flex-col"
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-[4/3] mb-6 flex items-start justify-center">
+            <div className="relative w-full aspect-[4/3] flex items-start justify-center">
               {project.image_url ? (
                 <BrowserMockup
                   url={project.live_url || project.repo_url || undefined}
-                  className="w-full h-full"
+                  className="w-full h-full border-none shadow-none rounded-2xl rounded-b-none"
                 >
                   <Image
                     loader={cloudinaryLoader}
@@ -59,7 +50,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   />
                 </BrowserMockup>
               ) : (
-                <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/20 rounded-xl border border-border/20 shadow-sm transition-transform duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl">
+                <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/20 rounded-xl border border-border/20 shadow-sm">
                   <span className="text-4xl filter grayscale opacity-50">
                     🚀
                   </span>
@@ -68,44 +59,44 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             </div>
 
             {/* Content Body */}
-            <div className="flex flex-col flex-1 space-y-4 px-1">
-              <div className="space-y-2.5">
-                <h3 className="font-bold text-2xl tracking-tight group-hover:text-primary transition-colors line-clamp-1">
-                  {project.title}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags &&
-                    project.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs font-medium text-secondary-foreground bg-secondary px-2 py-0.5 rounded-md"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  {project.tags && project.tags.length > 3 && (
-                    <span className="text-xs text-muted-foreground px-1 py-0.5">
-                      +{project.tags.length - 3}
+            <div
+              className={`flex-1 flex flex-col pt-5 p-4 bg-card/90 backdrop-blur-md border-x border-border/50 shadow-sm transition-all duration-300 group-hover:shadow-md z-10 -mt-1 ${!(project.live_url || project.repo_url) ? "rounded-b-xl border-b" : ""}`}
+            >
+              {/* Title */}
+              <h3 className="font-semibold leading-none group-hover:text-primary transition-colors line-clamp-1">
+                {project.title}
+              </h3>
+
+              {/* Tag chips */}
+              {project.tags && project.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {project.tags.slice(0, 4).map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs font-medium text-muted-foreground outline outline-1 outline-border px-2 py-0.5 rounded-md"
+                    >
+                      {tag}
                     </span>
-                  )}
+                  ))}
                 </div>
-              </div>
-              <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
+              )}
+
+              {/* Description */}
+              <p className="text-sm text-muted-foreground line-clamp-2 mt-3">
                 {project.description}
               </p>
             </div>
           </Link>
 
-          {/* Footer Actions (Subtle) */}
+          {/* Footer Actions — outside Link to avoid nested <a> */}
           {(project.live_url || project.repo_url) && (
-            <div className="px-1 pb-2 pt-6 flex gap-4 mt-auto">
+            <div className="flex gap-4 px-4 py-3 border-t border-border/50 bg-card/90 backdrop-blur-md rounded-b-xl border-x border-b border-border/50 z-10">
               {project.live_url && (
                 <Link
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
-                  onClick={(e) => e.stopPropagation()}
+                  className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors py-1"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   Live Demo
@@ -116,8 +107,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                   href={project.repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-2 -mx-2 rounded-md min-h-[44px]"
-                  onClick={(e) => e.stopPropagation()}
+                  className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors py-1"
                 >
                   <Github className="w-3.5 h-3.5" />
                   Source Code

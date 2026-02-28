@@ -8,6 +8,7 @@ import { SetupChecklist } from "@/components/visitor/setup-checklist";
 import { adminClient } from "@/lib/db/admin";
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
+
 import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,7 @@ export default async function VisitorPage() {
     <main className="min-h-screen bg-background text-foreground flex flex-col">
       <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} />
 
-      <div className="container mx-auto px-4 pb-24 space-y-24 pt-16 flex-grow">
+      <div className="container mx-auto px-4 pt-16">
         {/* Hero Section */}
         <section
           id="about"
@@ -68,10 +69,15 @@ export default async function VisitorPage() {
             skills={skills}
           />
         </section>
+      </div>
 
-        {/* Projects Section */}
-        {projects.length > 0 && (
-          <section id="projects" className="space-y-8 scroll-mt-24">
+      {/* Projects Section */}
+      {projects.length > 0 && (
+        <section
+          id="projects"
+          className="relative w-full py-24 my-24 bg-background text-foreground overflow-hidden border-y border-border/50 bg-grid-pattern"
+        >
+          <div className="container mx-auto px-4 relative z-10 space-y-8">
             <div className="space-y-2 text-center">
               <h2 className="text-3xl font-bold tracking-tight">
                 Featured Projects
@@ -80,11 +86,12 @@ export default async function VisitorPage() {
                 Some of the things I've built
               </p>
             </div>
-            <Separator className="max-w-xs mx-auto" />
             <ProjectsGrid projects={projects} />
-          </section>
-        )}
+          </div>
+        </section>
+      )}
 
+      <div className="container mx-auto px-4 pb-24 space-y-24 flex-grow">
         {/* Experience Section */}
         {experiences.length > 0 && (
           <section
