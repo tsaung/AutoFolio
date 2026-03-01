@@ -26,14 +26,14 @@ The visitor experience will be transformed from a simple chat interface to a com
 
 ### 3. Projects Section
 
-- **Layout**: Grid of cards.
+- **Layout**: Single-item Carousel.
 - **Card Content**:
   - Thumbnail wrapped in a `BrowserMockup` component to appear as an interactive device window.
   - Title (Link to `project_url` or `demo_url`).
   - Description (Truncated).
   - Tags (Badge list).
   - Links (GitHub, Live Demo).
-- **Impl**: `ProjectsGrid` component with `BrowserMockup`.
+- **Impl**: `ProjectsGrid` component with `Carousel` and `BrowserMockup`.
 
 ### 4. Experience Section
 
