@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { Database } from "@/types/database";
 import { BotConfig } from "@/lib/actions/bot-config";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const ChatInterface = dynamic(
   () =>
@@ -31,6 +32,7 @@ export function VisitorLayoutWrapper({
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -55,10 +57,11 @@ export function VisitorLayoutWrapper({
       <aside
         className={cn(
           "hidden md:flex flex-col h-full bg-background border-l transition-[width] duration-300 ease-in-out shrink-0 overflow-hidden",
+          resolvedTheme === "dark" ? "light" : "dark",
           open ? "w-[400px] lg:w-[448px] border-l" : "w-0 border-l-0",
         )}
       >
-        <div className="w-[400px] lg:w-[448px] h-full flex flex-col relative">
+        <div className="w-[400px] lg:w-[448px] h-full flex flex-col relative bg-background text-foreground">
           {open && (
             <ChatInterface
               profile={profile}
@@ -74,10 +77,13 @@ export function VisitorLayoutWrapper({
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent
             side="right"
-            className="w-full h-full p-0 sm:max-w-md border-l shadow-2xl"
+            className={cn(
+              "w-full h-full p-0 sm:max-w-md border-l shadow-2xl bg-background",
+              resolvedTheme === "dark" ? "light" : "dark",
+            )}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            <div className="flex h-full flex-col">
+            <div className="flex h-full flex-col bg-background text-foreground">
               <SheetTitle className="sr-only">
                 Chat with {profile?.name || "AI"}
               </SheetTitle>

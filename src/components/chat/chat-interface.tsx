@@ -66,7 +66,7 @@ export function ChatInterface({
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-hidden relative">
       <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10 relative shadow-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 md:hidden">
           {profile ? (
             <div className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
@@ -90,13 +90,13 @@ export function ChatInterface({
         <div className="flex items-center gap-2">
           {onClose && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={onClose}
               aria-label="Close chat"
-              className="rounded-full bg-foreground text-background hover:bg-foreground/90 hover:text-background border-none shadow-md transition-all active:scale-95"
+              className="rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-all active:scale-95"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </Button>
           )}
         </div>
