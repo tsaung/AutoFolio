@@ -4,8 +4,7 @@ import { getPublicProjects } from "@/lib/actions/projects";
 import { getPublicExperiences } from "@/lib/actions/experiences";
 import { getPublicSkills } from "@/lib/actions/skills";
 import { getPublicSocialLinks } from "@/lib/actions/social-links";
-import { SetupChecklist } from "@/components/visitor/setup-checklist";
-import { adminClient } from "@/lib/db/admin";
+
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
 
@@ -19,11 +18,6 @@ const ExperienceTimeline = dynamic(() =>
   ),
 );
 
-const FloatingChat = dynamic(() =>
-  import("@/components/portfolio/floating-chat").then(
-    (mod) => mod.FloatingChat,
-  ),
-);
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
@@ -32,32 +26,18 @@ export default async function VisitorPage() {
   const profile = await getPublicProfile();
 
   // Parallel data fetching for performance
-  const [botConfig, projects, experiences, skills, socialLinks, userCheck] =
-    await Promise.all([
-      getPublicBotConfig(profile?.id),
-      profile ? getPublicProjects(profile.id) : Promise.resolve([]),
-      profile ? getPublicExperiences(profile.id) : Promise.resolve([]),
-      profile ? getPublicSkills(profile.id) : Promise.resolve([]),
-      profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
-      adminClient.auth.admin.listUsers({ page: 1, perPage: 1 }),
-    ]);
-
-  const hasAnyUser = userCheck.data.users.length > 0;
-  const isReady = !!(profile && profile.name);
-
-  if (!isReady) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <SetupChecklist profile={profile} hasAnyUser={hasAnyUser} />
-      </main>
-    );
-  }
+  const [projects, experiences, skills, socialLinks] = await Promise.all([
+    profile ? getPublicProjects(profile.id) : Promise.resolve([]),
+    profile ? getPublicExperiences(profile.id) : Promise.resolve([]),
+    profile ? getPublicSkills(profile.id) : Promise.resolve([]),
+    profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
+  ]);
 
   return (
-    <main className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="flex flex-col min-h-max w-full bg-background text-foreground">
       <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} />
 
-      <div className="container mx-auto px-4 pt-16">
+      <div className="container mx-auto px-4">
         {/* Hero Section */}
         <section
           id="about"
@@ -111,7 +91,6 @@ export default async function VisitorPage() {
       </div>
 
       <VisitorFooter profile={profile} socialLinks={socialLinks} />
-      <FloatingChat profile={profile} botConfig={botConfig} />
-    </main>
+    </div>
   );
 }

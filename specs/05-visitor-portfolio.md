@@ -6,12 +6,12 @@ The visitor experience will be transformed from a simple chat interface to a com
 
 ## UI Structure
 
-### 1. Navigation (Sticky/Fixed)
+### 1. Navigation (Sticky)
 
 - **Links**: Home, Projects, Experience, Skills.
 - **Action**: "Chat with AI" (optional, mainly covered by FAB).
 - **Behavior**: Smooth visual scrolling to sections.
-- **Impl**: `VisitorNav` component.
+- **Impl**: `VisitorNav` component (sticky to top of the main content area, keeping it independent of the chat sidebar).
 
 ### 2. Hero Section (`ProfileHero`)
 
@@ -58,7 +58,7 @@ The visitor experience will be transformed from a simple chat interface to a com
 
 - **Position**: Fixed Bottom-Right.
 - **Icon**: Message/Chat icon.
-- **Interaction**: Opens a Sheet (Side Drawer) or Dialog containing the `ChatInterface`.
+- **Interaction**: Opens a Side Drawer (`Sheet` sliding in from the right) containing the `ChatInterface`. Takes up `max-w-md` (~448px) on desktop and full width on mobile.
 - **State**: Persist chat state if possible, or reset on close (acceptable for v1).
 - **Impl**: `FloatingChat` component.
 

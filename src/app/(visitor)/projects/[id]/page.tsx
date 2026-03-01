@@ -4,7 +4,6 @@ import { getPublicBotConfig } from "@/lib/actions/bot-config";
 import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
-import { FloatingChat } from "@/components/portfolio/floating-chat";
 import { BrowserMockup } from "@/components/portfolio/browser-mockup";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <main className="min-h-screen bg-background text-foreground">
       <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} />
 
-      <div className="container mx-auto px-4 py-24 space-y-12 pt-28">
+      <div className="container mx-auto px-4 py-12 md:py-16 space-y-12">
         {/* Header Section */}
         <div className="space-y-6 max-w-4xl mx-auto">
           <Button asChild variant="ghost" size="sm" className="mb-4">
@@ -130,7 +129,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </div>
 
       <VisitorFooter profile={profile} socialLinks={socialLinks} />
-      <FloatingChat profile={profile} botConfig={botConfig} />
     </main>
   );
 }

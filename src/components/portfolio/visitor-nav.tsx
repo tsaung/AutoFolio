@@ -84,15 +84,15 @@ export function VisitorNav({
 
   return (
     <>
-      {/* Sentinel element for IntersectionObserver (placed absolute top so it stays at the top of the DOCUMENT, not the sticky header) */}
+      {/* Sentinel element for IntersectionObserver */}
       <div
         id="nav-sentinel"
-        className="absolute top-0 left-0 w-full h-5 pointer-events-none invisible"
-        style={{ top: "-20px" }}
+        className="absolute top-0 left-0 w-full h-1 pointer-events-none invisible"
+        style={{ top: "-1px" }}
       />
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+          "sticky top-0 left-0 right-0 z-40 transition-all duration-300",
           scrolled
             ? "bg-background/80 backdrop-blur-md shadow-sm border-b"
             : "bg-transparent",

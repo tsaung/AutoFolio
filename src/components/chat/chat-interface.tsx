@@ -90,12 +90,13 @@ export function ChatInterface({
         <div className="flex items-center gap-2">
           {onClose && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={onClose}
               aria-label="Close chat"
+              className="rounded-full bg-foreground text-background hover:bg-foreground/90 hover:text-background border-none shadow-md transition-all active:scale-95"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </Button>
           )}
         </div>
