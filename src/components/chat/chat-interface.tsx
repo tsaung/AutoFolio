@@ -66,7 +66,7 @@ export function ChatInterface({
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-hidden relative">
-      <header className="p-4 border-b bg-card flex items-center justify-end shrink-0 z-10 relative shadow-sm min-h-[73px]">
+      <header className="px-4 py-2.5 border-b bg-card flex items-center justify-end shrink-0 z-10 relative shadow-sm min-h-[56px]">
         <div className="flex items-center gap-2">
           {onClose && (
             <Button
@@ -74,9 +74,9 @@ export function ChatInterface({
               size="icon"
               onClick={onClose}
               aria-label="Close chat"
-              className="rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-all active:scale-95"
+              className="rounded-full h-8 w-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-all active:scale-95"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </Button>
           )}
         </div>
@@ -86,20 +86,18 @@ export function ChatInterface({
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in duration-500">
             <div className="flex flex-col items-center justify-center space-y-6 max-w-lg mx-auto px-4">
-              <AIOrb />
-
-              <div className="px-4 py-2 text-center max-w-md animate-in slide-in-from-bottom-5 duration-500">
-                <p className="text-lg font-medium leading-relaxed text-foreground/90">
-                  {profile?.chat_welcome_message
+              <AIOrb
+                message={
+                  profile?.chat_welcome_message
                     ? profile.chat_welcome_message.replace(
                         "{name}",
                         profile.name || "User",
                       )
                     : `Hello! I am ${
                         profile?.name?.split(" ")[0] || "an"
-                      } AI assistant. How can I help you today?`}
-                </p>
-              </div>
+                      } AI assistant. How can I help you today?`
+                }
+              />
 
               {profile && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full animate-in slide-in-from-bottom-10 duration-700 delay-150">
