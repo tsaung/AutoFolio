@@ -108,27 +108,4 @@ describe("ChatInterface", () => {
     const dots = container.getElementsByClassName("animate-bounce");
     expect(dots.length).toBe(3);
   });
-
-  it("renders profile name and profession in header when profile is provided", () => {
-    render(<ChatInterface profile={mockProfile} />);
-
-    const header = screen.getByRole("banner");
-
-    // Check within the header specifically
-    expect(
-      within(header).getByRole("heading", { name: "Test User" }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(header).queryByRole("heading", { name: "BotFolio" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("renders BotFolio branding in header when no profile is provided", () => {
-    render(<ChatInterface profile={null} />);
-    expect(
-      screen.getByRole("heading", { name: "BotFolio" }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("Test User")).not.toBeInTheDocument();
-  });
 });

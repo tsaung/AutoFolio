@@ -11,6 +11,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import { Database } from "@/types/database";
 import { useChat } from "@ai-sdk/react";
+import { AIOrb } from "./ai-orb";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -65,28 +66,7 @@ export function ChatInterface({
 
   return (
     <div className="flex flex-col h-full w-full bg-background overflow-hidden relative">
-      <header className="p-4 border-b bg-card flex items-center justify-between shrink-0 z-10 relative shadow-sm">
-        <div className="flex items-center gap-2 md:hidden">
-          {profile ? (
-            <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={profile.avatar_url || "/avatar.jpg"} />
-                <AvatarFallback>
-                  {profile.name?.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <h1 className="text-sm font-bold tracking-tight line-clamp-1">
-                {profile.name}
-              </h1>
-            </div>
-          ) : (
-            <h1 className="text-lg font-bold flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              BotFolio
-            </h1>
-          )}
-        </div>
-
+      <header className="p-4 border-b bg-card flex items-center justify-end shrink-0 z-10 relative shadow-sm min-h-[73px]">
         <div className="flex items-center gap-2">
           {onClose && (
             <Button
@@ -106,16 +86,10 @@ export function ChatInterface({
         {messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in duration-500">
             <div className="flex flex-col items-center justify-center space-y-6 max-w-lg mx-auto px-4">
-              <Avatar className="h-20 w-20 border-4 border-background shadow-xl ring-4 ring-primary/10">
-                <AvatarImage src={profile?.avatar_url || "/avatar.jpg"} />
-                <AvatarFallback className="bg-muted text-2xl">
-                  {profile?.name?.slice(0, 2).toUpperCase() || <Bot />}
-                </AvatarFallback>
-              </Avatar>
+              <AIOrb />
 
-              <div className="bg-card/50 backdrop-blur-sm border rounded-2xl p-6 text-center shadow-sm max-w-md animate-in slide-in-from-bottom-5 duration-500">
+              <div className="px-4 py-2 text-center max-w-md animate-in slide-in-from-bottom-5 duration-500">
                 <p className="text-lg font-medium leading-relaxed text-foreground/90">
-                  {/* @ts-ignore - column added but types might be lagging */}
                   {profile?.chat_welcome_message
                     ? profile.chat_welcome_message.replace(
                         "{name}",
