@@ -1,7 +1,7 @@
 # BotFolio Tasks
 
-> **Version:** 1.0
-> **Last Updated:** 2026-02-16
+> **Version:** 2.0
+> **Last Updated:** 2026-03-03
 
 ## V1 — Complete ✅
 
@@ -21,16 +21,79 @@
 - [x] Migration Consolidation (single V1 schema)
 - [x] Deployment Guide (DEPLOY.md)
 
-## Backlog
+## V2 Migration — In Progress 🚧
 
-### Phase 2: AI Enrichment
+> **Architecture:** Sanity (CMS + Auth + Dashboard) + Supabase (vectors + bot configs) + Next.js (frontend + API)
 
-- [ ] Improve with AI (Content Studio)
-- [ ] AI-Generated Knowledge (reviewable drafts)
-- [ ] Enrichment Agent (admin-facing AI)
+### Phase 1a: Sanity Setup & Studio Embedding ✅
 
-### Phase 3: Polish & Deployment
+- [x] Git baseline (`v1.2.0` tag)
+- [x] Install `next-sanity`, `@sanity/image-url`
+- [x] Embed Sanity Studio at `/studio`
+- [x] Configure env vars + CORS
+- [x] Verify Studio loads
 
+### Phase 1b: Schema Design
+
+- [ ] `page` document (with `pageBuilder` array)
+- [ ] `project` document
+- [ ] `experience` document
+- [ ] `siteSettings` singleton (site name, logo, nav, footer, brand colors)
+- [ ] `seo` object type (attached to `page`)
+- [ ] Foundational blocks: `heroBlock`, `richTextBlock`, `ctaBlock`
+
+### Phase 2: Next.js Page Renderer
+
+- [ ] Dynamic catch-all route (`app/[[...slug]]/page.tsx`)
+- [ ] `PageRenderer` component (block → React component mapping)
+- [ ] All General Purpose block components
+- [ ] Portfolio block components
+- [ ] Fetch `siteSettings` for nav/footer
+- [ ] Generate `metadata` from `seo` object
+
+### Phase 2.5: Themeable Design System
+
+- [ ] CSS custom properties for brand colors, fonts, spacing
+- [ ] Wire `siteSettings` brand colors → CSS variables
+- [ ] All blocks consume design tokens (no hardcoded colors)
+
+### Phase 3: RAG Auto-Ingestion Pipeline
+
+- [ ] Extend `knowledge_chunks` with `source`, `source_id`, `source_rev`
+- [ ] `/api/webhooks/sanity` route with signature verification
+- [ ] Idempotent embedding logic (`_id` + `_rev`)
+- [ ] Portable Text parsing (`@portabletext/to-plain-text`)
+
+### Phase 4: Chat Integration & Staleness Check
+
+- [ ] Unified `knowledge_chunks` vector search
+- [ ] On-the-fly staleness check on chat open
+- [ ] Social links / contact info from Sanity `siteSettings`
+- [ ] Refined AI system prompt
+
+### Phase 5: Cleanup & Deprecation
+
+- [ ] **Drop Supabase Auth** entirely (Sanity handles auth)
+- [ ] **Remove admin routes:** `/admin/*`, `/dashboard`, login/signup flows
+- [ ] **Remove Supabase tables:** `projects`, `experiences`, `skills`, `social_links`, `profiles`
+- [ ] **Remove server actions:** All CRUD actions for deprecated tables
+- [ ] **Remove:** Cloudinary dependencies
+- [ ] **Retain:** `bot_configs`, `knowledge_documents`, `knowledge_chunks`, `/admin/settings` (bot config only)
+- [ ] Update `.agent/rules/` and `specs/` for V2
+
+### Phase 6: Live Preview & Draft Support
+
+- [ ] `next-sanity` preview mode
+- [ ] Sanity Presentation tool / `@sanity/visual-editing`
+- [ ] Draft/published toggle
+
+### Phase 7: Polish & Documentation
+
+- [ ] End-to-end template test (clone → setup → deploy)
+- [ ] Template README for marketplace users
+- [ ] Update all spec files to V2 final state
+
+## Post-Migration
+
+- [ ] Vercel Analytics integration
 - [ ] Generative UI Widgets (streamUI)
-- [ ] SEO & Metadata (OpenGraph)
-- [ ] Analytics Dashboard

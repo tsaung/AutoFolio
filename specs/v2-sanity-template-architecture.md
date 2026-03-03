@@ -21,15 +21,16 @@ The V2 stack uses a decoupled, "best-of-breed" approach:
 
 To avoid dual-source-of-truth confusion, this is the definitive boundary:
 
-- **Sanity owns:** All user-facing content (pages, page builder blocks, projects, experiences, navigation, site settings, images).
-- **Supabase owns:** Vector embeddings (derived from Sanity content), bot configs (model selection, system prompt), auth state, sync metadata.
+- **Sanity owns:** All user-facing content (pages, page builder blocks, projects, experiences, navigation, site settings, images) and **all authentication** (Studio login via Google/GitHub SSO).
+- **Supabase owns:** Vector embeddings (derived from Sanity content), bot configs (model selection, system prompt), sync metadata.
 - **Content never lives in both.** Supabase stores _derived_ data (embeddings), not source content.
 
 ### 1.2 Authentication
 
-Sanity Studio uses **Sanity's native authentication** (Google/GitHub SSO via `sanity.io`). The template user (site owner) must create a free Sanity account to manage their content.
+Sanity Studio uses **Sanity's native authentication** (Google/GitHub SSO via `sanity.io`). The template user (site owner) must create a free Sanity account to manage their content. Site owners can invite collaborators (employees, editors) directly through Sanity's team management.
 
-Supabase Auth is retained only if application-level auth is needed outside the CMS (e.g., gated pages, admin-only settings). For most deployments, Sanity Auth is the only auth the site owner interacts with.
+> [!IMPORTANT]
+> **Supabase Auth is fully dropped in V2.** There is no custom login/signup flow. Sanity is the sole authentication provider. The old admin dashboard (`/admin/*`), auth routes (`/login`, `/signup`), and all Supabase Auth dependencies (`@supabase/ssr`, auth middleware) will be removed in Phase 5.
 
 ### 1.3 Template Prerequisites & Costs
 
@@ -280,11 +281,12 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 
 ### Phase 5: Cleanup & Deprecation
 
-- [ ] **Remove Supabase tables:** `projects`, `experiences`, `skills`, `social_links` (content now in Sanity).
+- [ ] **Drop Supabase Auth entirely:** Remove `@supabase/ssr`, auth middleware/proxy, login/signup routes, auth callbacks.
+- [ ] **Remove Supabase tables:** `projects`, `experiences`, `skills`, `social_links`, `profiles` (content now in Sanity `siteSettings`).
 - [ ] **Remove server actions:** All CRUD actions for the deprecated tables (in `src/lib/actions/`).
-- [ ] **Remove admin routes:** `/projects`, `/experiences`, `/skills`, `/social-links`, `/dashboard` (replaced by Sanity Studio).
-- [ ] **Retain:** `bot_configs` table, `knowledge_documents` + `knowledge_chunks` tables, `/admin/settings` route.
-- [ ] **Retain:** `profiles` table — evaluate if still needed or if profile data moves to `siteSettings`.
+- [ ] **Remove admin routes:** All `/admin/*` routes, `/dashboard` (replaced by Sanity Studio at `/studio`).
+- [ ] **Retain:** `bot_configs` table, `knowledge_documents` + `knowledge_chunks` tables.
+- [ ] **Retain:** A minimal `/admin/settings` route for bot config (model, prompt) — or move to a Sanity Studio plugin.
 - [ ] Remove Cloudinary dependencies (`src/lib/cloudinary.ts`, `src/lib/cloudinary-loader.ts`).
 - [ ] Update `.agent/rules/*.md` and `specs/*.md` to reflect the new architecture.
 - [ ] Verify: App builds cleanly, no dead imports or references to removed tables.
