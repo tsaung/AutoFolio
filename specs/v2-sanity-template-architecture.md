@@ -228,26 +228,26 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 
 ### Phase 1a: Sanity Setup & Studio Embedding
 
-- [ ] Install `next-sanity`, `sanity`, and `@sanity/image-url`.
-- [ ] Create the Sanity project (via `sanity init` or Sanity dashboard).
-- [ ] Embed Sanity Studio at `/studio` within the Next.js app.
-- [ ] Configure Sanity CORS origins and API tokens.
-- [ ] Add Sanity env vars to `.env.local.example` and document in README.
-- [ ] Verify: Studio loads at `localhost:3000/studio` and can create a test document.
+- [x] Install `next-sanity`, `sanity`, and `@sanity/image-url`.
+- [x] Create the Sanity project (via `sanity init` or Sanity dashboard).
+- [x] Embed Sanity Studio at `/studio` within the Next.js app.
+- [x] Configure Sanity CORS origins and API tokens.
+- [x] Add Sanity env vars to `.env.local.example` and document in README.
+- [x] Verify: Studio loads at `localhost:3000/studio` and can create a test document.
 
 ### Phase 1b: Schema Design
 
-- [ ] Define the `page` document type with `pageBuilder` array field.
-- [ ] Define the `project` document type.
-- [ ] Define the `experience` document type.
-- [ ] Define the `siteSettings` singleton (site name, logo, navigation, footer, brand colors).
-- [ ] Define the `seo` object type and attach to `page`.
-- [ ] Implement 3 foundational blocks: `heroBlock`, `richTextBlock`, `ctaBlock`.
-- [ ] Verify: All document types and blocks are editable in Studio.
+- [x] Define the `page` document type with `pageBuilder` array field.
+- [x] Define the `project` document type.
+- [x] Define the `experience` document type.
+- [x] Define the `siteSettings` singleton (site name, logo, navigation, footer, brand colors).
+- [x] Define the `seo` object type and attach to `page`.
+- [x] Implement 3 foundational blocks: `heroBlock`, `richTextBlock`, `ctaBlock`.
+- [x] Verify: All document types and blocks are editable in Studio.
 
 ### Phase 2: Next.js Page Renderer
 
-- [ ] Create the dynamic catch-all route (`app/[[...slug]]/page.tsx`) to fetch `page` data via GROQ.
+- [ ] Create an isolated test route (e.g., `app/sandbox/page.tsx` or `app/v2/[slug]/page.tsx`) instead of a catch-all route to fetch `page` data via GROQ. This avoids conflicts with existing V1 routes until cleanup.
 - [ ] Build the `PageRenderer` component to map `_type` to React components.
 - [ ] Scaffold all General Purpose block components (Hero, RichText, CTA, FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm).
 - [ ] Scaffold Portfolio block components (ProjectGrid, ExperienceTimeline, Skills).

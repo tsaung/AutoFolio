@@ -1,5 +1,27 @@
-import { testDocument } from "./test-document";
+// Objects
+import { seo } from "./objects/seo";
 
-// Schema types registered with Sanity Studio.
-// Add new document/object types here as they are created in Phase 1b.
-export const schemaTypes = [testDocument];
+// Blocks
+import { heroBlock } from "./blocks/hero-block";
+import { richTextBlock } from "./blocks/rich-text-block";
+import { ctaBlock } from "./blocks/cta-block";
+
+// Documents
+import { page } from "./documents/page";
+import { project } from "./documents/project";
+import { experience } from "./documents/experience";
+import { siteSettings } from "./documents/site-settings";
+
+export const schemaTypes = [
+  // Objects
+  seo,
+  // Blocks
+  heroBlock,
+  richTextBlock,
+  ctaBlock,
+  // Documents
+  page,
+  project,
+  experience,
+  siteSettings,
+];
