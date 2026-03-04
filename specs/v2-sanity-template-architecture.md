@@ -247,13 +247,13 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 
 ### Phase 2: Next.js Page Renderer
 
-- [ ] Create an isolated test route (e.g., `app/sandbox/page.tsx` or `app/v2/[slug]/page.tsx`) instead of a catch-all route to fetch `page` data via GROQ. This avoids conflicts with existing V1 routes until cleanup.
-- [ ] Build the `PageRenderer` component to map `_type` to React components.
-- [ ] Scaffold all General Purpose block components (Hero, RichText, CTA, FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm).
-- [ ] Scaffold Portfolio block components (ProjectGrid, ExperienceTimeline, Skills).
+- [x] Create an isolated test route (e.g., `app/sandbox/page.tsx` or `app/v2/[slug]/page.tsx`) instead of a catch-all route to fetch `page` data via GROQ. This avoids conflicts with existing V1 routes until cleanup.
+- [x] Build the `PageRenderer` component to map `_type` to React components.
+- [x] Scaffold foundational General Purpose block components (Hero, RichText, CTA).
+- [ ] Create and polish remaining block components (FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm, ProjectGrid, ExperienceTimeline, Skills).
 - [ ] Fetch `siteSettings` for navigation and footer rendering.
-- [ ] Generate Next.js `metadata` from the `seo` object on each page.
-- [ ] Verify: Creating a page in Studio with blocks renders correctly on the frontend.
+- [x] Generate Next.js `metadata` from the `seo` object on each page.
+- [x] Verify: Creating a page in Studio with blocks renders correctly on the frontend.
 
 ### Phase 2.5: Themeable Design System
 
