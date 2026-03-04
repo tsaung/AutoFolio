@@ -4,11 +4,16 @@ This guide walks you through deploying BotFolio to **Supabase Cloud** + **Vercel
 
 ## Prerequisites
 
+You will need the following accounts (all offer generous free tiers suitable for personal use):
+
 - A [GitHub](https://github.com) account (to fork the repo)
-- A [Supabase](https://supabase.com) account (free tier works)
-- A [Vercel](https://vercel.com) account (free tier works)
+- A [Supabase](https://supabase.com) account (Authentication, pgvector database)
+- A [Vercel](https://vercel.com) account (Hosting)
+- A [Sanity](https://sanity.io) account (Headless CMS for content management)
 - An [OpenRouter](https://openrouter.ai) API key (for AI chat)
 - A [Google AI Studio](https://aistudio.google.com) API key (for RAG embeddings)
+
+> **⚠️ Pricing Disclaimer:** While you can run BotFolio completely for free, scaling past the free limits on these platforms may incur charges. Please monitor your usage limits in their respective dashboards.
 
 ## Step 1: Fork the Repository
 

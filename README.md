@@ -1,9 +1,23 @@
 # BotFolio
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tsaung/botfolio)
+
 **BotFolio** is an AI-native portfolio platform that "interviews" for you. It combines a structured portfolio with an AI-powered chat assistant backed by RAG (Retrieval Augmented Generation) to answer questions about your experience, projects, and skills accurately.
 
-> **Version:** 1.0
-> **Stack:** Next.js (App Router), Supabase, Vercel AI SDK, Shadcn UI, Tailwind CSS
+> **Version:** 2.0 (Migration to Sanity CMS in progress)
+> **Stack:** Next.js (App Router), Sanity, Supabase, Vercel AI SDK, Shadcn UI, Tailwind CSS
+
+## Prerequisites & Pricing
+
+To run BotFolio, you will need the following accounts (all offer generous free tiers suitable for personal use):
+
+- **[GitHub](https://github.com)** (for forking the repo)
+- **[Supabase](https://supabase.com)** (Authentication, pgvector database)
+- **[Vercel](https://vercel.com)** (Hosting)
+- **[Sanity](https://sanity.io)** (Headless CMS for content management)
+- **API Gateways** like [OpenRouter](https://openrouter.ai) or [Google AI Studio](https://aistudio.google.com) for AI Chat & Embeddings
+
+> **⚠️ Note on Scaling:** While the free tiers of these services are sufficient to run BotFolio, you may incur fees if your traffic scales significantly or if you exceed API gateway usage limits.
 
 ## Features
 
