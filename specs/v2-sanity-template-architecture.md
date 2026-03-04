@@ -9,28 +9,36 @@ This document outlines the architecture for the V2 iteration of the BotFolio pro
 
 The V2 stack uses a decoupled, "best-of-breed" approach:
 
-| Layer                        | Technology                             | Responsibility                                                                                                             |
-| ---------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend & API**           | Next.js (App Router)                   | Presentation (rendering page builder blocks), API routes (webhooks, AI chat)                                               |
-| **Content Management**       | Sanity Studio (embedded at `/studio`)  | Single source of truth for all **structured content**: Pages, Projects, Experiences, Blog Posts, Site Settings, Navigation |
-| **Database & Vector Search** | Supabase (PostgreSQL + pgvector)       | Vector embeddings for RAG pipeline, bot configs, auth (if needed outside CMS)                                              |
-| **AI Provider**              | OpenRouter / Vercel AI SDK             | Public-facing chat assistant, embedding generation                                                                         |
-| **Images**                   | Sanity Image CDN (`@sanity/image-url`) | Responsive images, on-the-fly transforms, hotspot cropping                                                                 |
+| Layer                        | Technology                                | Responsibility                                                                                                             |
+| ---------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend & API**           | Next.js (App Router)                      | Presentation (rendering page builder blocks), API routes (webhooks, AI chat)                                               |
+| **Content Management**       | Sanity Studio (hosted at Sanity's domain) | Single source of truth for all **structured content**: Pages, Projects, Experiences, Blog Posts, Site Settings, Navigation |
+| **Admin Dashboard**          | Sanity App SDK (in Sanity Dashboard)      | Bot config management UI — saves to Supabase via API route, authenticated by Sanity token verification                     |
+| **Database & Vector Search** | Supabase (PostgreSQL + pgvector)          | Vector embeddings for RAG pipeline, bot configs                                                                            |
+| **AI Provider**              | OpenRouter / Vercel AI SDK                | Public-facing chat assistant, embedding generation                                                                         |
+| **Images**                   | Sanity Image CDN (`@sanity/image-url`)    | Responsive images, on-the-fly transforms, hotspot cropping                                                                 |
 
 ### 1.1 Source of Truth Boundaries
 
 To avoid dual-source-of-truth confusion, this is the definitive boundary:
 
-- **Sanity owns:** All user-facing content (pages, page builder blocks, projects, experiences, navigation, site settings, images) and **all authentication** (Studio login via Google/GitHub SSO).
+- **Sanity owns:** All user-facing content (pages, page builder blocks, projects, experiences, navigation, site settings, images) and **all authentication** (Studio/Dashboard login via Google/GitHub SSO).
 - **Supabase owns:** Vector embeddings (derived from Sanity content), bot configs (model selection, system prompt), sync metadata.
 - **Content never lives in both.** Supabase stores _derived_ data (embeddings), not source content.
 
 ### 1.2 Authentication
 
-Sanity Studio uses **Sanity's native authentication** (Google/GitHub SSO via `sanity.io`). The template user (site owner) must create a free Sanity account to manage their content. Site owners can invite collaborators (employees, editors) directly through Sanity's team management.
+Sanity is the **sole authentication provider** in V2. Content editors log into the **Sanity Dashboard** (`sanity.io/@your-org`) via Google/GitHub SSO. From there, they access:
+
+1. **Hosted Studio** — for content CRUD (pages, projects, experiences, site settings)
+2. **Bot Settings App** (Sanity App SDK) — for managing bot configs (saved to Supabase)
+
+The Bot Settings app runs inside the Sanity Dashboard as an iframe. In Dashboard mode, the SDK provides a **global stamped token** via `useClient().config().token`. The app sends this token as a `Bearer` header to the Next.js API route, where it's verified server-side via Sanity's `/users/me` endpoint. No secrets are exposed on the client.
 
 > [!IMPORTANT]
 > **Supabase Auth is fully dropped in V2.** There is no custom login/signup flow. Sanity is the sole authentication provider. The old admin dashboard (`/admin/*`), auth routes (`/login`, `/signup`), and all Supabase Auth dependencies (`@supabase/ssr`, auth middleware) will be removed in Phase 5.
+>
+> **Studio is NOT embedded in Next.js.** The `/studio` route is removed. The hosted Studio and App SDK app both live in the Sanity Dashboard.
 
 ### 1.3 Template Prerequisites & Costs
 
@@ -87,7 +95,7 @@ Global site configuration, managed from Studio:
 > **Why Sanity for site settings instead of Supabase?**
 > The site owner is already in Sanity Studio editing content. Having navigation, branding, and footer settings in the same editing environment is much better UX than switching to a separate admin panel. Sanity also provides validation, draft previews, and revision history on these settings for free.
 >
-> **Supabase retains** only technical settings that the site owner shouldn't touch from the CMS: bot model selection, system prompts, and RAG configuration (via `/admin/settings`).
+> **Supabase retains** only technical settings that the site owner shouldn't touch from the CMS: bot model selection, system prompts, and RAG configuration (managed via the Bot Settings App SDK app in the Sanity Dashboard).
 
 ### 2.2 Page Builder Blocks
 
@@ -216,11 +224,18 @@ NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=           # Server-side: read/write for webhooks
 SANITY_WEBHOOK_SECRET=      # Webhook signature verification
 
-# Admin API (bot config management from Sanity Studio)
-
-
 # (Existing V1 vars for Supabase, OpenRouter, Google AI remain)
 ```
+
+The App SDK project (`botfolio-admin/`) uses its own env vars:
+
+```
+# botfolio-admin/.env
+SANITY_APP_API_URL=           # Your Next.js app URL (e.g. https://yoursite.com)
+```
+
+> [!NOTE]
+> No shared secret is needed. The App SDK provides the Sanity auth token automatically via `useClient().config().token`, and the Next.js API verifies it server-side via `api.sanity.io/users/me`.
 
 ## 6. Actionable Task Breakdown
 
@@ -229,14 +244,14 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 > [!TIP]
 > **Before starting Phase 1:** Tag the current codebase as `v1.0.0` in Git so there's a clear rollback point.
 
-### Phase 1a: Sanity Setup & Studio Embedding
+### Phase 1a: Sanity Setup
 
 - [x] Install `next-sanity`, `sanity`, and `@sanity/image-url`.
 - [x] Create the Sanity project (via `sanity init` or Sanity dashboard).
-- [x] Embed Sanity Studio at `/studio` within the Next.js app.
 - [x] Configure Sanity CORS origins and API tokens.
 - [x] Add Sanity env vars to `.env.local.example` and document in README.
-- [x] Verify: Studio loads at `localhost:3000/studio` and can create a test document.
+- [x] Verify: Studio loads at hosted Sanity domain and can create a test document.
+- [ ] Remove embedded Studio route (`/studio`) from Next.js app.
 
 ### Phase 1b: Schema Design
 
@@ -259,16 +274,20 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 - [x] Generate Next.js `metadata` from the `seo` object on each page.
 - [x] Verify: Creating a page in Studio with blocks renders correctly on the frontend.
 
-### Phase 2.1: Bot Settings Studio Tool
+### Phase 2.1: Bot Settings App (Sanity App SDK)
 
 > [!NOTE]
 > This phase is executed **before** remaining Phase 2 work. The chat interface integration (Phase 2) depends on `bot_configs` being accessible without Supabase Auth. This phase provides that.
 
-- [ ] Build API route `GET/POST /api/admin/bot-config` — reads/writes `bot_configs` from Supabase, protected by Sanity Token Verification (verified via Sanity users API).
+- [x] Build API route `GET/POST /api/admin/bot-config` — reads/writes `bot_configs` from Supabase, protected by Sanity token verification (`Bearer` token → `/users/me`).
 - [ ] Update `getPublicBotConfig()` in `src/lib/actions/bot-config.ts` — remove Supabase Auth dependency, query directly by type (single-tenant).
-- [ ] Build a [Sanity custom Studio tool](https://www.sanity.io/docs/studio/custom-studio-tool) — "Bot Settings" tab in Studio with form for model selection, system prompt, and predefined prompts. Uses `fetch()` to call the API route.
-- [ ] Remove `ADMIN_API_SECRET` and `@sanity/studio-secrets` dependency.
-- [ ] Verify: Bot settings are editable from within Sanity Studio and persisted to Supabase.
+- [ ] Scaffold Sanity App SDK project (`botfolio-admin/`) with `npx sanity@latest init --template app-sanity-ui`.
+- [ ] Build Bot Settings form using `@sanity/ui` components — model selection, system prompt, predefined prompts.
+- [ ] Wire API calls from App SDK app to Next.js `bot-config` endpoint with `ADMIN_API_SECRET`.
+- [x] Remove embedded Studio route, `BotSettingsTool.tsx`, and `@sanity/studio-secrets` dependency.
+- [ ] Migrate `bot_configs` table: drop `user_id` foreign key (no more Supabase Auth users).
+- [ ] Deploy App SDK app with `npx sanity deploy`.
+- [ ] Verify: Bot settings are editable from the Sanity Dashboard App and persisted to Supabase.
 
 ### Phase 2.5: Themeable Design System
 
