@@ -216,6 +216,9 @@ NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=           # Server-side: read/write for webhooks
 SANITY_WEBHOOK_SECRET=      # Webhook signature verification
 
+# Admin API (bot config management from Sanity Studio)
+
+
 # (Existing V1 vars for Supabase, OpenRouter, Google AI remain)
 ```
 
@@ -252,8 +255,20 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 - [x] Scaffold foundational General Purpose block components (Hero, RichText, CTA).
 - [ ] Create and polish remaining block components (FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm, ProjectGrid, ExperienceTimeline, Skills).
 - [ ] Fetch `siteSettings` for navigation and footer rendering.
+- [ ] **Integrate chat interface into V2 layout:** Decouple `ChatInterface` from V1's `profiles` table — source bot name/avatar from `siteSettings` (Sanity). Decouple `VisitorLayoutWrapper` from V1 types. Create a V2-compatible layout wrapper that works with Sanity data.
 - [x] Generate Next.js `metadata` from the `seo` object on each page.
 - [x] Verify: Creating a page in Studio with blocks renders correctly on the frontend.
+
+### Phase 2.1: Bot Settings Studio Tool
+
+> [!NOTE]
+> This phase is executed **before** remaining Phase 2 work. The chat interface integration (Phase 2) depends on `bot_configs` being accessible without Supabase Auth. This phase provides that.
+
+- [ ] Build API route `GET/POST /api/admin/bot-config` — reads/writes `bot_configs` from Supabase, protected by Sanity Token Verification (verified via Sanity users API).
+- [ ] Update `getPublicBotConfig()` in `src/lib/actions/bot-config.ts` — remove Supabase Auth dependency, query directly by type (single-tenant).
+- [ ] Build a [Sanity custom Studio tool](https://www.sanity.io/docs/studio/custom-studio-tool) — "Bot Settings" tab in Studio with form for model selection, system prompt, and predefined prompts. Uses `fetch()` to call the API route.
+- [ ] Remove `ADMIN_API_SECRET` and `@sanity/studio-secrets` dependency.
+- [ ] Verify: Bot settings are editable from within Sanity Studio and persisted to Supabase.
 
 ### Phase 2.5: Themeable Design System
 
@@ -271,11 +286,10 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 - [ ] Configure the webhook trigger in the Sanity project dashboard.
 - [ ] Verify: Creating/updating a document in Studio triggers the webhook and upserts embeddings.
 
-### Phase 4: Chat Integration & Staleness Check
+### Phase 4: Chat RAG Integration & Staleness Check
 
 - [ ] Update the chat API to use the unified `knowledge_chunks` table (same RPC, now includes Sanity content).
 - [ ] Implement the on-the-fly staleness check on chat open (compare `source_rev`).
-- [ ] Fetch social links / contact info from `siteSettings` (Sanity) instead of Supabase tables.
 - [ ] Refine the AI system prompt to reference dynamic Sanity content.
 - [ ] Verify: Chat correctly answers questions about content created in Sanity Studio.
 
@@ -286,7 +300,7 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 - [ ] **Remove server actions:** All CRUD actions for the deprecated tables (in `src/lib/actions/`).
 - [ ] **Remove admin routes:** All `/admin/*` routes, `/dashboard` (replaced by Sanity Studio at `/studio`).
 - [ ] **Retain:** `bot_configs` table, `knowledge_documents` + `knowledge_chunks` tables.
-- [ ] **Retain:** A minimal `/admin/settings` route for bot config (model, prompt) — or move to a Sanity Studio plugin.
+- [ ] **Retain:** Bot config management via the Sanity Studio custom tool (built in Phase 2.1).
 - [ ] Remove Cloudinary dependencies (`src/lib/cloudinary.ts`, `src/lib/cloudinary-loader.ts`).
 - [ ] Update `.agent/rules/*.md` and `specs/*.md` to reflect the new architecture.
 - [ ] Verify: App builds cleanly, no dead imports or references to removed tables.

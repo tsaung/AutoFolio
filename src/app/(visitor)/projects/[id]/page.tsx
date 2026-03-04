@@ -33,7 +33,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const [botConfig, socialLinks] = await Promise.all([
-    getPublicBotConfig(profile?.id),
+    getPublicBotConfig(),
     profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
   ]);
 

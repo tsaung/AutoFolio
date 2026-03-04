@@ -27,7 +27,7 @@ export default async function VisitorLayout({
   }
 
   // Pre-fetch BotConfig safely
-  const botConfig = await getPublicBotConfig(profile?.id);
+  const botConfig = await getPublicBotConfig();
 
   return (
     <VisitorLayoutWrapper profile={profile} botConfig={botConfig}>
