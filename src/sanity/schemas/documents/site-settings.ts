@@ -19,51 +19,18 @@ export const siteSettings = defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: "navigation",
+      name: "mainNavigation",
       title: "Main Navigation",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          name: "navItem",
-          title: "Navigation Item",
-          fields: [
-            defineField({
-              name: "label",
-              title: "Label",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "link",
-              title: "Link",
-              description: "Link to a page document or an external URL.",
-              type: "array",
-              of: [
-                { type: "reference", to: [{ type: "page" }] },
-                {
-                  type: "object",
-                  name: "externalLink",
-                  title: "External URL",
-                  fields: [
-                    defineField({
-                      name: "url",
-                      title: "URL",
-                      type: "url",
-                      validation: (rule) =>
-                        rule.uri({ scheme: ["http", "https"] }),
-                    }),
-                  ],
-                },
-              ],
-              validation: (rule) => rule.max(1),
-            }),
-          ],
-          preview: {
-            select: { title: "label" },
-          },
-        },
-      ],
+      type: "reference",
+      to: [{ type: "navigation" }],
+      description: "Select a navigation menu for the header.",
+    }),
+    defineField({
+      name: "footerNavigation",
+      title: "Footer Navigation",
+      type: "reference",
+      to: [{ type: "navigation" }],
+      description: "Select a navigation menu for the footer.",
     }),
     defineField({
       name: "footer",
