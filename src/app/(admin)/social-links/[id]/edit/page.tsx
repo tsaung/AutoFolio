@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getSocialLink } from "@/lib/actions/social-links";
+import { getSocialLink } from "@/lib/actions/sanity-portfolio";
 import { SocialLinkForm } from "@/components/admin/portfolio/social-link-form";
 
 interface EditSocialLinkPageProps {

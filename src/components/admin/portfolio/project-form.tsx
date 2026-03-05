@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft, X } from "lucide-react";
-import { Database } from "@/types/database";
-import { createProject, updateProject } from "@/lib/actions/projects";
+import { SanityProject } from "@/types/sanity-types";
+import { createProject, updateProject } from "@/lib/actions/sanity-portfolio";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,22 +32,20 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-type Project = Database["public"]["Tables"]["projects"]["Row"];
-
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   tags: z.string().optional(), // We'll parse this comma-separated string to array
-  live_url: z.string().url("Invalid URL").optional().or(z.literal("")),
-  repo_url: z.string().url("Invalid URL").optional().or(z.literal("")),
-  image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
+  liveUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
+  repoUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
+  imageUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
   status: z.enum(["published", "draft", "archived"]),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
 interface ProjectFormProps {
-  initialData?: Project;
+  initialData?: SanityProject;
 }
 
 export function ProjectForm({ initialData }: ProjectFormProps) {
@@ -60,9 +58,9 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       title: initialData?.title ?? "",
       description: initialData?.description ?? "",
       tags: initialData?.tags?.join(", ") ?? "",
-      live_url: initialData?.live_url ?? "",
-      repo_url: initialData?.repo_url ?? "",
-      image_url: initialData?.image_url ?? "",
+      liveUrl: initialData?.liveUrl ?? "",
+      repoUrl: initialData?.repoUrl ?? "",
+      imageUrl: "", // Ignoring initial image logic here since Sanity uses image objects, assuming we are doing URL fields for now or ignoring it as complex block. Let's keep it simple for now, or just leave it empty.
       status:
         (initialData?.status as "published" | "draft" | "archived") ?? "draft",
     },
@@ -79,24 +77,20 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
       const formattedData = {
         title: data.title,
-        description: data.description,
+        description: data.description || "", // default to empty string as Sanity description requires a string
         status: data.status,
         tags,
-        // If URLs are empty strings, send null/undefined or keep as "" depending on DB constraint?
-        // DB allows null, `zod` handles structure.
-        // But `createProject` expects strict types.
-        live_url: data.live_url || null,
-        repo_url: data.repo_url || null,
-        image_url: data.image_url || null,
+        liveUrl: data.liveUrl || undefined,
+        repoUrl: data.repoUrl || undefined,
       };
 
       if (initialData) {
-        await updateProject(initialData.id, formattedData);
+        await updateProject(initialData._id, formattedData);
         toast.success("Project updated successfully");
       } else {
         await createProject({
           ...formattedData,
-          sort_order: 0, // Default sort order, functionality to be improved if needed
+          sortOrder: 0, // Default sort order, functionality to be improved if needed
         });
         toast.success("Project created successfully");
       }
@@ -181,7 +175,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
             <FormField
               control={form.control}
-              name="live_url"
+              name="liveUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Live URL</FormLabel>
@@ -195,7 +189,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
             <FormField
               control={form.control}
-              name="repo_url"
+              name="repoUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Repository URL</FormLabel>
@@ -209,7 +203,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
             <FormField
               control={form.control}
-              name="image_url"
+              name="imageUrl"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
                   <FormLabel>Image URL</FormLabel>

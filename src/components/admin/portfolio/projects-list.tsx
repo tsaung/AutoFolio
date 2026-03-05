@@ -25,22 +25,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Database } from "@/types/database";
-import { deleteProject, reorderProjects } from "@/lib/actions/projects";
+import { SanityProject } from "@/types/sanity-types";
+import { deleteProject, reorderProjects } from "@/lib/actions/sanity-portfolio";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-type Project = Database["public"]["Tables"]["projects"]["Row"];
-
 interface ProjectsListProps {
-  initialProjects: Project[];
+  initialProjects: SanityProject[];
 }
 
 export function ProjectsList({ initialProjects }: ProjectsListProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deletingProject, setDeletingProject] = useState<Project | null>(null);
+  const [deletingProject, setDeletingProject] = useState<SanityProject | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
 
@@ -48,7 +46,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
     project.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  function handleDeleteClick(project: Project) {
+  function handleDeleteClick(project: SanityProject) {
     setDeletingProject(project);
     setDeleteDialogOpen(true);
   }
@@ -58,7 +56,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
     setIsDeleting(true);
 
     try {
-      await deleteProject(deletingProject.id);
+      await deleteProject(deletingProject._id);
       setDeleteDialogOpen(false);
       setDeletingProject(null);
       toast.success("Project deleted successfully");
@@ -85,10 +83,10 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
       newProjects[index],
     ];
 
-    // Update sort_order for all affected items (simple reassignment based on index)
+    // Update sortOrder for all affected items (simple reassignment based on index)
     const updates = newProjects.map((project, idx) => ({
-      id: project.id,
-      sort_order: idx,
+      id: project._id,
+      sortOrder: idx,
     }));
 
     try {
@@ -158,7 +156,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                 ) : (
                   filteredProjects.map((project, index) => (
                     <tr
-                      key={project.id}
+                      key={project._id}
                       className="border-b last:border-0 hover:bg-muted/50"
                     >
                       <td className="p-4">
@@ -224,7 +222,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
 
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {project.live_url && (
+                          {project.liveUrl && (
                             <Button
                               variant="ghost"
                               size="icon"
@@ -232,7 +230,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                               asChild
                             >
                               <a
-                                href={project.live_url}
+                                href={project.liveUrl}
                                 target="_blank"
                                 rel="noreferrer"
                               >
@@ -240,7 +238,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                               </a>
                             </Button>
                           )}
-                          {project.repo_url && (
+                          {project.repoUrl && (
                             <Button
                               variant="ghost"
                               size="icon"
@@ -248,7 +246,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                               asChild
                             >
                               <a
-                                href={project.repo_url}
+                                href={project.repoUrl}
                                 target="_blank"
                                 rel="noreferrer"
                               >
@@ -261,7 +259,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                             size="icon"
                             className="h-8 w-8"
                             onClick={() =>
-                              router.push(`/projects/${project.id}/edit`)
+                              router.push(`/projects/${project._id}/edit`)
                             }
                           >
                             <Pencil className="h-4 w-4" />

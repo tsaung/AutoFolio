@@ -1,4 +1,4 @@
-import { getSkills } from "@/lib/actions/skills";
+import { getSkills } from "@/lib/actions/sanity-portfolio";
 import { SkillsList } from "@/components/admin/portfolio/skills-list";
 
 export default async function SkillsPage() {

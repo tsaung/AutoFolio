@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getSkill } from "@/lib/actions/skills";
+import { getSkill } from "@/lib/actions/sanity-portfolio";
 import { SkillForm } from "@/components/admin/portfolio/skill-form";
 
 interface EditSkillPageProps {

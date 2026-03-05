@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { Database } from "@/types/database";
-import { createSkill, updateSkill } from "@/lib/actions/skills";
+import { SanitySkill } from "@/types/sanity-types";
+import { createSkill, updateSkill } from "@/lib/actions/sanity-portfolio";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,8 +31,6 @@ import { TECH_OPTIONS } from "@/components/portfolio/tech-icons";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
-type Skill = Database["public"]["Tables"]["skills"]["Row"];
-
 const skillSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
@@ -42,7 +40,7 @@ const skillSchema = z.object({
 type SkillFormValues = z.infer<typeof skillSchema>;
 
 interface SkillFormProps {
-  initialData?: Skill;
+  initialData?: SanitySkill;
   onSuccess?: () => void;
   isDialog?: boolean;
 }
@@ -78,12 +76,12 @@ export function SkillForm({
     setIsSubmitting(true);
     try {
       if (initialData) {
-        await updateSkill(initialData.id, data);
+        await updateSkill(initialData._id, data);
         toast.success("Skill updated successfully");
       } else {
         await createSkill({
           ...data,
-          sort_order: 0,
+          sortOrder: 0,
         });
         toast.success("Skill created successfully");
       }

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProject } from "@/lib/actions/projects";
+import { getProject } from "@/lib/actions/sanity-portfolio";
 import { ProjectForm } from "@/components/admin/portfolio/project-form";
 
 interface EditProjectPageProps {

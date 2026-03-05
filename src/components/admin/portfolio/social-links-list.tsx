@@ -20,30 +20,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Database } from "@/types/database";
+import { SanitySocialLink } from "@/types/sanity-types";
 import {
   deleteSocialLink,
   reorderSocialLinks,
-} from "@/lib/actions/social-links";
+} from "@/lib/actions/sanity-portfolio";
 import { toast } from "sonner";
 import Link from "next/link";
 import { SocialLinkForm } from "@/components/admin/portfolio/social-link-form";
 
-type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
-
 interface SocialLinksListProps {
-  initialLinks: SocialLink[];
+  initialLinks: SanitySocialLink[];
 }
 
 export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [deletingLink, setDeletingLink] = useState<SocialLink | null>(null);
+  const [deletingLink, setDeletingLink] = useState<SanitySocialLink | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
 
-  function handleDeleteClick(link: SocialLink) {
+  function handleDeleteClick(link: SanitySocialLink) {
     setDeletingLink(link);
     setDeleteDialogOpen(true);
   }
@@ -53,7 +51,7 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
     setIsDeleting(true);
 
     try {
-      await deleteSocialLink(deletingLink.id);
+      await deleteSocialLink(deletingLink._id);
       setDeleteDialogOpen(false);
       setDeletingLink(null);
       toast.success("Social link deleted successfully");
@@ -80,10 +78,10 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
       newLinks[index],
     ];
 
-    // Update sort_order for all affected items
+    // Update sortOrder for all affected items
     const updates = newLinks.map((link, idx) => ({
-      id: link.id,
-      sort_order: idx,
+      id: link._id,
+      sortOrder: idx,
     }));
 
     try {
@@ -138,7 +136,7 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
             ) : (
               initialLinks.map((link, index) => (
                 <tr
-                  key={link.id}
+                  key={link._id}
                   className="border-b last:border-0 hover:bg-muted/50"
                 >
                   <td className="p-4">
@@ -194,7 +192,7 @@ export function SocialLinksList({ initialLinks }: SocialLinksListProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() =>
-                          router.push(`/social-links/${link.id}/edit`)
+                          router.push(`/social-links/${link._id}/edit`)
                         }
                       >
                         <Pencil className="h-4 w-4" />
