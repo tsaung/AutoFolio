@@ -11,37 +11,37 @@ import {
   Briefcase,
   Code2,
   FolderKanban,
-  Share2,
   ArrowRight,
   Plus,
 } from "lucide-react";
 import { createClient } from "@/lib/db/server";
 import Link from "next/link";
 import { QuickAddSkillDialog } from "@/components/admin/dashboard/quick-add-skill-dialog";
-import { QuickAddSocialDialog } from "@/components/admin/dashboard/quick-add-social-dialog";
 import { buttonVariants } from "@/components/ui/button";
+import { client } from "@/sanity/lib/client";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  // Fetch counts
-  const tables = [
-    "projects",
-    "experiences",
-    "skills",
-    "social_links",
-    "knowledge_documents",
-  ];
-  const counts: Record<string, number> = {};
+  // Fetch Sanity Counts
+  const [projectsCount, experiencesCount, skillsCount] = await Promise.all([
+    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "project"])`, {}, { cache: "no-store" }),
+    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "experience"])`, {}, { cache: "no-store" }),
+    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "skill"])`, {}, { cache: "no-store" }),
+  ]);
 
-  await Promise.all(
-    tables.map(async (table) => {
-      const { count } = await supabase
-        .from(table)
-        .select("*", { count: "exact", head: true });
-      counts[table] = count || 0;
-    }),
-  );
+  const counts: Record<string, number> = {
+    projects: projectsCount,
+    experiences: experiencesCount,
+    skills: skillsCount,
+  };
+
+  // Fetch Supabase Counts for RAG
+  const { count: knowledgeDocumentsCount } = await supabase
+    .from("knowledge_documents")
+    .select("*", { count: "exact", head: true });
+
+  counts.knowledge_documents = knowledgeDocumentsCount || 0;
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -131,31 +131,9 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Social Links */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Social Links</CardTitle>
-            <Share2 className="h-8 w-8 text-pink-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{counts.social_links}</div>
-            <p className="text-xs text-muted-foreground mb-4">
-              External profiles
-            </p>
-            <div className="flex items-center justify-between">
-              <Link
-                href="/social-links"
-                className="text-xs text-primary flex items-center hover:underline"
-              >
-                Manage <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-              <QuickAddSocialDialog />
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Total Chats */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
