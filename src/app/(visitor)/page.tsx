@@ -4,6 +4,7 @@ import { getPublicProjects } from "@/lib/actions/projects";
 import { getPublicExperiences } from "@/lib/actions/experiences";
 import { getPublicSkills } from "@/lib/actions/skills";
 import { getPublicSocialLinks } from "@/lib/actions/social-links";
+import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 
 import { ProfileHero } from "@/components/visitor/profile-hero";
 import { ProjectsGrid } from "@/components/portfolio/projects-grid";
@@ -26,11 +27,12 @@ export default async function VisitorPage() {
   const profile = await getPublicProfile();
 
   // Parallel data fetching for performance
-  const [projects, experiences, skills, socialLinks] = await Promise.all([
+  const [projects, experiences, skills, socialLinks, siteSettings] = await Promise.all([
     profile ? getPublicProjects(profile.id) : Promise.resolve([]),
     profile ? getPublicExperiences(profile.id) : Promise.resolve([]),
     profile ? getPublicSkills(profile.id) : Promise.resolve([]),
     profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
+    getPublicSiteSettings(),
   ]);
 
   return (
@@ -90,7 +92,7 @@ export default async function VisitorPage() {
         )}
       </div>
 
-      <VisitorFooter profile={profile} socialLinks={socialLinks} />
+      <VisitorFooter profile={profile} socialLinks={socialLinks} siteSettings={siteSettings} />
     </div>
   );
 }

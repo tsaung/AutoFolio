@@ -11,9 +11,10 @@ type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
 interface VisitorFooterProps {
   profile: Profile | null;
   socialLinks: SocialLink[];
+  siteSettings?: any;
 }
 
-export function VisitorFooter({ profile, socialLinks }: VisitorFooterProps) {
+export function VisitorFooter({ profile, socialLinks, siteSettings }: VisitorFooterProps) {
   const currentYear = new Date().getFullYear();
 
   const getSocialIcon = (platform: string) => {
@@ -36,11 +37,11 @@ export function VisitorFooter({ profile, socialLinks }: VisitorFooterProps) {
     <footer className="border-t bg-muted/30 py-12">
       <div className="container mx-auto px-4 flex flex-col items-center space-y-8">
         {/* Social Links */}
-        {socialLinks.length > 0 && (
+        {(siteSettings?.footer?.socialLinks || socialLinks).length > 0 && (
           <div className="flex items-center gap-6">
-            {socialLinks.map((link) => (
+            {(siteSettings?.footer?.socialLinks || socialLinks).map((link: any, i: number) => (
               <Button
-                key={link.id}
+                key={link.id || link._key || i}
                 variant="ghost"
                 size="icon"
                 asChild
@@ -55,11 +56,14 @@ export function VisitorFooter({ profile, socialLinks }: VisitorFooterProps) {
           </div>
         )}
 
-        {/* Brand/Copyright */}
         <div className="text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            &copy; {currentYear} {profile?.name || "Portfolio"}
-          </p>
+          {siteSettings?.footer?.copyrightText ? (
+            <p className="text-sm text-muted-foreground">{siteSettings.footer.copyrightText}</p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              &copy; {currentYear} {siteSettings?.siteName || profile?.name || "Portfolio"}
+            </p>
+          )}
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
             Built with{" "}
             <Link

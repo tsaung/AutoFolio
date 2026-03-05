@@ -14,8 +14,10 @@ interface AdminLayoutWrapperProps {
 
 export function AdminLayoutWrapper({
   children,
+  siteName,
 }: {
   children: React.ReactNode;
+  siteName?: string;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -50,7 +52,7 @@ export function AdminLayoutWrapper({
       )}
     >
       <div className="hidden border-r bg-muted/40 lg:block dark:bg-zinc-800/40 overflow-y-auto">
-        <AdminSidebar collapsed={isCollapsed} onToggle={toggleSidebar} />
+        <AdminSidebar collapsed={isCollapsed} onToggle={toggleSidebar} siteName={siteName} />
       </div>
       <div className="flex flex-col h-full overflow-hidden">{children}</div>
     </div>

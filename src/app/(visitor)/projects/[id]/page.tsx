@@ -2,6 +2,7 @@ import { getPublicProject } from "@/lib/actions/projects";
 import { getPublicProfile } from "@/lib/actions/profile";
 import { getPublicBotConfig } from "@/lib/actions/bot-config";
 import { getPublicSocialLinks } from "@/lib/actions/social-links";
+import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 import { BrowserMockup } from "@/components/portfolio/browser-mockup";
@@ -32,9 +33,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const [botConfig, socialLinks] = await Promise.all([
+  const [botConfig, socialLinks, siteSettings] = await Promise.all([
     getPublicBotConfig(),
     profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
+    getPublicSiteSettings(),
   ]);
 
   return (
@@ -128,7 +130,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </div>
 
-      <VisitorFooter profile={profile} socialLinks={socialLinks} />
+      <VisitorFooter profile={profile} socialLinks={socialLinks} siteSettings={siteSettings} />
     </main>
   );
 }

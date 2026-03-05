@@ -4,10 +4,27 @@ import { client } from "@/sanity/lib/client";
 import { writeClient } from "@/sanity/lib/write-client";
 import { createClient } from "@/lib/db/server";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function getSiteSettings() {
-  return await client.fetch(SITE_SETTINGS_QUERY, {}, { cache: "no-store", perspective: "published" });
+  return await client
+    .withConfig({ useCdn: false })
+    .fetch(SITE_SETTINGS_QUERY, {}, { 
+      cache: "no-store", 
+      perspective: "published",
+      next: { tags: ["siteSettings"] }
+    });
+}
+
+export async function getPublicSiteSettings() {
+  try {
+    return await client.fetch(SITE_SETTINGS_QUERY, {}, {
+      next: { tags: ["siteSettings"] }
+    });
+  } catch (error) {
+    console.error("Error fetching public site settings:", error);
+    return null;
+  }
 }
 
 export async function updateSiteSettings(input: any) {
@@ -33,6 +50,8 @@ export async function updateSiteSettings(input: any) {
     .set(input)
     .commit();
 
-  revalidatePath("/", "layout"); // Revalidate entire site
+  revalidateTag("siteSettings");
+  revalidatePath("/settings", "layout");
+  revalidatePath("/dashboard");
   return { success: true, settings: { _id: "siteSettings" } };
 }

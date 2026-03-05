@@ -42,12 +42,14 @@ interface SidebarContentProps {
   className?: string;
   collapsed?: boolean;
   onToggle?: () => void;
+  siteName?: string;
 }
 
 export function SidebarContent({
   className,
   collapsed,
   onToggle,
+  siteName,
 }: SidebarContentProps) {
   const pathname = usePathname();
 
@@ -69,7 +71,7 @@ export function SidebarContent({
             href="/dashboard"
             className="flex items-center gap-2 font-semibold overflow-hidden whitespace-nowrap"
           >
-            <span className="">BotFolio Admin</span>
+            <span className="">{siteName || "BotFolio Admin"}</span> {/* Use siteName here */}
           </Link>
         )}
         {onToggle && (
@@ -119,13 +121,15 @@ export function SidebarContent({
 interface AdminSidebarProps {
   collapsed?: boolean;
   onToggle?: () => void;
+  siteName?: string;
 }
 
-export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed, onToggle, siteName }: AdminSidebarProps) {
   return (
     <SidebarContent
       collapsed={collapsed}
       onToggle={onToggle}
+      siteName={siteName}
       className="hidden h-full border-r lg:flex"
     />
   );

@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getSiteSettings, updateSiteSettings } from "../site-settings";
+import { getSiteSettings, updateSiteSettings } from "@/lib/actions/site-settings";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 
 // --- Mocks ---
@@ -11,6 +10,9 @@ const {
   mockPatch,
   mockSet,
   mockCommit,
+  mockRevalidateTag,
+  mockRevalidatePath,
+  mockWithConfig,
 } = vi.hoisted(() => {
   return {
     mockGetUser: vi.fn(),
@@ -19,6 +21,9 @@ const {
     mockPatch: vi.fn(),
     mockSet: vi.fn(),
     mockCommit: vi.fn(),
+    mockRevalidateTag: vi.fn(),
+    mockRevalidatePath: vi.fn(),
+    mockWithConfig: vi.fn().mockReturnThis(),
   };
 });
 
@@ -32,8 +37,8 @@ vi.mock("@/lib/db/server", () => ({
 // Mock Sanity Clients
 vi.mock("@/sanity/lib/client", () => ({
   client: {
+    withConfig: mockWithConfig,
     fetch: mockFetch,
-    withConfig: vi.fn(() => ({ fetch: mockFetch })),
   },
 }));
 
@@ -47,12 +52,16 @@ vi.mock("@/sanity/lib/write-client", () => ({
 
 // Mock Next.js Cache
 vi.mock("next/cache", () => ({
-  revalidatePath: vi.fn(),
+  revalidateTag: mockRevalidateTag,
+  revalidatePath: mockRevalidatePath,
 }));
 
 describe("Site Settings Server Actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRevalidateTag.mockClear();
+    mockRevalidatePath.mockClear();
+    mockWithConfig.mockReturnValue({ fetch: mockFetch });
 
     const patchChain = {
       set: mockSet,
@@ -70,7 +79,16 @@ describe("Site Settings Server Actions", () => {
 
       const result = await getSiteSettings();
 
-      expect(mockFetch).toHaveBeenCalledWith(SITE_SETTINGS_QUERY, {}, { cache: "no-store", perspective: "published" });
+      expect(mockWithConfig).toHaveBeenCalledWith({ useCdn: false });
+      expect(mockFetch).toHaveBeenCalledWith(
+        SITE_SETTINGS_QUERY,
+        {},
+        {
+          cache: "no-store",
+          perspective: "published",
+          next: { tags: ["siteSettings"] },
+        }
+      );
       expect(result).toEqual(mockData);
     });
   });
@@ -120,6 +138,8 @@ describe("Site Settings Server Actions", () => {
       expect(mockSet).toHaveBeenCalledWith(input);
       expect(mockCommit).toHaveBeenCalled();
 
+      expect(mockRevalidateTag).toHaveBeenCalledWith("siteSettings");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/settings", "layout");
       expect(result).toEqual({ success: true, settings: { _id: "siteSettings" } });
     });
   });
