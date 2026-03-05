@@ -52,6 +52,18 @@ export const experience = defineType({
       description: "Lower numbers appear first.",
       initialValue: 0,
     }),
+    defineField({
+      name: "createdBy",
+      title: "Created By (Supabase User ID)",
+      type: "string",
+      hidden: true,
+    }),
+    defineField({
+      name: "updatedBy",
+      title: "Updated By (Supabase User ID)",
+      type: "string",
+      hidden: true,
+    }),
   ],
   preview: {
     select: {

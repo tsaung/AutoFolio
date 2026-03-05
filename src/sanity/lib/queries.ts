@@ -13,3 +13,17 @@ export const PAGE_BY_SLUG_QUERY = groq`
     pageBuilder[]
   }
 `;
+
+/**
+ * Fetches all \`experience\` documents, ordered by sortOrder ascending.
+ */
+export const EXPERIENCES_QUERY = groq`
+  *[_type == "experience"] | order(sortOrder asc)
+`;
+
+/**
+ * Fetches a single \`experience\` document by its ID.
+ */
+export const EXPERIENCE_BY_ID_QUERY = groq`
+  *[_type == "experience" && _id == $id][0]
+`;

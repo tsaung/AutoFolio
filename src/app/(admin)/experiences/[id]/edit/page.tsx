@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getExperience } from "@/lib/actions/experiences"; // Now exists
+import { getExperience } from "@/lib/actions/sanity-experiences"; // Now exists
 import { ExperienceForm } from "@/components/admin/portfolio/experience-form";
 
 interface EditExperiencePageProps {

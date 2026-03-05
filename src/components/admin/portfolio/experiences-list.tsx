@@ -21,83 +21,99 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Database } from "@/types/database";
 import {
   deleteExperience,
   reorderExperiences,
-} from "@/lib/actions/experiences";
+} from "@/lib/actions/sanity-experiences";
 import { toast } from "sonner";
 import { format } from "date-fns";
-
-type Experience = Database["public"]["Tables"]["experiences"]["Row"];
+import { SanityExperience } from "@/types/sanity-types";
 
 interface ExperiencesListProps {
-  initialExperiences: Experience[];
+  initialExperiences: SanityExperience[];
 }
 
 export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deletingExperience, setDeletingExperience] =
-    useState<Experience | null>(null);
+  const [experiences, setExperiences] = useState<SanityExperience[]>(
+    initialExperiences,
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
+  const [experienceToDelete, setExperienceToDelete] =
+    useState<SanityExperience | null>(null);
 
-  function handleDeleteClick(experience: Experience) {
-    setDeletingExperience(experience);
+  const handleDeleteClick = (experience: SanityExperience) => {
+    setExperienceToDelete(experience);
     setDeleteDialogOpen(true);
-  }
+  };
 
-  async function handleDeleteConfirm() {
-    if (!deletingExperience) return;
+  const handleDeleteConfirm = async () => {
+    if (!experienceToDelete) return;
     setIsDeleting(true);
-
     try {
-      await deleteExperience(deletingExperience.id);
-      setDeleteDialogOpen(false);
-      setDeletingExperience(null);
+      await deleteExperience(experienceToDelete._id);
+      setExperiences((prev) =>
+        prev.filter((exp) => exp._id !== experienceToDelete._id),
+      );
       toast.success("Experience deleted successfully");
+      router.refresh();
+      setDeleteDialogOpen(false);
     } catch (error) {
       console.error("Failed to delete experience:", error);
       toast.error("Failed to delete experience");
     } finally {
       setIsDeleting(false);
+      setExperienceToDelete(null);
     }
-  }
+  };
 
-  async function handleReorder(index: number, direction: "up" | "down") {
-    if (isReordering) return;
-    if (direction === "up" && index === 0) return;
-    if (direction === "down" && index === initialExperiences.length - 1) return;
+  const handleReorder = async (index: number, direction: "up" | "down") => {
+    if (
+      (direction === "up" && index === 0) ||
+      (direction === "down" && index === experiences.length - 1)
+    ) {
+      return;
+    }
 
     setIsReordering(true);
-    const newExperiences = [...initialExperiences];
+    const newExperiences = [...experiences];
     const targetIndex = direction === "up" ? index - 1 : index + 1;
 
-    // Swap items
+    // Swap elements
     [newExperiences[index], newExperiences[targetIndex]] = [
       newExperiences[targetIndex],
       newExperiences[index],
     ];
 
-    // Update sort_order for all affected items
-    const updates = newExperiences.map((exp, idx) => ({
-      id: exp.id,
-      sort_order: idx,
+    // Update sort_order locally
+    const updatedExperiences = newExperiences.map((exp, i) => ({
+      ...exp,
+      sortOrder: i,
     }));
 
+    setExperiences(updatedExperiences);
+
     try {
-      await reorderExperiences(updates);
-      toast.success("Experience order updated");
+      await reorderExperiences(
+        updatedExperiences.map((exp) => ({
+          id: exp._id,
+          sortOrder: exp.sortOrder,
+        })),
+      );
+      toast.success("Order updated");
+      router.refresh();
     } catch (error) {
-      console.error("Failed to reorder experiences:", error);
-      toast.error("Failed to reorder experiences");
+      console.error("Failed to reorder:", error);
+      toast.error("Failed to update order");
+      setExperiences(initialExperiences); // Revert on failure
     } finally {
       setIsReordering(false);
     }
-  }
+  };
 
-  function formatDateRange(start: string, end: string | null) {
+  function formatDateRange(start: string, end: string | undefined) {
     const startDate = format(new Date(start), "MMM yyyy");
     const endDate = end ? format(new Date(end), "MMM yyyy") : "Present";
     return `${startDate} - ${endDate}`;
@@ -134,7 +150,7 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
             </tr>
           </thead>
           <tbody>
-            {initialExperiences.length === 0 ? (
+            {experiences.length === 0 ? (
               <tr>
                 <td
                   colSpan={5}
@@ -145,9 +161,9 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
                 </td>
               </tr>
             ) : (
-              initialExperiences.map((experience, index) => (
+              experiences.map((experience, index) => (
                 <tr
-                  key={experience.id}
+                  key={experience._id}
                   className="border-b last:border-0 hover:bg-muted/50"
                 >
                   <td className="p-4">
@@ -168,7 +184,7 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
                         className="h-6 w-6"
                         onClick={() => handleReorder(index, "down")}
                         disabled={
-                          index === initialExperiences.length - 1 ||
+                          index === experiences.length - 1 ||
                           isReordering
                         }
                         title="Move Down"
@@ -197,8 +213,8 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
                       <Calendar className="h-4 w-4 shrink-0" />
                       <span>
                         {formatDateRange(
-                          experience.start_date,
-                          experience.end_date,
+                          experience.startDate,
+                          experience.endDate,
                         )}
                       </span>
                     </div>
@@ -218,7 +234,7 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() =>
-                          router.push(`/experiences/${experience.id}/edit`)
+                          router.push(`/experiences/${experience._id}/edit`)
                         }
                       >
                         <Pencil className="h-4 w-4" />
@@ -248,15 +264,20 @@ export function ExperiencesList({ initialExperiences }: ExperiencesListProps) {
           <DialogHeader>
             <DialogTitle>Delete Experience</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;
-              {deletingExperience?.title} at {deletingExperience?.company}
-              &quot;? This action cannot be undone.
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">
+                &quot;{experienceToDelete?.title} at {experienceToDelete?.company}&quot;
+              </span>
+              ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setExperienceToDelete(null);
+              }}
               disabled={isDeleting}
             >
               Cancel

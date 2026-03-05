@@ -37,11 +37,22 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    (request.nextUrl.pathname.startsWith("/dashboard") ||
-      request.nextUrl.pathname.startsWith("/settings"))
-  ) {
+  const protectedPaths = [
+    "/dashboard",
+    "/experiences",
+    "/improve",
+    "/knowledge",
+    "/projects",
+    "/settings",
+    "/skills",
+    "/social-links",
+  ];
+
+  const isProtectedRoute = protectedPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (!user && isProtectedRoute) {
     // no user, potentially respond with redirect
     const url = request.nextUrl.clone();
     url.pathname = "/login";

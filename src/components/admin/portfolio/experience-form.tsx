@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft, CalendarIcon } from "lucide-react";
-import { Database } from "@/types/database";
-import { createExperience, updateExperience } from "@/lib/actions/experiences";
+import { createExperience, updateExperience } from "@/lib/actions/sanity-experiences";
+import { SanityExperience } from "@/types/sanity-types";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,8 +30,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
-
-type Experience = Database["public"]["Tables"]["experiences"]["Row"];
+import type { PortableTextBlock } from "next-sanity";
+import { toPlainText } from "@portabletext/react";
 
 const experienceSchema = z
   .object({
@@ -39,26 +39,47 @@ const experienceSchema = z
     company: z.string().min(1, "Company is required"),
     location: z.string().optional(),
     description: z.string().optional(),
-    start_date: z.date(),
-    end_date: z.date().optional().nullable(),
-    is_current: z.boolean().default(false).optional(),
+    startDate: z.date(),
+    endDate: z.date().optional().nullable(),
+    isCurrent: z.boolean().default(false).optional(),
   })
   .refine(
     (data) => {
-      if (data.is_current) return true;
-      if (!data.end_date) return false;
-      return data.end_date >= data.start_date;
+      if (data.isCurrent) return true;
+      if (!data.endDate) return false;
+      return data.endDate >= data.startDate;
     },
     {
       message: "End date must be after start date",
-      path: ["end_date"],
+      path: ["endDate"],
     },
   );
 
 type ExperienceFormValues = z.infer<typeof experienceSchema>;
 
 interface ExperienceFormProps {
-  initialData?: Experience;
+  initialData?: SanityExperience;
+}
+
+// Very basic plain text to Sanity Block converter for the textarea
+function textToBlocks(text: string | null | undefined): PortableTextBlock[] | undefined {
+  if (!text) return undefined;
+  // Splits by double newline as basic paragraph mapping
+  return text.split('\n\n').map(paragraph => ({
+    _type: 'block',
+    children: [
+      {
+        _type: 'span',
+        text: paragraph,
+      }
+    ]
+  })) as PortableTextBlock[];
+}
+
+// Convert PortableText back to plain text for the textarea
+function blocksToText(blocks: PortableTextBlock[] | undefined | null): string {
+  if (!blocks || !Array.isArray(blocks)) return "";
+  return blocks.map(b => b.children?.map((c: any) => c.text).join("")).join("\n\n");
 }
 
 export function ExperienceForm({ initialData }: ExperienceFormProps) {
@@ -71,17 +92,14 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
       title: initialData?.title ?? "",
       company: initialData?.company ?? "",
       location: initialData?.location ?? "",
-      description: initialData?.description ?? "",
-      start_date: initialData?.start_date
-        ? new Date(initialData.start_date)
+      description: blocksToText(initialData?.description),
+      startDate: initialData?.startDate
+        ? new Date(initialData.startDate)
         : undefined,
-      end_date: initialData?.end_date
-        ? new Date(initialData.end_date)
+      endDate: initialData?.endDate
+        ? new Date(initialData.endDate)
         : undefined,
-      is_current: !initialData?.end_date, // If no end date, assume current? Or we should store is_current explicitly?
-      // The DB doesn't have is_current column based on types, it infers from end_date being null.
-      // But my spec said logic: If "Current" is checked, end_date is null.
-      // So verify initial state: if initialData exists and end_date is null, is_current = true.
+      isCurrent: !initialData?.endDate, 
     },
   });
 
@@ -91,22 +109,22 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
       const formattedData = {
         title: data.title,
         company: data.company,
-        location: data.location || null,
-        description: data.description || null,
-        start_date: format(data.start_date, "yyyy-MM-dd"), // Supabase expects string date
-        end_date:
-          data.is_current || !data.end_date
-            ? null
-            : format(data.end_date, "yyyy-MM-dd"),
+        location: data.location || undefined,
+        description: textToBlocks(data.description),
+        startDate: format(data.startDate, "yyyy-MM-dd"),
+        endDate:
+          data.isCurrent || !data.endDate
+            ? undefined
+            : format(data.endDate, "yyyy-MM-dd"),
       };
 
       if (initialData) {
-        await updateExperience(initialData.id, formattedData);
+        await updateExperience(initialData._id, formattedData);
         toast.success("Experience updated successfully");
       } else {
         await createExperience({
           ...formattedData,
-          sort_order: 0,
+          sortOrder: 0,
         });
         toast.success("Experience created successfully");
       }
@@ -120,8 +138,8 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
     }
   }
 
-  // Watch is_current to disable end_date
-  const isCurrent = form.watch("is_current");
+  // Watch isCurrent to disable endDate
+  const isCurrent = form.watch("isCurrent");
 
   return (
     <div className="flex flex-col gap-6">
@@ -190,7 +208,7 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
             <div className="grid gap-6 md:grid-cols-2 md:col-span-2">
               <FormField
                 control={form.control}
-                name="start_date"
+                name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Start Date</FormLabel>
@@ -235,7 +253,7 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
 
               <FormField
                 control={form.control}
-                name="end_date"
+                name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>End Date</FormLabel>
@@ -286,7 +304,7 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
 
             <FormField
               control={form.control}
-              name="is_current"
+              name="isCurrent"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-2 space-y-0 md:col-span-2">
                   <FormControl>

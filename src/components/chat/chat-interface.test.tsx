@@ -46,9 +46,13 @@ describe("ChatInterface", () => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
 
-  it("renders welcome screen initially", () => {
+  it("renders welcome screen initially", async () => {
+    // The "Welcome!" message is animated in via AIOrb with a 600ms delay
     render(<ChatInterface profile={mockProfile} />);
-    expect(screen.getByText("Welcome!")).toBeInTheDocument();
+    
+    // findByText automatically waits and retries for default timeout (1000ms)
+    // We add a safety margin with a custom timeout of 2000ms
+    expect(await screen.findByText("Welcome!", {}, { timeout: 2000 })).toBeInTheDocument();
   });
 
   it("renders suggested prompts", () => {
