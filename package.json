@@ -28,7 +28,6 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@sanity/image-url": "^2.0.3",
-    "@sanity/ui": "^3.1.13",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "ai": "^6.0.86",
@@ -52,7 +51,6 @@
     "react-textarea-autosize": "^8.5.9",
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.7",
-    "styled-components": "^6.3.11",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.6"
   },
