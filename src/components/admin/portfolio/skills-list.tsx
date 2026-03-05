@@ -13,29 +13,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Database } from "@/types/database";
-import { deleteSkill, reorderSkills } from "@/lib/actions/skills";
+import { SanitySkill } from "@/types/sanity-types";
+import { deleteSkill, reorderSkills } from "@/lib/actions/sanity-portfolio";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress"; // Using Progress for proficiency visual
 import { toast } from "sonner";
 
 import { SkillForm } from "@/components/admin/portfolio/skill-form";
 
-type Skill = Database["public"]["Tables"]["skills"]["Row"];
-
 interface SkillsListProps {
-  initialSkills: Skill[];
+  initialSkills: SanitySkill[];
 }
 
 export function SkillsList({ initialSkills }: SkillsListProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [deletingSkill, setDeletingSkill] = useState<Skill | null>(null);
+  const [deletingSkill, setDeletingSkill] = useState<SanitySkill | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
 
-  function handleDeleteClick(skill: Skill) {
+  function handleDeleteClick(skill: SanitySkill) {
     setDeletingSkill(skill);
     setDeleteDialogOpen(true);
   }
@@ -45,7 +43,7 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
     setIsDeleting(true);
 
     try {
-      await deleteSkill(deletingSkill.id);
+      await deleteSkill(deletingSkill._id);
       setDeleteDialogOpen(false);
       setDeletingSkill(null);
       toast.success("Skill deleted successfully");
@@ -72,10 +70,10 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
       newSkills[index],
     ];
 
-    // Update sort_order for all affected items
+    // Update sortOrder for all affected items
     const updates = newSkills.map((skill, idx) => ({
-      id: skill.id,
-      sort_order: idx,
+      id: skill._id,
+      sortOrder: idx,
     }));
 
     try {
@@ -133,7 +131,7 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
             ) : (
               initialSkills.map((skill, index) => (
                 <tr
-                  key={skill.id}
+                  key={skill._id}
                   className="border-b last:border-0 hover:bg-muted/50"
                 >
                   <td className="p-4">
@@ -192,7 +190,7 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => router.push(`/skills/${skill.id}/edit`)}
+                        onClick={() => router.push(`/skills/${skill._id}/edit`)}
                       >
                         <Pencil className="h-4 w-4" />
                         <span className="sr-only">Edit</span>

@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { Database } from "@/types/database";
-import { createSocialLink, updateSocialLink } from "@/lib/actions/social-links";
+import { SanitySocialLink } from "@/types/sanity-types";
+import { createSocialLink, updateSocialLink } from "@/lib/actions/sanity-portfolio";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -28,8 +28,6 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
-type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
-
 const socialLinkSchema = z.object({
   platform: z.string().min(1, "Platform is required"),
   url: z.string().url("Must be a valid URL"),
@@ -38,7 +36,7 @@ const socialLinkSchema = z.object({
 type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
 
 interface SocialLinkFormProps {
-  initialData?: SocialLink;
+  initialData?: SanitySocialLink;
   onSuccess?: () => void;
   isDialog?: boolean;
 }
@@ -75,12 +73,12 @@ export function SocialLinkForm({
     setIsSubmitting(true);
     try {
       if (initialData) {
-        await updateSocialLink(initialData.id, data);
+        await updateSocialLink(initialData._id, data);
         toast.success("Social link updated successfully");
       } else {
         await createSocialLink({
           ...data,
-          sort_order: 0,
+          sortOrder: 0,
         });
         toast.success("Social link created successfully");
       }

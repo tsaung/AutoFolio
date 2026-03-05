@@ -27,3 +27,31 @@ export const EXPERIENCES_QUERY = groq`
 export const EXPERIENCE_BY_ID_QUERY = groq`
   *[_type == "experience" && _id == $id][0]
 `;
+
+export const PROJECTS_QUERY = groq`
+  *[_type == "project"] | order(sortOrder asc)
+`;
+
+export const PROJECT_BY_ID_QUERY = groq`
+  *[_type == "project" && _id == $id][0]
+`;
+
+export const PUBLIC_PROJECTS_QUERY = groq`
+  *[_type == "project" && status == "published"] | order(sortOrder asc)
+`;
+
+export const SKILLS_QUERY = groq`
+  *[_type == "skill"] | order(sortOrder asc)
+`;
+
+export const SKILL_BY_ID_QUERY = groq`
+  *[_type == "skill" && _id == $id][0]
+`;
+
+export const SOCIAL_LINKS_QUERY = groq`
+  *[_type == "socialLink"] | order(sortOrder asc)
+`;
+
+export const SOCIAL_LINK_BY_ID_QUERY = groq`
+  *[_type == "socialLink" && _id == $id][0]
+`;
