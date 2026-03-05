@@ -285,23 +285,23 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 > [!IMPORTANT]
 > This phase cleans up the Sanity Studio / App SDK experiments before building the custom dashboard.
 
-- [ ] Remove embedded Studio route (`/studio`, catch-all `[[...tool]]/page.tsx`).
-- [ ] Remove `admin/` App SDK directory (if exists).
-- [ ] Remove `BotSettingsTool.tsx` and related Studio tool files.
-- [ ] Remove `@sanity/studio-secrets` dependency.
-- [ ] Remove `/api/admin/bot-config` API route (will be replaced by server action).
-- [ ] Keep: Sanity schemas, `next-sanity` client, GROQ queries, image utils.
-- [ ] Verify: `npm run build` succeeds with no dead imports.
+- [x] Remove embedded Studio route (`/studio`, catch-all `[[...tool]]/page.tsx`).
+- [x] Remove `admin/` App SDK directory (if exists).
+- [x] Remove `BotSettingsTool.tsx` and related Studio tool files.
+- [x] Remove `@sanity/studio-secrets` dependency.
+- [x] Remove `/api/admin/bot-config` API route (will be replaced by server action).
+- [x] Keep: Sanity schemas, `next-sanity` client, GROQ queries, image utils.
+- [x] Verify: `npm run build` succeeds with no dead imports.
 
 ### Phase 4: Admin Dashboard — Projects & Experiences CRUD
 
-- [ ] Ensure Supabase Auth (login/signup) works for dashboard access.
-- [ ] Protect `/admin/*` routes with auth middleware.
-- [ ] Build dashboard layout: sidebar nav, header with user info.
-- [ ] Build `/admin/projects` — list, create, edit, delete projects via Sanity API.
-- [ ] Build `/admin/experiences` — list, create, edit, delete experiences via Sanity API.
-- [ ] Implement image upload to Sanity Asset CDN via server action.
-- [ ] Verify: CRUD operations from dashboard create/update documents in Sanity.
+- [x] Ensure Supabase Auth (login/signup) works for dashboard access.
+- [x] Protect `/admin/*` routes with auth middleware.
+- [x] Build dashboard layout: sidebar nav, header with user info.
+- [x] Build `/admin/projects` — list, create, edit, delete projects via Sanity API.
+- [x] Build `/admin/experiences` — list, create, edit, delete experiences via Sanity API.
+- [x] Implement image upload to Sanity Asset CDN via server action.
+- [x] Verify: CRUD operations from dashboard create/update documents in Sanity.
 
 ### Phase 5: Admin Dashboard — Page Builder
 

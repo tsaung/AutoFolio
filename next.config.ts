@@ -9,9 +9,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
     ],
   },
-  reactStrictMode:true
+  reactStrictMode: true,
 };
 
 export default nextConfig;

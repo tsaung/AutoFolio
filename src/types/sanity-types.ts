@@ -24,7 +24,13 @@ export interface SanityProject {
   title: string;
   slug?: { current: string };
   description: string;
-  image?: any;
+  image?: {
+    _type: "image";
+    asset: {
+      _ref: string;
+      _type: "reference";
+    };
+  };
   liveUrl?: string;
   repoUrl?: string;
   tags?: string[];

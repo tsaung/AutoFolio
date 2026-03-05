@@ -8,6 +8,7 @@ import * as z from "zod";
 import { Loader2, ArrowLeft, X } from "lucide-react";
 import { SanityProject } from "@/types/sanity-types";
 import { createProject, updateProject } from "@/lib/actions/sanity-portfolio";
+import { SanityImageUpload } from "@/components/admin/sanity-image-upload";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,7 +39,7 @@ const projectSchema = z.object({
   tags: z.string().optional(), // We'll parse this comma-separated string to array
   liveUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
   repoUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
-  imageUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
+  image: z.any().optional(),
   status: z.enum(["published", "draft", "archived"]),
 });
 
@@ -60,7 +61,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       tags: initialData?.tags?.join(", ") ?? "",
       liveUrl: initialData?.liveUrl ?? "",
       repoUrl: initialData?.repoUrl ?? "",
-      imageUrl: "", // Ignoring initial image logic here since Sanity uses image objects, assuming we are doing URL fields for now or ignoring it as complex block. Let's keep it simple for now, or just leave it empty.
+      image: initialData?.image || undefined,
       status:
         (initialData?.status as "published" | "draft" | "archived") ?? "draft",
     },
@@ -82,6 +83,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
         tags,
         liveUrl: data.liveUrl || undefined,
         repoUrl: data.repoUrl || undefined,
+        image: data.image || undefined,
       };
 
       if (initialData) {
@@ -203,15 +205,18 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
             <FormField
               control={form.control}
-              name="imageUrl"
+              name="image"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
-                  <FormLabel>Image URL</FormLabel>
+                  <FormLabel>Project Image</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} />
+                    <SanityImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormDescription>
-                    URL to a screenshot or banner image.
+                    Upload a showcase image for this project.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
