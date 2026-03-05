@@ -50,7 +50,7 @@ export async function updateSiteSettings(input: any) {
     .set(input)
     .commit();
 
-  revalidateTag("siteSettings");
+  revalidateTag("siteSettings", "siteSettings");
   revalidatePath("/settings", "layout");
   revalidatePath("/dashboard");
   return { success: true, settings: { _id: "siteSettings" } };
