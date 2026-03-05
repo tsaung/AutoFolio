@@ -49,7 +49,8 @@ From the dashboard, users can:
 /admin/projects/[id]/edit      → Edit project
 /admin/experiences             → List/CRUD experiences
 /admin/experiences/[id]/edit   → Edit experience
-/admin/settings                → Site settings (Sanity) + bot config (Supabase)
+/settings/site                 → Site settings (Sanity)
+/settings/bot                  → Bot config (Supabase)
 ```
 
 **Server-side CRUD flow:**
@@ -303,24 +304,24 @@ This migration is executed in phases. Each phase is designed to be a self-contai
 - [x] Implement image upload to Sanity Asset CDN via server action.
 - [x] Verify: CRUD operations from dashboard create/update documents in Sanity.
 
-### Phase 5: Admin Dashboard — Page Builder
+### Phase 5: Admin Dashboard — Settings & UI Component Library
 
-- [ ] Build `/admin/pages` — list all pages, create new page.
-- [ ] Build `/admin/pages/[id]/edit` — form-based page builder.
-- [ ] Implement "Add Block" dropdown with block type selector.
-- [ ] Build form for each block type (Hero, RichText, CTA, etc.).
-- [ ] Implement block reordering with `@dnd-kit/sortable`.
-- [ ] Implement block removal.
-- [ ] Add rich text editing for Portable Text fields (markdown textarea → Portable Text conversion for v1, upgrade to TipTap/Slate later).
-- [ ] Implement Next.js draft mode for page preview.
-- [ ] Verify: Page built in dashboard renders correctly on the frontend.
-
-### Phase 6: Admin Dashboard — Settings & Bot Config
-
-- [ ] Build `/admin/settings` — site settings form (site name, navigation, footer, brand colors → saved to Sanity).
+- [ ] Build `/settings/site` — site settings form (site name, navigation, footer, brand colors → saved to Sanity).
 - [ ] Build bot config section — model, provider, system prompt, predefined prompts (→ saved to Supabase).
 - [ ] Migrate `bot_configs` table if needed (ensure no Supabase Auth user_id dependency).
-- [ ] Verify: Settings changes from dashboard reflect on the public site.
+- [ ] Refactor generic form UI components (Image Upload, Array Builders for nested lists like socialLinks, Input with Validation, Rich Text Editor) into a reusable `admin/ui` library based on the inputs developed so far.
+- [ ] Verify: Settings changes from dashboard reflect on the public site layout (Header, Footer, Navigation).
+
+### Phase 6: Admin Dashboard — Page Builder
+
+- [ ] Build `/admin/pages` — list all pages, create new page.
+- [ ] Build `/admin/pages/[id]/edit` — form-based page builder using reusable UI components.
+- [ ] Implement "Add Block" dropdown with block type selector.
+- [ ] Build form for each core block type (Hero, RichText, CTA).
+- [ ] Implement block reordering with `@dnd-kit/sortable`.
+- [ ] Implement block removal.
+- [ ] Implement Next.js draft mode for page preview.
+- [ ] Verify: Page built in dashboard renders correctly on the frontend.
 
 ### Phase 7: Themeable Design System
 

@@ -55,3 +55,7 @@ export const SOCIAL_LINKS_QUERY = groq`
 export const SOCIAL_LINK_BY_ID_QUERY = groq`
   *[_type == "socialLink" && _id == $id][0]
 `;
+
+export const SITE_SETTINGS_QUERY = groq`
+  *[_type == "siteSettings"][0]
+`;
