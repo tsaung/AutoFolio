@@ -97,3 +97,11 @@
 
 - [ ] Vercel Analytics integration
 - [ ] Generative UI Widgets (streamUI)
+
+## V3 — Auth & Permissions (Planned)
+
+- [ ] **Granular Roles:** Implement `superadmin`, `admin`, and `public` roles (e.g., stored in `profiles` or `auth.users` metadata).
+- [ ] **Admin User Management:** Build a user management panel in the dashboard for `superadmin` to invite and manage other `admin` users.
+- [ ] **Public Signup/Login:** Create a public registration flow (`/signup`, `/login`) for visitors to access the AI chat (to limit usage volume).
+- [ ] **Chat Access Control:** Protect the frontend public chat behind the new public user authentication.
+- [ ] **Supabase Initial Setup:** Document the manual process for creating the first `superadmin` user directly in the Supabase Studio interface.
