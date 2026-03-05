@@ -44,8 +44,6 @@ export function VisitorLayoutWrapper({
     return () => mql.removeEventListener("change", handler);
   }, []);
 
-  if (!isMounted) return <>{children}</>;
-
   return (
     <div className="flex w-full h-screen overflow-hidden bg-background">
       {/* Main Content Area */}
@@ -54,26 +52,28 @@ export function VisitorLayoutWrapper({
       </main>
 
       {/* Desktop Sidebar - Pure Flex Box */}
-      <aside
-        className={cn(
-          "hidden md:flex flex-col h-full bg-background border-l transition-[width] duration-300 ease-in-out shrink-0 overflow-hidden",
-          resolvedTheme === "dark" ? "light" : "dark",
-          open ? "w-[400px] lg:w-[448px] border-l" : "w-0 border-l-0",
-        )}
-      >
-        <div className="w-[400px] lg:w-[448px] h-full flex flex-col relative bg-background text-foreground">
-          {open && (
-            <ChatInterface
-              profile={profile}
-              botConfig={botConfig}
-              onClose={() => setOpen(false)}
-            />
+      {isMounted && (
+        <aside
+          className={cn(
+            "hidden md:flex flex-col h-full bg-background border-l transition-[width] duration-300 ease-in-out shrink-0 overflow-hidden",
+            resolvedTheme === "dark" ? "light" : "dark",
+            open ? "w-[400px] lg:w-[448px] border-l" : "w-0 border-l-0",
           )}
-        </div>
-      </aside>
+        >
+          <div className="w-[400px] lg:w-[448px] h-full flex flex-col relative bg-background text-foreground">
+            {open && (
+              <ChatInterface
+                profile={profile}
+                botConfig={botConfig}
+                onClose={() => setOpen(false)}
+              />
+            )}
+          </div>
+        </aside>
+      )}
 
       {/* Mobile Sheet (Overlay) - Only rendered physically below md break */}
-      {!isDesktop && (
+      {isMounted && !isDesktop && (
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent
             side="right"
@@ -102,7 +102,7 @@ export function VisitorLayoutWrapper({
       )}
 
       {/* Floating Action Button (FAB) */}
-      {!open && (
+      {isMounted && !open && (
         <Button
           size="icon"
           onClick={() => setOpen(true)}
