@@ -117,13 +117,29 @@ Work history entry, referenced by `experienceTimelineBlock`.
 
 - `title`, `company`, `location`, `startDate`, `endDate`, `description` (Portable Text), `sortOrder`
 
+#### `navigation` (Document)
+
+Represents a reusable navigation menu (e.g., Main Menu, Footer Menu). Supports nested items.
+
+- `name` (String — Internal identifier)
+- `items` (Array of `navigationItem` objects)
+
+#### `navigationItem` (Object)
+
+A recursive object for building menu structures.
+
+- `label` (String)
+- `link` (Array: Reference to `page` or External URL object)
+- `children` (Array of `navigationItem` — supports up to 3 levels of nesting)
+
 #### `siteSettings` (Singleton Document)
 
 Global site configuration:
 
 - `siteName` (String)
 - `logo` (Sanity Image)
-- `navigation` (Array of `{ label, link }` — link can reference a `page` document or be an external URL)
+- `mainNavigation` (Reference to a `navigation` document)
+- `footerNavigation` (Reference to a `navigation` document)
 - `footer` (Object: `copyrightText`, `socialLinks[]`)
 - `brandColors` (Object: `primary`, `secondary`, `accent` — hex values for CSS custom properties)
 

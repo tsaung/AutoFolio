@@ -1,5 +1,6 @@
 // Objects
 import { seo } from "./objects/seo";
+import { navigationItem } from "./objects/navigation-item";
 
 // Blocks
 import { heroBlock } from "./blocks/hero-block";
@@ -12,10 +13,12 @@ import { project } from "./documents/project";
 import { experience } from "./documents/experience";
 import { siteSettings } from "./documents/site-settings";
 import { skill } from "./documents/skill";
+import { navigation } from "./documents/navigation";
 
 export const schemaTypes = [
   // Objects
   seo,
+  navigationItem,
   // Blocks
   heroBlock,
   richTextBlock,
@@ -26,4 +29,5 @@ export const schemaTypes = [
   experience,
   skill,
   siteSettings,
+  navigation,
 ];
