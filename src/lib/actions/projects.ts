@@ -93,6 +93,7 @@ export async function createProject(
   }
 
   revalidatePath("/projects");
+  revalidatePath("/dashboard");
   after(() => syncProjectsToKnowledge(user.id));
 
   return data;
@@ -129,6 +130,7 @@ export async function updateProject(
   }
 
   revalidatePath("/projects");
+  revalidatePath("/dashboard");
   after(() => syncProjectsToKnowledge(user.id));
 
   return data;
@@ -157,6 +159,7 @@ export async function deleteProject(id: string): Promise<void> {
   }
 
   revalidatePath("/projects");
+  revalidatePath("/dashboard");
   after(() => syncProjectsToKnowledge(user.id));
 }
 
@@ -196,6 +199,7 @@ export async function reorderProjects(
   }
 
   revalidatePath("/projects");
+  revalidatePath("/dashboard");
   after(() => syncProjectsToKnowledge(user.id));
 }
 

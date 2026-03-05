@@ -93,6 +93,7 @@ export async function createSkill(
   }
 
   revalidatePath("/skills");
+  revalidatePath("/dashboard");
   after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
@@ -128,6 +129,7 @@ export async function updateSkill(
   }
 
   revalidatePath("/skills");
+  revalidatePath("/dashboard");
   after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
@@ -155,6 +157,7 @@ export async function deleteSkill(id: string): Promise<void> {
   }
 
   revalidatePath("/skills");
+  revalidatePath("/dashboard");
   after(() => syncSkillsToKnowledge(user.id));
 }
 
@@ -188,6 +191,7 @@ export async function reorderSkills(
   }
 
   revalidatePath("/skills");
+  revalidatePath("/dashboard");
   after(() => syncSkillsToKnowledge(user.id));
 }
 

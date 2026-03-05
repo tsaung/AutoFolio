@@ -96,6 +96,7 @@ export async function createDocument(input: {
   }
 
   revalidatePath("/knowledge");
+  revalidatePath("/dashboard");
 
   // Background: chunk + embed
   after(() => processDocument(data.id, user.id, input.content));
@@ -135,6 +136,7 @@ export async function updateDocument(
   }
 
   revalidatePath("/knowledge");
+  revalidatePath("/dashboard");
 
   // Background: re-chunk + re-embed
   after(() => processDocument(data.id, user.id, input.content));
@@ -165,4 +167,5 @@ export async function deleteDocument(id: string): Promise<void> {
   }
 
   revalidatePath("/knowledge");
+  revalidatePath("/dashboard");
 }
