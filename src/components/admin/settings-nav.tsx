@@ -51,17 +51,17 @@ export function SettingsNav({ className, items, ...props }: SettingsNavProps) {
 export const settingsNavItems = [
   {
     title: "Profile",
-    href: "/settings/profile",
+    href: "/admin/settings/profile",
     icon: User,
   },
   {
     title: "Site Settings",
-    href: "/settings/site",
+    href: "/admin/settings/site",
     icon: Globe,
   },
   {
     title: "Bot Configuration",
-    href: "/settings/bot",
+    href: "/admin/settings/bot",
     icon: Bot,
   },
 ];

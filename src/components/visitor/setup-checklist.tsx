@@ -29,7 +29,7 @@ export function SetupChecklist({ profile, hasAnyUser }: SetupChecklistProps) {
     {
       title: "Setup Profile",
       description: "Add your name, profession, and bio details.",
-      href: "/settings/profile",
+      href: "/admin/settings/profile",
       cta: "Setup Profile",
       isComplete: !!profile,
     },

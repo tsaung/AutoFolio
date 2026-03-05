@@ -25,9 +25,19 @@ export default async function DashboardPage() {
 
   // Fetch Sanity Counts
   const [projectsCount, experiencesCount, skillsCount] = await Promise.all([
-    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "project"])`, {}, { cache: "no-store" }),
-    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "experience"])`, {}, { cache: "no-store" }),
-    client.withConfig({ useCdn: false }).fetch<number>(`count(*[_type == "skill"])`, {}, { cache: "no-store" }),
+    client
+      .withConfig({ useCdn: false })
+      .fetch<number>(`count(*[_type == "project"])`, {}, { cache: "no-store" }),
+    client
+      .withConfig({ useCdn: false })
+      .fetch<number>(
+        `count(*[_type == "experience"])`,
+        {},
+        { cache: "no-store" },
+      ),
+    client
+      .withConfig({ useCdn: false })
+      .fetch<number>(`count(*[_type == "skill"])`, {}, { cache: "no-store" }),
   ]);
 
   const counts: Record<string, number> = {
@@ -59,13 +69,13 @@ export default async function DashboardPage() {
             </p>
             <div className="flex items-center justify-between">
               <Link
-                href="/projects"
+                href="/admin/projects"
                 className="text-xs text-primary flex items-center hover:underline"
               >
                 Manage Projects <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
               <Link
-                href="/projects/new"
+                href="/admin/projects/new"
                 className={
                   buttonVariants({ variant: "outline", size: "sm" }) +
                   " h-7 text-xs"
@@ -90,13 +100,13 @@ export default async function DashboardPage() {
             </p>
             <div className="flex items-center justify-between">
               <Link
-                href="/experiences"
+                href="/admin/experiences"
                 className="text-xs text-primary flex items-center hover:underline"
               >
                 Manage Experiences <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
               <Link
-                href="/experiences/new"
+                href="/admin/experiences/new"
                 className={
                   buttonVariants({ variant: "outline", size: "sm" }) +
                   " h-7 text-xs"
@@ -121,7 +131,7 @@ export default async function DashboardPage() {
             </p>
             <div className="flex items-center justify-between">
               <Link
-                href="/skills"
+                href="/admin/skills"
                 className="text-xs text-primary flex items-center hover:underline"
               >
                 Manage <ArrowRight className="ml-1 h-3 w-3" />
@@ -130,7 +140,6 @@ export default async function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -163,13 +172,13 @@ export default async function DashboardPage() {
             </p>
             <div className="flex items-center justify-between">
               <Link
-                href="/knowledge"
+                href="/admin/knowledge"
                 className="text-xs text-primary flex items-center hover:underline"
               >
                 Manage <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
               <Link
-                href="/knowledge/new"
+                href="/admin/knowledge/new"
                 className={
                   buttonVariants({ variant: "outline", size: "sm" }) +
                   " h-7 text-xs"

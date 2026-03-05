@@ -18,17 +18,17 @@ import { Button } from "@/components/ui/button";
 const sidebarItems = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/admin",
     icon: LayoutDashboard,
   },
   {
     title: "Knowledge Base",
-    href: "/knowledge",
+    href: "/admin/knowledge",
     icon: Database,
   },
   {
     title: "Settings",
-    href: "/settings",
+    href: "/admin/settings",
     icon: Settings,
   },
   {
@@ -68,10 +68,11 @@ export function SidebarContent({
       >
         {!collapsed && (
           <Link
-            href="/dashboard"
+            href="/admin"
             className="flex items-center gap-2 font-semibold overflow-hidden whitespace-nowrap"
           >
-            <span className="">{siteName || "BotFolio Admin"}</span> {/* Use siteName here */}
+            <span className="">{siteName || "BotFolio Admin"}</span>{" "}
+            {/* Use siteName here */}
           </Link>
         )}
         {onToggle && (
@@ -124,7 +125,11 @@ interface AdminSidebarProps {
   siteName?: string;
 }
 
-export function AdminSidebar({ collapsed, onToggle, siteName }: AdminSidebarProps) {
+export function AdminSidebar({
+  collapsed,
+  onToggle,
+  siteName,
+}: AdminSidebarProps) {
   return (
     <SidebarContent
       collapsed={collapsed}
