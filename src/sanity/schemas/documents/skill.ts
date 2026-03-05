@@ -45,11 +45,27 @@ export const skill = defineType({
       type: "string",
       hidden: true,
     }),
+    defineField({
+      name: "builtinIcon",
+      title: "Built-in Icon Name",
+      type: "string",
+      description: "Name of the icon from lucide-react (e.g., 'terminal', 'database'). Used if Custom Icon is not provided.",
+    }),
+    defineField({
+      name: "customIcon",
+      title: "Custom Icon",
+      type: "image",
+      description: "Upload a custom icon (e.g., SVG or PNG). If provided, this will override the Built-in Icon.",
+      options: {
+        accept: "image/*",
+      },
+    }),
   ],
   preview: {
     select: {
       title: "name",
       subtitle: "category",
+      media: "customIcon",
     },
   },
   orderings: [

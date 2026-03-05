@@ -12,7 +12,6 @@ import { project } from "./documents/project";
 import { experience } from "./documents/experience";
 import { siteSettings } from "./documents/site-settings";
 import { skill } from "./documents/skill";
-import { socialLink } from "./documents/social-link";
 
 export const schemaTypes = [
   // Objects
@@ -26,6 +25,5 @@ export const schemaTypes = [
   project,
   experience,
   skill,
-  socialLink,
   siteSettings,
 ];
