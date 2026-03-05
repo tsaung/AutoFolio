@@ -91,6 +91,7 @@ export async function createSocialLink(
   }
 
   revalidatePath("/social-links");
+  revalidatePath("/dashboard");
   return data;
 }
 
@@ -125,6 +126,7 @@ export async function updateSocialLink(
   }
 
   revalidatePath("/social-links");
+  revalidatePath("/dashboard");
   return data;
 }
 
@@ -151,6 +153,7 @@ export async function deleteSocialLink(id: string): Promise<void> {
   }
 
   revalidatePath("/social-links");
+  revalidatePath("/dashboard");
 }
 
 export async function reorderSocialLinks(
@@ -183,6 +186,7 @@ export async function reorderSocialLinks(
   }
 
   revalidatePath("/social-links");
+  revalidatePath("/dashboard");
 }
 
 /**

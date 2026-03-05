@@ -77,6 +77,7 @@ export async function createProject(
     });
 
     revalidatePath("/projects", "layout");
+    revalidatePath("/dashboard");
     // TODO: update RAG pipeline to use Sanity webhook or direct call
     return data as unknown as SanityProject;
   } catch (error) {
@@ -109,6 +110,7 @@ export async function updateProject(
       .commit();
 
     revalidatePath("/projects", "layout");
+    revalidatePath("/dashboard");
     // TODO: update RAG pipeline to use Sanity webhook or direct call
     return data as unknown as SanityProject;
   } catch (error) {
@@ -131,6 +133,7 @@ export async function deleteProject(id: string): Promise<void> {
   try {
     await writeClient.delete(id);
     revalidatePath("/projects", "layout");
+    revalidatePath("/dashboard");
     // TODO: update RAG pipeline to use Sanity webhook or direct call
   } catch (error) {
     console.error("Error deleting project from Sanity:", error);
@@ -160,6 +163,7 @@ export async function reorderProjects(
 
     await tx.commit();
     revalidatePath("/projects", "layout");
+    revalidatePath("/dashboard");
     // TODO: update RAG pipeline
   } catch (error) {
     console.error("Error reordering projects in Sanity:", error);
@@ -239,6 +243,7 @@ export async function createSkill(
     });
 
     revalidatePath("/skills", "layout");
+    revalidatePath("/dashboard");
     // TODO: RAG pipeline sync
     return data as unknown as SanitySkill;
   } catch (error) {
@@ -271,6 +276,7 @@ export async function updateSkill(
       .commit();
 
     revalidatePath("/skills", "layout");
+    revalidatePath("/dashboard");
     // TODO: RAG pipeline sync
     return data as unknown as SanitySkill;
   } catch (error) {
@@ -293,6 +299,7 @@ export async function deleteSkill(id: string): Promise<void> {
   try {
     await writeClient.delete(id);
     revalidatePath("/skills", "layout");
+    revalidatePath("/dashboard");
     // TODO: RAG pipeline sync
   } catch (error) {
     console.error("Error deleting skill from Sanity:", error);
@@ -322,6 +329,7 @@ export async function reorderSkills(
 
     await tx.commit();
     revalidatePath("/skills", "layout");
+    revalidatePath("/dashboard");
     // TODO: RAG pipeline sync
   } catch (error) {
     console.error("Error reordering skills in Sanity:", error);
@@ -401,6 +409,7 @@ export async function createSocialLink(
     });
 
     revalidatePath("/social-links", "layout");
+    revalidatePath("/dashboard");
     return data as unknown as SanitySocialLink;
   } catch (error) {
     console.error("Error creating social link in Sanity:", error);
@@ -432,6 +441,7 @@ export async function updateSocialLink(
       .commit();
 
     revalidatePath("/social-links", "layout");
+    revalidatePath("/dashboard");
     return data as unknown as SanitySocialLink;
   } catch (error) {
     console.error("Error updating social link in Sanity:", error);
@@ -453,6 +463,7 @@ export async function deleteSocialLink(id: string): Promise<void> {
   try {
     await writeClient.delete(id);
     revalidatePath("/social-links", "layout");
+    revalidatePath("/dashboard");
   } catch (error) {
     console.error("Error deleting social link from Sanity:", error);
     throw new Error("Failed to delete social link");
@@ -481,6 +492,7 @@ export async function reorderSocialLinks(
 
     await tx.commit();
     revalidatePath("/social-links", "layout");
+    revalidatePath("/dashboard");
   } catch (error) {
     console.error("Error reordering social links in Sanity:", error);
     throw new Error("Failed to reorder social links");

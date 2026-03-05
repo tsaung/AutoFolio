@@ -93,6 +93,7 @@ export async function createExperience(
   }
 
   revalidatePath("/experiences");
+  revalidatePath("/dashboard");
   after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
@@ -128,6 +129,7 @@ export async function updateExperience(
   }
 
   revalidatePath("/experiences");
+  revalidatePath("/dashboard");
   after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
@@ -155,6 +157,7 @@ export async function deleteExperience(id: string): Promise<void> {
   }
 
   revalidatePath("/experiences");
+  revalidatePath("/dashboard");
   after(() => syncExperiencesToKnowledge(user.id));
 }
 
@@ -188,6 +191,7 @@ export async function reorderExperiences(
   }
 
   revalidatePath("/experiences");
+  revalidatePath("/dashboard");
   after(() => syncExperiencesToKnowledge(user.id));
 }
 
