@@ -46,11 +46,25 @@ From the dashboard, users can:
 /admin/pages/new               → Create new page
 /admin/pages/[id]/edit         → Page builder (form-based blocks + reorder)
 /admin/projects                → List/CRUD projects
+/admin/projects/new            → Create new project
 /admin/projects/[id]/edit      → Edit project
 /admin/experiences             → List/CRUD experiences
+/admin/experiences/new         → Create new experience
 /admin/experiences/[id]/edit   → Edit experience
-/settings/site                 → Site settings (Sanity)
-/settings/bot                  → Bot config (Supabase)
+/admin/skills                  → List/CRUD skills
+/admin/skills/new              → Create new skill
+/admin/skills/[id]/edit        → Edit skill
+/admin/social-links            → List/CRUD social links
+/admin/social-links/new        → Create new social link
+/admin/social-links/[id]/edit  → Edit social link
+/admin/knowledge               → List/CRUD knowledge documents
+/admin/knowledge/new           → Create new knowledge document
+/admin/knowledge/[id]/edit     → Edit knowledge document
+/admin/improve                 → Chat/AI Improvement interface
+/admin/settings                → Settings overview
+/admin/settings/profile        → Profile settings
+/admin/settings/site           → Site settings (Sanity)
+/admin/settings/bot            → Bot config (Supabase)
 ```
 
 **Server-side CRUD flow:**
