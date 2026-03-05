@@ -3,9 +3,13 @@
 ## 1. Authentication
 
 - **Method:** Email/Password via Supabase Auth.
-- **Registration:** Invite-only (no public signup).
-- **Flows:** Login, Forgot Password, Update Password.
-- **Status:** Implemented.
+- **Registration:** Invite-only for admins (no public signup for admins). **Planned (V3):** Public user signup to access frontend chat functionality, limiting chat volume.
+- **Flows:** Login, Forgot Password, Update Password, Public Signup (Planned).
+- **Roles & Permissions (Planned V3):**
+  - **Superadmin:** Manually created in Supabase. Full access to content management, bot settings, and admin user management.
+  - **Admin:** Invited by `superadmin`. Access to content management and bot settings.
+  - **Public:** Self-registered visitors. Access limited to public chat UI.
+- **Status:** Implemented (Basic Auth). V3 granular roles and public signup pending.
 
 ## 2. Admin Dashboard
 
@@ -16,6 +20,7 @@
   - Mobile-responsive.
 - **Features:**
   - **Overview:** Consolidated dashboard with portfolio item counts (Projects, Experiences, Skills, Social Links), Knowledge Fragments, and Chats. Quick-add dialogs for Skills and Social Links.
+  - **User Management (Planned V3):** Panel for `superadmin` to invite and manage other `admin` users.
   - **Knowledge Base:** CRUD for RAG documents (user-provided content). Create/Edit via full-page form, delete with confirmation. Phase 1: manual documents only.
     - **Auto-Processing:** On create/update, documents are automatically chunked and embedded in the background via Next.js `after()`.
     - **Status:** Implemented.
@@ -46,6 +51,7 @@
 
 - **Interface:** Full-screen chat UI.
 - **Functionality:**
+  - **Access Control (Planned V3):** Chat interface locked behind public user authentication to manage volume.
   - **Welcome Screen:** Display a welcoming message and suggested prompts (e.g., "Tell me about your experience", "Contact info").
   - **Chat Interaction:**
     - User types a message or clicks a prompt.
