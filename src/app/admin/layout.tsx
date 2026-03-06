@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AdminLayoutWrapper } from "@/components/admin/admin-layout-wrapper";
-import { AdminHeader } from "@/components/admin/header";
 
 import { getSiteSettings } from "@/lib/actions/site-settings";
 
@@ -18,8 +17,7 @@ export default async function AdminLayout({
 
   return (
     <AdminLayoutWrapper siteName={settings?.siteName}>
-      <AdminHeader />
-      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto min-h-0">
+      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto">
         {children}
       </main>
     </AdminLayoutWrapper>
