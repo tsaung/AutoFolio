@@ -201,14 +201,20 @@ export async function reorderExperiences(
 
 export async function getPublicExperiences(
   userId: string,
+  isPreview = false
 ): Promise<Experience[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("experiences")
     .select("*")
     .eq("user_id", userId)
     .order("sort_order", { ascending: true });
+
+  // Experiences doesn't have a published status yet according to schema,
+  // but if we ever add it, this preview check handles it.
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching public experiences:", error);

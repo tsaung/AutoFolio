@@ -25,73 +25,123 @@
 
 > **Architecture:** Sanity (CMS + Auth + Dashboard) + Supabase (vectors + bot configs) + Next.js (frontend + API)
 
-### Phase 1a: Sanity Setup & Studio Embedding ✅
 
-- [x] Git baseline (`v1.2.0` tag)
-- [x] Install `next-sanity`, `@sanity/image-url`
-- [x] Embed Sanity Studio at `/studio`
-- [x] Configure env vars + CORS
-- [x] Verify Studio loads
+> [!TIP]
+> **Before starting Phase 1:** Tag the current codebase as `v1.0.0` in Git so there's a clear rollback point.
 
-### Phase 1b: Schema Design
+### Phase 1a: Sanity Setup ✅
 
-- [ ] `page` document (with `pageBuilder` array)
-- [ ] `project` document
-- [ ] `experience` document
-- [ ] `siteSettings` singleton (site name, logo, nav, footer, brand colors)
-- [ ] `seo` object type (attached to `page`)
-- [ ] Foundational blocks: `heroBlock`, `richTextBlock`, `ctaBlock`
+- [x] Install `next-sanity`, `sanity`, and `@sanity/image-url`.
+- [x] Create the Sanity project (via `sanity init` or Sanity dashboard).
+- [x] Configure Sanity CORS origins and API tokens.
+- [x] Add Sanity env vars to `.env.local.example` and document in README.
+- [x] Verify: Sanity API is accessible and can create test documents.
 
-### Phase 2: Next.js Page Renderer
+### Phase 1b: Schema Design ✅
 
-- [ ] Dynamic catch-all route (`app/[[...slug]]/page.tsx`)
-- [ ] `PageRenderer` component (block → React component mapping)
-- [ ] All General Purpose block components
-- [ ] Portfolio block components
-- [ ] Fetch `siteSettings` for nav/footer
-- [ ] Generate `metadata` from `seo` object
+- [x] Define the `page` document type with `pageBuilder` array field.
+- [x] Define the `project` document type.
+- [x] Define the `experience` document type.
+- [x] Define the `siteSettings` singleton (site name, logo, navigation, footer, brand colors).
+- [x] Define the `seo` object type and attach to `page`.
+- [x] Implement 3 foundational blocks: `heroBlock`, `richTextBlock`, `ctaBlock`.
+- [x] Verify: All document types and blocks are accessible via Sanity API.
 
-### Phase 2.5: Themeable Design System
+### Phase 2: Next.js Page Renderer ✅
 
-- [ ] CSS custom properties for brand colors, fonts, spacing
-- [ ] Wire `siteSettings` brand colors → CSS variables
-- [ ] All blocks consume design tokens (no hardcoded colors)
+- [x] Create an isolated test route to fetch `page` data via GROQ.
+- [x] Build the `PageRenderer` component to map `_type` to React components.
+- [x] Scaffold foundational block components (Hero, RichText, CTA).
+- [x] Generate Next.js `metadata` from the `seo` object on each page.
+- [x] Verify: Creating a page with blocks renders correctly on the frontend.
 
-### Phase 3: RAG Auto-Ingestion Pipeline
+### Phase 3: Studio & SDK Cleanup
 
-- [ ] Extend `knowledge_chunks` with `source`, `source_id`, `source_rev`
-- [ ] `/api/webhooks/sanity` route with signature verification
-- [ ] Idempotent embedding logic (`_id` + `_rev`)
-- [ ] Portable Text parsing (`@portabletext/to-plain-text`)
+> [!IMPORTANT]
+> This phase cleans up the Sanity Studio / App SDK experiments before building the custom dashboard.
 
-### Phase 4: Chat Integration & Staleness Check
+- [x] Remove embedded Studio route (`/studio`, catch-all `[[...tool]]/page.tsx`).
+- [x] Remove `admin/` App SDK directory (if exists).
+- [x] Remove `BotSettingsTool.tsx` and related Studio tool files.
+- [x] Remove `@sanity/studio-secrets` dependency.
+- [x] Remove `/api/admin/bot-config` API route (will be replaced by server action).
+- [x] Keep: Sanity schemas, `next-sanity` client, GROQ queries, image utils.
+- [x] Verify: `npm run build` succeeds with no dead imports.
 
-- [ ] Unified `knowledge_chunks` vector search
-- [ ] On-the-fly staleness check on chat open
-- [ ] Social links / contact info from Sanity `siteSettings`
-- [ ] Refined AI system prompt
+### Phase 4: Admin Dashboard — Projects & Experiences CRUD
 
-### Phase 5: Cleanup & Deprecation
+- [x] Ensure Supabase Auth (login/signup) works for dashboard access.
+- [x] Protect `/admin/*` routes with auth middleware.
+- [x] Build dashboard layout: sidebar nav, header with user info.
+- [x] Build `/admin/projects` — list, create, edit, delete projects via Sanity API.
+- [x] Build `/admin/experiences` — list, create, edit, delete experiences via Sanity API.
+- [x] Implement image upload to Sanity Asset CDN via server action.
+- [x] Verify: CRUD operations from dashboard create/update documents in Sanity.
 
-- [ ] **Drop Supabase Auth** entirely (Sanity handles auth)
-- [ ] **Remove admin routes:** `/admin/*`, `/dashboard`, login/signup flows
-- [ ] **Remove Supabase tables:** `projects`, `experiences`, `skills`, `social_links`, `profiles`
-- [ ] **Remove server actions:** All CRUD actions for deprecated tables
-- [ ] **Remove:** Cloudinary dependencies
-- [ ] **Retain:** `bot_configs`, `knowledge_documents`, `knowledge_chunks`, `/admin/settings` (bot config only)
-- [ ] Update `.agent/rules/` and `specs/` for V2
+### Phase 5: Admin Dashboard — Settings & UI Component Library
 
-### Phase 6: Live Preview & Draft Support
+- [x] Build `/settings/site` — site settings form (site name, navigation, footer, brand colors → saved to Sanity).
+- [x] Build bot config section — model, provider, system prompt, predefined prompts (→ saved to Supabase).
+- [x] Migrate `bot_configs` table if needed (ensure no Supabase Auth user_id dependency).
+- [ ] Refactor generic form UI components (Image Upload, Array Builders for nested lists like socialLinks, Input with Validation, Rich Text Editor) into a reusable `admin/ui` library based on the inputs developed so far.
+- [x] Verify: Settings changes from dashboard reflect on the public site layout (Header, Footer, Navigation).
 
-- [ ] `next-sanity` preview mode
-- [ ] Sanity Presentation tool / `@sanity/visual-editing`
-- [ ] Draft/published toggle
+### Phase 6: Admin Dashboard — Page Builder
 
-### Phase 7: Polish & Documentation
+- [x] Build `/admin/pages` — list all pages, create new page.
+- [x] Build `/admin/pages/[id]/edit` — form-based page builder using reusable UI components.
+- [x] Implement "Add Block" dropdown with block type selector.
+- [x] Build form for each core block type (Hero, RichText, CTA).
+- [x] Implement block reordering with `@dnd-kit/sortable`.
+- [x] Implement block removal.
+- [ ] Implement Next.js draft mode for page preview.
+- [x] Verify: Page built in dashboard renders correctly on the frontend.
 
-- [ ] End-to-end template test (clone → setup → deploy)
-- [ ] Template README for marketplace users
-- [ ] Update all spec files to V2 final state
+### Phase 7: Themeable Design System
+
+- [ ] Implement CSS custom properties for brand colors, fonts, and spacing.
+- [ ] Wire brand color values from `siteSettings` (fetched at layout-level) into CSS variables.
+- [ ] Ensure all block components consume design tokens (no hardcoded colors).
+- [ ] Verify: Changing brand colors in dashboard updates the site's look.
+
+### Phase 8: Remaining Block Components
+
+- [ ] Create and polish remaining block components: FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm, ProjectGrid, ExperienceTimeline, Skills.
+- [ ] Add corresponding forms in the page builder for each new block type.
+- [ ] Verify: All block types are createable from dashboard and render on frontend.
+
+### Phase 9: RAG Auto-Ingestion Pipeline
+
+- [ ] Add `source`, `source_id`, and `source_rev` columns to `knowledge_chunks` table.
+- [ ] Install `@portabletext/to-plain-text` for Portable Text serialization.
+- [ ] Develop the `/api/webhooks/sanity` API route with signature verification.
+- [ ] Implement idempotent embedding logic (check `_id` + `_rev`).
+- [ ] Configure the webhook trigger in the Sanity project dashboard.
+- [ ] Verify: Creating/updating content in dashboard triggers webhook and upserts embeddings.
+
+### Phase 10: Chat RAG Integration & Staleness Check
+
+- [ ] Update the chat API to use the unified `knowledge_chunks` table.
+- [ ] Implement the on-the-fly staleness check on chat open.
+- [ ] Refine the AI system prompt to reference dynamic Sanity content.
+- [ ] Integrate chat interface into V2 layout — source bot name/avatar from `siteSettings`.
+- [ ] Verify: Chat correctly answers questions about content created via dashboard.
+
+### Phase 11: V1 Cleanup & Deprecation
+
+- [ ] Remove old Supabase content tables: `projects`, `experiences`, `skills`, `social_links`, `profiles`.
+- [ ] Remove server actions for deprecated tables (in `src/lib/actions/`).
+- [ ] Remove old admin routes that duplicate new dashboard functionality.
+- [ ] Remove Cloudinary dependencies (`src/lib/cloudinary.ts`, `src/lib/cloudinary-loader.ts`).
+- [ ] Update `.agent/rules/*.md` and `specs/*.md` to reflect final V2 architecture.
+- [ ] Verify: App builds cleanly, no dead imports or references to removed tables.
+
+### Phase 12: Polish & Documentation
+
+- [ ] End-to-end test: clone template → configure env → deploy to Vercel.
+- [ ] Write template README with setup instructions for marketplace users.
+- [ ] Update all spec files to match V2 final state.
+- [ ] Update `.agent/rules/` to reflect V2 conventions.
 
 ## Post-Migration
 

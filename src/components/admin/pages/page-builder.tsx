@@ -138,6 +138,7 @@ export function PageBuilder({
   const [blocks, setBlocks] = useState(initialBlocks);
   const [isPending, startTransition] = useTransition();
   const [isSaved, setIsSaved] = useState(true);
+  const [previewKey, setPreviewKey] = useState(Date.now());
 
   // DnD sensors
   const sensors = useSensors(
@@ -183,13 +184,15 @@ export function PageBuilder({
       try {
         await updatePageBlocks(pageId, blocks);
         setIsSaved(true);
+        setPreviewKey(Date.now()); // Update the iframe key to fetch fresh data
       } catch (error) {
         console.error("Failed to save blocks", error);
       }
     });
   };
 
-  const previewUrl = `/${slug === 'home' ? '' : slug}`;
+  const basePreviewUrl = `/${slug === 'home' ? '' : slug}`;
+  const previewUrl = `${basePreviewUrl}?preview=true&t=${previewKey}`;
 
   return (
     <div className="flex h-[calc(100vh-140px)] w-full relative">
@@ -257,7 +260,7 @@ export function PageBuilder({
              {/* Dev reload hint */}
             {!isSaved && <span className="text-[10px] text-amber-500 font-medium">Save to refresh preview</span>}
             <Button variant="ghost" size="icon" className="h-6 w-6" asChild>
-                <a href={previewUrl} target="_blank" rel="noreferrer">
+                <a href={basePreviewUrl} target="_blank" rel="noreferrer">
                     <Maximize2 className="h-3 w-3" />
                 </a>
             </Button>
@@ -266,7 +269,7 @@ export function PageBuilder({
         <div className="flex-1 w-full relative bg-zinc-100 overflow-hidden">
              {/* Use key on iframe to force unmount/remount on save to fetch fresh server data immediately */}
              <iframe
-                key={isSaved ? 'saved' : 'dirty'}
+                key={previewKey}
                 src={previewUrl}
                 className="w-full h-full border-none"
                 title="Live Preview"

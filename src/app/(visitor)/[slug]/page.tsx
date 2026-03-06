@@ -27,6 +27,7 @@ type SanityPage = {
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 // ---------------------------------------------------------------------------
@@ -54,12 +55,20 @@ export async function generateMetadata({
 // Page Component
 // ---------------------------------------------------------------------------
 
-export default async function DynamicPage({ params }: PageProps) {
+export default async function DynamicPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const { preview } = await searchParams;
+  const isPreview = preview === "true";
+
+  // When previewing via iframe from the builder, bypass CDN and fetch latest drafts/published
+  const fetchClient = isPreview
+    ? client.withConfig({ useCdn: false, perspective: 'previewDrafts' })
+    : client;
+  const fetchOptions = isPreview ? { cache: 'no-store' as RequestCache } : undefined;
 
   // Fetch Sanity page and required shared data in parallel
   const [page, profile, siteSettings] = await Promise.all([
-    client.fetch<SanityPage | null>(PAGE_BY_SLUG_QUERY, { slug }),
+    fetchClient.fetch<SanityPage | null>(PAGE_BY_SLUG_QUERY, { slug }, fetchOptions),
     getPublicProfile(),
     getPublicSiteSettings()
   ]);
