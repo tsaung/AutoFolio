@@ -23,13 +23,21 @@ import { VisitorNav } from "@/components/portfolio/visitor-nav";
 
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 
-export default async function VisitorPage() {
+export default async function VisitorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const profile = await getPublicProfile();
+
+  // Extract preview params
+  const { preview } = await searchParams;
+  const isPreview = preview === "true";
 
   // Parallel data fetching for performance
   const [projects, experiences, skills, socialLinks, siteSettings] = await Promise.all([
-    profile ? getPublicProjects(profile.id) : Promise.resolve([]),
-    profile ? getPublicExperiences(profile.id) : Promise.resolve([]),
+    profile ? getPublicProjects(profile.id, isPreview) : Promise.resolve([]),
+    profile ? getPublicExperiences(profile.id, isPreview) : Promise.resolve([]),
     profile ? getPublicSkills(profile.id) : Promise.resolve([]),
     profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
     getPublicSiteSettings(),

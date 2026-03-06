@@ -207,15 +207,19 @@ export async function reorderProjects(
  * Public Actions
  */
 
-export async function getPublicProjects(userId: string): Promise<Project[]> {
+export async function getPublicProjects(userId: string, isPreview = false): Promise<Project[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("projects")
     .select("*")
-    .eq("status", "published")
-    .eq("user_id", userId)
-    .order("sort_order", { ascending: true });
+    .eq("user_id", userId);
+
+  if (!isPreview) {
+    query = query.eq("status", "published");
+  }
+
+  const { data, error } = await query.order("sort_order", { ascending: true });
 
   if (error) {
     console.error("Error fetching public projects:", error);
