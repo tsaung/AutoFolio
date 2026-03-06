@@ -20,6 +20,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const siteSettingsSchema = z.object({
   siteName: z.string().min(1, "Site name is required"),
@@ -28,10 +35,8 @@ const siteSettingsSchema = z.object({
     secondary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form"),
     accent: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form"),
   }).optional(),
-  navigation: z.array(z.object({
-    label: z.string().min(1, "Label is required"),
-    link: z.array(z.any()).optional() // Using any for complex referenced object, real production would validate strictly or use an ID
-  })).optional(),
+  mainNavigation: z.string().optional(),
+  footerNavigation: z.string().optional(),
   footer: z.object({
     copyrightText: z.string().optional(),
     socialLinks: z.array(z.object({
@@ -44,7 +49,7 @@ const siteSettingsSchema = z.object({
 
 type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
 
-export function SiteSettingsForm({ initialData }: { initialData: any }) {
+export function SiteSettingsForm({ initialData, availableNavigations = [] }: { initialData: any, availableNavigations?: any[] }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
@@ -60,14 +65,10 @@ export function SiteSettingsForm({ initialData }: { initialData: any }) {
     defaultValues: {
       siteName: initialData?.siteName || "",
       brandColors: defaultColors,
-      navigation: initialData?.navigation || [],
+      mainNavigation: initialData?.mainNavigation?._ref || "",
+      footerNavigation: initialData?.footerNavigation?._ref || "",
       footer: initialData?.footer || { copyrightText: "", socialLinks: [] },
     },
-  });
-
-  const { fields: navFields, append: appendNav, remove: removeNav } = useFieldArray({
-    control: form.control,
-    name: "navigation"
   });
 
   const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
@@ -78,7 +79,17 @@ export function SiteSettingsForm({ initialData }: { initialData: any }) {
   async function onSubmit(data: SiteSettingsFormValues) {
     setIsPending(true);
     try {
-      const result = await updateSiteSettings(data);
+      // Map mainNavigation and footerNavigation string values to Sanity reference objects
+      const submitData = {
+        ...data,
+        mainNavigation: data.mainNavigation
+          ? { _type: "reference", _ref: data.mainNavigation }
+          : undefined,
+        footerNavigation: data.footerNavigation
+          ? { _type: "reference", _ref: data.footerNavigation }
+          : undefined,
+      };
+      const result = await updateSiteSettings(submitData);
       if (result.success) {
         toast.success("Site settings updated successfully.");
         router.refresh();
@@ -166,45 +177,66 @@ export function SiteSettingsForm({ initialData }: { initialData: any }) {
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-medium">Navigation Links</h4>
-              <p className="text-sm text-muted-foreground">Manage the main menu navigational links.</p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {navFields.map((field, index) => (
-              <div key={field.id} className="flex gap-4 items-end">
-                <FormField
-                  control={form.control}
-                  name={`navigation.${index}.label`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className={index !== 0 ? "sr-only" : ""}>Label</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Home" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button 
-                  type="button" 
-                  variant="destructive" 
-                  size="icon" 
-                  onClick={() => removeNav(index)}
-                >
-                  <Trash className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => appendNav({ label: "", link: [] })}
-            >
-              <Plus className="w-4 h-4 mr-2" /> Add Navigation Link
-            </Button>
+          <h4 className="text-sm font-medium">Navigation Menus</h4>
+          <p className="text-sm text-muted-foreground">
+            Select the navigation menus to use for the header and footer.
+          </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="mainNavigation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Main Navigation</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select main menu" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableNavigations.map((nav) => (
+                        <SelectItem key={nav._id} value={nav._id}>
+                          {nav.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    This menu appears in the site header.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="footerNavigation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Footer Navigation</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select footer menu" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableNavigations.map((nav) => (
+                        <SelectItem key={nav._id} value={nav._id}>
+                          {nav.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    This menu appears in the site footer.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 

@@ -12,6 +12,7 @@ import {
   User,
   Briefcase,
   Globe,
+  Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +31,11 @@ const sidebarItems = [
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
+  },
+  {
+    title: "Navigation",
+    href: "/admin/navigation",
+    icon: Menu,
   },
   {
     title: "View Site",

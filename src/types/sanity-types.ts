@@ -65,3 +65,32 @@ export interface SanitySocialLink {
   createdBy?: string;
   updatedBy?: string;
 }
+
+export interface SanityNavigationItem {
+  _key?: string;
+  _type: "navigationItem";
+  label: string;
+  link?: Array<
+    | { _type: "reference"; _ref: string; _key?: string }
+    | { _type: "externalLink"; url: string; _key?: string }
+  >;
+  children?: SanityNavigationItem[];
+}
+
+export interface SanityNavigation {
+  _id: string;
+  _type: "navigation";
+  _createdAt: string;
+  _updatedAt: string;
+  name: string;
+  items?: SanityNavigationItem[];
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityPage {
+  _id: string;
+  _type: "page";
+  title: string;
+  slug?: { current: string };
+}

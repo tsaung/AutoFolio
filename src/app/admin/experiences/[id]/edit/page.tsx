@@ -3,9 +3,9 @@ import { getExperience } from "@/lib/actions/sanity-experiences"; // Now exists
 import { ExperienceForm } from "@/components/admin/portfolio/experience-form";
 
 interface EditExperiencePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditExperiencePage({
