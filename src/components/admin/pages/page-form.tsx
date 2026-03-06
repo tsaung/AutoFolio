@@ -12,8 +12,9 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { createPage } from "@/lib/actions/pages";
 
 const initialState = {
+  success: false,
   message: "",
-  errors: {},
+  errors: {} as Record<string, string[]>,
 };
 
 function SubmitButton({ isEditing }: { isEditing?: boolean }) {

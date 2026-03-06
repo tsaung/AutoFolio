@@ -138,7 +138,7 @@ describe("Site Settings Server Actions", () => {
       expect(mockSet).toHaveBeenCalledWith(input);
       expect(mockCommit).toHaveBeenCalled();
 
-      expect(mockRevalidateTag).toHaveBeenCalledWith("siteSettings");
+      expect(mockRevalidateTag).toHaveBeenCalledWith("siteSettings", "layout");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/settings", "layout");
       expect(result).toEqual({ success: true, settings: { _id: "siteSettings" } });
     });

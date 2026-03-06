@@ -87,7 +87,7 @@ export function VisitorNav({
   ];
 
   // Map Sanity mainNavigation to our link format
-  const getNavLinks = () => {
+  const getNavLinks = (): { href: string; label: string }[] => {
     if (siteSettings?.mainNavigation?.items?.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return siteSettings.mainNavigation.items.map((item: any) => {

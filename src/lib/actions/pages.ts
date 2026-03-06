@@ -60,7 +60,6 @@ export async function createPage(prevState: any, formData: FormData) {
       pageBuilder: [],
     });
 
-    revalidateTag("pages");
     revalidatePath("/admin/pages");
 
     return {
@@ -99,7 +98,6 @@ export async function updatePageBlocks(
       .set({ pageBuilder: blocks })
       .commit();
 
-    revalidateTag("pages");
     revalidatePath(`/admin/pages/${pageId}/edit`);
     revalidatePath(`/(visitor)/[slug]`, "page"); // generic path invalidation
 
