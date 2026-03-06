@@ -7,20 +7,26 @@ import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function getSiteSettings() {
-  return await client
-    .withConfig({ useCdn: false })
-    .fetch(SITE_SETTINGS_QUERY, {}, { 
-      cache: "no-store", 
+  return await client.withConfig({ useCdn: false }).fetch(
+    SITE_SETTINGS_QUERY,
+    {},
+    {
+      cache: "no-store",
       perspective: "published",
-      next: { tags: ["siteSettings"] }
-    });
+      next: { tags: ["siteSettings"] },
+    },
+  );
 }
 
 export async function getPublicSiteSettings() {
   try {
-    return await client.fetch(SITE_SETTINGS_QUERY, {}, {
-      next: { tags: ["siteSettings"] }
-    });
+    return await client.fetch(
+      SITE_SETTINGS_QUERY,
+      {},
+      {
+        next: { tags: ["siteSettings"] },
+      },
+    );
   } catch (error) {
     console.error("Error fetching public site settings:", error);
     return null;
@@ -41,16 +47,13 @@ export async function updateSiteSettings(input: any) {
   // Create document if it doesn't exist
   await writeClient.createIfNotExists(
     { _id: "siteSettings", _type: "siteSettings" },
-    { returnDocuments: false }
+    { returnDocuments: false },
   );
 
   // Apply updates as patch
-  await writeClient
-    .patch("siteSettings")
-    .set(input)
-    .commit();
+  await writeClient.patch("siteSettings").set(input).commit();
 
-  revalidateTag("siteSettings");
+  revalidateTag("siteSettings", "siteSettings");
   revalidatePath("/settings", "layout");
   revalidatePath("/dashboard");
   return { success: true, settings: { _id: "siteSettings" } };
