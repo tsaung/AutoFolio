@@ -13,6 +13,7 @@ import {
   Briefcase,
   Globe,
   Menu,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +22,11 @@ const sidebarItems = [
     title: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Pages",
+    href: "/admin/pages",
+    icon: FileText,
   },
   {
     title: "Knowledge Base",
