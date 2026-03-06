@@ -20,9 +20,12 @@ const ModeToggle = dynamic(
 export function VisitorNav({
   name,
   avatarUrl,
+  siteSettings,
 }: {
   name?: string | null;
   avatarUrl?: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  siteSettings?: any;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -76,11 +79,32 @@ export function VisitorNav({
     }
   };
 
-  const navLinks = [
+  // Fallback nav links if Sanity navigation is empty
+  const defaultNavLinks = [
     { href: isHome ? "#about" : "/#about", label: "About" },
     { href: isHome ? "#projects" : "/#projects", label: "Projects" },
     { href: isHome ? "#experience" : "/#experience", label: "Experience" },
   ];
+
+  // Map Sanity mainNavigation to our link format
+  const getNavLinks = (): { href: string; label: string }[] => {
+    if (siteSettings?.mainNavigation?.items?.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return siteSettings.mainNavigation.items.map((item: any) => {
+        const link = item.link?.[0];
+        let href = "#";
+        if (link?._type === "reference" && link.slug) {
+          href = `/${link.slug === 'home' ? '' : link.slug}`;
+        } else if (link?._type === "externalLink" && link.url) {
+          href = link.url;
+        }
+        return { href, label: item.label };
+      });
+    }
+    return defaultNavLinks;
+  };
+
+  const navLinks = getNavLinks();
 
   return (
     <>

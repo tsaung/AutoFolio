@@ -37,7 +37,7 @@ export default async function VisitorPage() {
 
   return (
     <div className="flex flex-col min-h-max w-full bg-background text-foreground">
-      <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} />
+      <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} siteSettings={siteSettings} />
 
       <div className="container mx-auto px-4">
         {/* Hero Section */}

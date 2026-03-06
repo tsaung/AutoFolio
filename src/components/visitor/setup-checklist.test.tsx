@@ -24,7 +24,7 @@ describe("SetupChecklist", () => {
     // Step 1 should be indicated as complete (visual check is hard without implementation details, but we can check Step 2 is active)
     expect(screen.getAllByText("Setup Profile").length).toBeGreaterThan(0);
     const settingsLink = screen.getByRole("link", { name: /setup.*profile/i });
-    expect(settingsLink.getAttribute("href")).toBe("/settings/profile");
+    expect(settingsLink.getAttribute("href")).toBe("/admin/settings/profile");
   });
 
   it("renders 100% progress when profile is complete", () => {

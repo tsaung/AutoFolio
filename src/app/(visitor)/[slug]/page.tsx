@@ -3,6 +3,11 @@ import type { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
 import { PAGE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
 import { PageRenderer, type SanityBlock } from "@/components/v2/page-renderer";
+import { VisitorNav } from "@/components/portfolio/visitor-nav";
+import { VisitorFooter } from "@/components/portfolio/visitor-footer";
+import { getPublicProfile } from "@/lib/actions/profile";
+import { getPublicSocialLinks } from "@/lib/actions/social-links";
+import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,27 +54,31 @@ export async function generateMetadata({
 // Page Component
 // ---------------------------------------------------------------------------
 
-export default async function SandboxPage({ params }: PageProps) {
+export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params;
-  const page: SanityPage | null = await client.fetch(PAGE_BY_SLUG_QUERY, {
-    slug,
-  });
+
+  // Fetch Sanity page and required shared data in parallel
+  const [page, profile, siteSettings] = await Promise.all([
+    client.fetch<SanityPage | null>(PAGE_BY_SLUG_QUERY, { slug }),
+    getPublicProfile(),
+    getPublicSiteSettings()
+  ]);
+
+  const socialLinks = profile ? await getPublicSocialLinks(profile.id) : [];
 
   if (!page) {
     notFound();
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Dev-only banner so it's obvious this is a sandbox route */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="bg-yellow-400 px-4 py-2 text-center text-xs font-medium text-yellow-900">
-          🧪 Sandbox Route — rendering Sanity page:{" "}
-          <strong>{page.title}</strong>
-        </div>
-      )}
+    <div className="flex flex-col min-h-max w-full bg-background text-foreground">
+      <VisitorNav name={profile?.name} avatarUrl={profile?.avatar_url} siteSettings={siteSettings} />
 
-      <PageRenderer blocks={page.pageBuilder ?? []} />
+      <main className="flex-grow pt-16">
+        <PageRenderer blocks={page.pageBuilder ?? []} />
+      </main>
+
+      <VisitorFooter profile={profile} socialLinks={socialLinks} siteSettings={siteSettings} />
     </div>
   );
 }

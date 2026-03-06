@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Globe,
   Menu,
+  FileText,
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
@@ -21,6 +22,11 @@ const sidebarItems = [
     title: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Pages",
+    href: "/admin/pages",
+    icon: FileText,
   },
   {
     title: "Knowledge Base",

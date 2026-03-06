@@ -4,6 +4,15 @@ import { groq } from "next-sanity";
  * Fetches a single `page` document by its slug.
  * Returns the full pageBuilder array so PageRenderer can map blocks.
  */
+export const PAGES_QUERY = groq`
+  *[_type == "page"] | order(_updatedAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    _updatedAt
+  }
+`;
+
 export const PAGE_BY_SLUG_QUERY = groq`
   *[_type == "page" && slug.current == $slug][0]{
     _id,
@@ -57,5 +66,27 @@ export const SOCIAL_LINK_BY_ID_QUERY = groq`
 `;
 
 export const SITE_SETTINGS_QUERY = groq`
-  *[_type == "siteSettings"][0]
+  *[_type == "siteSettings"][0]{
+    ...,
+    mainNavigation->{
+      items[]{
+        label,
+        link[]{
+          _type == "reference" => @->{ "slug": slug.current, _type },
+          _type == "externalLink" => { "url": url, _type }
+        },
+        children
+      }
+    },
+    footerNavigation->{
+      items[]{
+        label,
+        link[]{
+          _type == "reference" => @->{ "slug": slug.current, _type },
+          _type == "externalLink" => { "url": url, _type }
+        },
+        children
+      }
+    }
+  }
 `;
