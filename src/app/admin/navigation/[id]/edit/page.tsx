@@ -9,11 +9,12 @@ export const metadata = {
 export default async function EditNavigationPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const [pages, navigation] = await Promise.all([
     getPages(),
-    getNavigationById(params.id),
+    getNavigationById(id),
   ]);
 
   if (!navigation) {
@@ -23,7 +24,9 @@ export default async function EditNavigationPage({
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Edit Navigation: {navigation.name}</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Edit Navigation: {navigation.name}
+        </h2>
         <p className="text-muted-foreground">
           Update the structure and links of this menu.
         </p>

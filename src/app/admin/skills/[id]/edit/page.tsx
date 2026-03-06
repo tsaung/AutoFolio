@@ -3,9 +3,9 @@ import { getSkill } from "@/lib/actions/sanity-portfolio";
 import { SkillForm } from "@/components/admin/portfolio/skill-form";
 
 interface EditSkillPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditSkillPage({ params }: EditSkillPageProps) {

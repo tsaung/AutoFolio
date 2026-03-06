@@ -3,9 +3,9 @@ import { getProject } from "@/lib/actions/sanity-portfolio";
 import { ProjectForm } from "@/components/admin/portfolio/project-form";
 
 interface EditProjectPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditProjectPage({

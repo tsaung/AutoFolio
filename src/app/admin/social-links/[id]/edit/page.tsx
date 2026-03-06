@@ -3,9 +3,9 @@ import { getSocialLink } from "@/lib/actions/sanity-portfolio";
 import { SocialLinkForm } from "@/components/admin/portfolio/social-link-form";
 
 interface EditSocialLinkPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditSocialLinkPage({
