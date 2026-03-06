@@ -1,16 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AdminHeader } from "@/components/admin/header";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { cn } from "@/lib/utils";
-
-interface AdminLayoutWrapperProps {
-  children: React.ReactNode;
-  sidebar: React.ReactNode; // We can pass the sidebar as a prop or render it inside. Rendering inside is easier for state.
-  // Actually, passing AdminSidebar as a component or just importing it is fine.
-  // But wait, layout.tsx imports AdminSidebar.
-  // Let's just import AdminSidebar here to avoid prop drilling complexity if not needed.
-}
 
 export function AdminLayoutWrapper({
   children,
@@ -45,16 +38,19 @@ export function AdminLayoutWrapper({
   // Better to default to false and let it snap to true if needed, or just accept the client-side adjustment.
 
   return (
-    <div
-      className={cn(
-        "grid fixed inset-0 w-full transition-all duration-300 overflow-hidden",
-        isCollapsed ? "lg:grid-cols-[60px_1fr]" : "lg:grid-cols-[280px_1fr]",
-      )}
-    >
-      <div className="hidden border-r bg-muted/40 lg:block dark:bg-zinc-800/40 overflow-y-auto">
-        <AdminSidebar collapsed={isCollapsed} onToggle={toggleSidebar} siteName={siteName} />
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-background">
+      <AdminHeader siteName={siteName} />
+      <div className="flex flex-1 overflow-hidden">
+        <aside
+          className={cn(
+            "hidden border-r bg-muted/40 lg:block dark:bg-zinc-800/40 transition-all duration-300 overflow-y-auto overflow-x-hidden",
+            isCollapsed ? "w-[60px]" : "w-[280px]",
+          )}
+        >
+          <AdminSidebar collapsed={isCollapsed} onToggle={toggleSidebar} />
+        </aside>
+        <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
       </div>
-      <div className="flex flex-col h-full overflow-hidden">{children}</div>
     </div>
   );
 }
