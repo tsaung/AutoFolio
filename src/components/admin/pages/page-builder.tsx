@@ -24,6 +24,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { GripVertical, Plus, Trash2, Loader2, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import { HeroBlockForm } from "./block-forms/hero-block-form";
+import { CtaBlockForm } from "./block-forms/cta-block-form";
+import { RichTextBlockForm } from "./block-forms/rich-text-block-form";
 
 // Supported block types
 const BLOCK_TYPES = [
@@ -66,9 +69,12 @@ function SortableBlockItem({
     transition,
   };
 
-  const blockTypeLabel = BLOCK_TYPES.find(t => t.type === block._type)?.label || block._type;
+  const blockTypeLabel =
+    BLOCK_TYPES.find((t) => t.type === block._type)?.label || block._type;
 
-  // Render raw JSON for early MVP. We can refine to specialized forms later.
+  const [showJson, setShowJson] = useState(false);
+
+  // Fallback JSON handling
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     try {
       const parsed = JSON.parse(e.target.value);
@@ -79,6 +85,30 @@ function SortableBlockItem({
     }
   };
 
+  // Determine which form component to render
+  const renderBlockForm = () => {
+    switch (block._type) {
+      case "heroBlock":
+        return <HeroBlockForm block={block} onChange={onChange} />;
+      case "ctaBlock":
+        return <CtaBlockForm block={block} onChange={onChange} />;
+      case "richTextBlock":
+        return <RichTextBlockForm block={block} onChange={onChange} />;
+      default:
+        return (
+          <div className="text-sm text-muted-foreground italic mb-2">
+            No specific form available for this block type yet. Please use the
+            JSON editor.
+          </div>
+        );
+    }
+  };
+
+  // Check if we have a custom form for this block
+  const hasCustomForm = ["heroBlock", "ctaBlock", "richTextBlock"].includes(
+    block._type
+  );
+
   return (
     <div
       ref={setNodeRef}
@@ -88,7 +118,7 @@ function SortableBlockItem({
         isDragging && "opacity-50 z-50 scale-[1.02] shadow-md border-primary"
       )}
     >
-      <div className="flex items-center justify-between border-b bg-muted/50 px-3 py-2 cursor-pointer rounded-t-lg">
+      <div className="flex items-center justify-between border-b bg-muted/50 px-3 py-2 rounded-t-lg">
         <div className="flex items-center gap-2">
           <div
             {...attributes}
@@ -99,24 +129,40 @@ function SortableBlockItem({
           </div>
           <span className="text-sm font-semibold">{blockTypeLabel}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-          onClick={() => onRemove(id)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowJson(!showJson)}
+            className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            {showJson ? "Hide JSON" : "Show JSON"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+            onClick={() => onRemove(id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-      <div className="p-4">
-         <Textarea
-            className="font-mono text-xs w-full min-h-[100px]"
-            defaultValue={JSON.stringify(block, null, 2)}
-            onChange={handleJsonChange}
-         />
-         <p className="text-[10px] text-muted-foreground mt-1">
-           Edit block JSON directly. Advanced form fields coming soon.
-         </p>
+      <div className="p-4 flex flex-col gap-4">
+        {(!showJson || !hasCustomForm) && renderBlockForm()}
+
+        {(showJson || !hasCustomForm) && (
+          <div className="border rounded-md p-2 bg-muted/10">
+            <h4 className="text-xs font-semibold mb-2 text-muted-foreground">
+              JSON Edit Mode
+            </h4>
+            <Textarea
+              className="font-mono text-xs w-full min-h-[150px]"
+              defaultValue={JSON.stringify(block, null, 2)}
+              onChange={handleJsonChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
