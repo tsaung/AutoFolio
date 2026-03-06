@@ -53,10 +53,7 @@ export async function updateSiteSettings(input: any) {
   // Apply updates as patch
   await writeClient.patch("siteSettings").set(input).commit();
 
-<<<<<<< feature-navigation-management-ui-10778918090352703678
-=======
   revalidateTag("siteSettings", "siteSettings");
->>>>>>> sanity
   revalidatePath("/settings", "layout");
   revalidatePath("/dashboard");
   return { success: true, settings: { _id: "siteSettings" } };
