@@ -79,8 +79,7 @@ export async function createPage(prevState: any, formData: FormData) {
 
 export async function updatePageBlocks(
   pageId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  blocks: any[]
+  blocks: { _key: string; _type: "reference"; _ref: string }[]
 ) {
   const supabase = await createClient();
   const {
@@ -92,14 +91,22 @@ export async function updatePageBlocks(
     throw new Error("Unauthorized");
   }
 
+  // Validate & sanitise — only keep Sanity reference fields
+  const refs = blocks.map((b) => {
+    if (!b._key || !b._ref || b._type !== "reference") {
+      throw new Error("Invalid block reference format");
+    }
+    return { _key: b._key, _type: "reference" as const, _ref: b._ref };
+  });
+
   try {
     await writeClient
       .patch(pageId)
-      .set({ pageBuilder: blocks })
+      .set({ pageBuilder: refs })
       .commit();
 
     revalidatePath(`/admin/pages/${pageId}/edit`);
-    revalidatePath(`/(visitor)/[slug]`, "page"); // generic path invalidation
+    revalidatePath(`/(visitor)/[slug]`, "page");
 
     return { success: true };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -21,39 +21,46 @@ import { CSS } from "@dnd-kit/utilities";
 import { updatePageBlocks } from "@/lib/actions/pages";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { GripVertical, Plus, Trash2, Loader2, Maximize2 } from "lucide-react";
+import {
+  GripVertical,
+  Plus,
+  Trash2,
+  Loader2,
+  Maximize2,
+  ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import { HeroBlockForm } from "./block-forms/hero-block-form";
-import { CtaBlockForm } from "./block-forms/cta-block-form";
-import { RichTextBlockForm } from "./block-forms/rich-text-block-form";
-
-// Supported block types
-const BLOCK_TYPES = [
-  { type: "heroBlock", label: "Hero Block" },
-  { type: "richTextBlock", label: "Rich Text" },
-  { type: "ctaBlock", label: "Call To Action" },
-];
-
-function generateId() {
-  return Math.random().toString(36).substring(2, 9);
-}
+import { BLOCK_CONFIG } from "@/components/admin/blocks/forms/block-config";
+import { BlockPickerDialog } from "./block-picker-dialog";
+import Link from "next/link";
 
 // ---------------------------------------------------------------------------
-// Sortable Block Item Component
+// Types
 // ---------------------------------------------------------------------------
-function SortableBlockItem({
+
+/** A block reference as stored in local state (includes display metadata). */
+type BlockRef = {
+  _key: string;
+  _ref: string;
+  _type: "reference";
+  /** Display-only: block name from Sanity */
+  blockName: string;
+  /** Display-only: the Sanity _type of the referenced block document */
+  blockType: string;
+};
+
+// ---------------------------------------------------------------------------
+// Sortable Block Card
+// ---------------------------------------------------------------------------
+
+function SortableBlockCard({
   id,
   block,
   onRemove,
-  onChange,
 }: {
   id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  block: any;
+  block: BlockRef;
   onRemove: (key: string) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange: (key: string, data: any) => void;
 }) {
   const {
     attributes,
@@ -69,100 +76,60 @@ function SortableBlockItem({
     transition,
   };
 
-  const blockTypeLabel =
-    BLOCK_TYPES.find((t) => t.type === block._type)?.label || block._type;
-
-  const [showJson, setShowJson] = useState(false);
-
-  // Fallback JSON handling
-  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    try {
-      const parsed = JSON.parse(e.target.value);
-      // Ensure we don't accidentally drop crucial Sanity identity keys
-      onChange(id, { ...parsed, _key: id, _type: block._type });
-    } catch {
-      // Ignore parse errors while typing
-    }
-  };
-
-  // Determine which form component to render
-  const renderBlockForm = () => {
-    switch (block._type) {
-      case "heroBlock":
-        return <HeroBlockForm block={block} onChange={onChange} />;
-      case "ctaBlock":
-        return <CtaBlockForm block={block} onChange={onChange} />;
-      case "richTextBlock":
-        return <RichTextBlockForm block={block} onChange={onChange} />;
-      default:
-        return (
-          <div className="text-sm text-muted-foreground italic mb-2">
-            No specific form available for this block type yet. Please use the
-            JSON editor.
-          </div>
-        );
-    }
-  };
-
-  // Check if we have a custom form for this block
-  const hasCustomForm = ["heroBlock", "ctaBlock", "richTextBlock"].includes(
-    block._type
-  );
+  const config = BLOCK_CONFIG[block.blockType];
+  const Icon = config?.icon;
+  const typeLabel = config?.title ?? block.blockType;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col gap-2 rounded-lg border bg-card text-card-foreground shadow-sm mb-4",
+        "group flex items-center gap-3 rounded-lg border bg-card text-card-foreground shadow-sm p-3 mb-2",
         isDragging && "opacity-50 z-50 scale-[1.02] shadow-md border-primary"
       )}
     >
-      <div className="flex items-center justify-between border-b bg-muted/50 px-3 py-2 rounded-t-lg">
-        <div className="flex items-center gap-2">
-          <div
-            {...attributes}
-            {...listeners}
-            className="cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground"
-          >
-            <GripVertical className="h-5 w-5" />
-          </div>
-          <span className="text-sm font-semibold">{blockTypeLabel}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowJson(!showJson)}
-            className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
-          >
-            {showJson ? "Hide JSON" : "Show JSON"}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-            onClick={() => onRemove(id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+      {/* Drag handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground shrink-0"
+      >
+        <GripVertical className="h-5 w-5" />
       </div>
-      <div className="p-4 flex flex-col gap-4">
-        {(!showJson || !hasCustomForm) && renderBlockForm()}
 
-        {(showJson || !hasCustomForm) && (
-          <div className="border rounded-md p-2 bg-muted/10">
-            <h4 className="text-xs font-semibold mb-2 text-muted-foreground">
-              JSON Edit Mode
-            </h4>
-            <Textarea
-              className="font-mono text-xs w-full min-h-[150px]"
-              defaultValue={JSON.stringify(block, null, 2)}
-              onChange={handleJsonChange}
-            />
-          </div>
-        )}
+      {/* Icon */}
+      {Icon && (
+        <div className="p-1.5 bg-primary/10 rounded-md text-primary shrink-0">
+          <Icon className="h-4 w-4" />
+        </div>
+      )}
+
+      {/* Name & type */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate">{block.blockName}</p>
+        <p className="text-xs text-muted-foreground">{typeLabel}</p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 shrink-0">
+        <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+          <Link
+            href={`/admin/blocks/${block._ref}/edit`}
+            title="Edit block in library"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+          onClick={() => onRemove(id)}
+          title="Remove from page"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
@@ -171,20 +138,21 @@ function SortableBlockItem({
 // ---------------------------------------------------------------------------
 // Main Builder Component
 // ---------------------------------------------------------------------------
+
 export function PageBuilder({
   pageId,
   initialBlocks,
   slug,
 }: {
   pageId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialBlocks: any[];
+  initialBlocks: BlockRef[];
   slug: string;
 }) {
-  const [blocks, setBlocks] = useState(initialBlocks);
+  const [blocks, setBlocks] = useState<BlockRef[]>(initialBlocks);
   const [isPending, startTransition] = useTransition();
   const [isSaved, setIsSaved] = useState(true);
   const [previewKey, setPreviewKey] = useState(Date.now());
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // DnD sensors
   const sensors = useSensors(
@@ -207,10 +175,8 @@ export function PageBuilder({
     }
   };
 
-  const addBlock = (type: string) => {
-    const newKey = generateId();
-    const newBlock = { _type: type, _key: newKey };
-    setBlocks([...blocks, newBlock]);
+  const addBlockRef = (ref: BlockRef) => {
+    setBlocks((prev) => [...prev, ref]);
     setIsSaved(false);
   };
 
@@ -219,25 +185,25 @@ export function PageBuilder({
     setIsSaved(false);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateBlock = (key: string, data: any) => {
-    setBlocks(blocks.map(b => b._key === key ? data : b));
-    setIsSaved(false);
-  };
-
   const handleSave = () => {
     startTransition(async () => {
       try {
-        await updatePageBlocks(pageId, blocks);
+        // Strip display-only metadata; send only Sanity reference fields
+        const refs = blocks.map((b) => ({
+          _key: b._key,
+          _type: "reference" as const,
+          _ref: b._ref,
+        }));
+        await updatePageBlocks(pageId, refs);
         setIsSaved(true);
-        setPreviewKey(Date.now()); // Update the iframe key to fetch fresh data
+        setPreviewKey(Date.now());
       } catch (error) {
         console.error("Failed to save blocks", error);
       }
     });
   };
 
-  const basePreviewUrl = `/${slug === 'home' ? '' : slug}`;
+  const basePreviewUrl = `/${slug === "home" ? "" : slug}`;
   const previewUrl = `${basePreviewUrl}?preview=true&t=${previewKey}`;
 
   return (
@@ -264,12 +230,11 @@ export function PageBuilder({
                 strategy={verticalListSortingStrategy}
               >
                 {blocks.map((block) => (
-                  <SortableBlockItem
+                  <SortableBlockCard
                     key={block._key}
                     id={block._key}
                     block={block}
                     onRemove={removeBlock}
-                    onChange={updateBlock}
                   />
                 ))}
               </SortableContext>
@@ -277,22 +242,21 @@ export function PageBuilder({
 
             {blocks.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed rounded-lg mb-4 text-muted-foreground text-sm">
-                No blocks added yet. Use the buttons below to start building your page.
+                No blocks added yet. Click the button below to add blocks from
+                your library.
               </div>
             )}
 
-            <div className="flex flex-wrap gap-2 pt-4 border-t mt-4">
-              {BLOCK_TYPES.map((bt) => (
-                <Button
-                  key={bt.type}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addBlock(bt.type)}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add {bt.label}
-                </Button>
-              ))}
+            <div className="pt-4 border-t mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setPickerOpen(true)}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add from Library
+              </Button>
             </div>
           </div>
         </ScrollArea>
@@ -303,25 +267,35 @@ export function PageBuilder({
         <div className="flex items-center justify-between border-b p-4 text-sm text-muted-foreground shrink-0 h-[61px]">
           <span>Live Preview</span>
           <div className="flex items-center gap-2">
-             {/* Dev reload hint */}
-            {!isSaved && <span className="text-[10px] text-amber-500 font-medium">Save to refresh preview</span>}
+            {!isSaved && (
+              <span className="text-[10px] text-amber-500 font-medium">
+                Save to refresh preview
+              </span>
+            )}
             <Button variant="ghost" size="icon" className="h-6 w-6" asChild>
-                <a href={basePreviewUrl} target="_blank" rel="noreferrer">
-                    <Maximize2 className="h-3 w-3" />
-                </a>
+              <a href={basePreviewUrl} target="_blank" rel="noreferrer">
+                <Maximize2 className="h-3 w-3" />
+              </a>
             </Button>
           </div>
         </div>
         <div className="flex-1 w-full relative bg-zinc-100 overflow-hidden">
-             {/* Use key on iframe to force unmount/remount on save to fetch fresh server data immediately */}
-             <iframe
-                key={previewKey}
-                src={previewUrl}
-                className="w-full h-full border-none"
-                title="Live Preview"
-             />
+          <iframe
+            key={previewKey}
+            src={previewUrl}
+            className="w-full h-full border-none"
+            title="Live Preview"
+          />
         </div>
       </div>
+
+      {/* Block Picker Dialog */}
+      <BlockPickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        onSelect={addBlockRef}
+        existingRefs={blocks.map((b) => b._ref)}
+      />
     </div>
   );
 }

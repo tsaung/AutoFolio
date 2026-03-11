@@ -20,7 +20,13 @@ export default async function EditPage({
       _id,
       title,
       "slug": slug.current,
-      pageBuilder
+      pageBuilder[]{
+        _key,
+        _ref,
+        _type,
+        "blockName": @->name,
+        "blockType": @->_type
+      }
     }`,
     { id },
     { cache: "no-store" }
