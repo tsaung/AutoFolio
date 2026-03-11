@@ -15,6 +15,7 @@ type CtaButton = {
 type HeroBlockData = {
   _type: "heroBlock";
   _key: string;
+  name: string;
   headline: string;
   subheadline?: string;
   buttons?: CtaButton[];

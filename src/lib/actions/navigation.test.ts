@@ -49,7 +49,7 @@ describe("Navigation Actions", () => {
 
   it("should fetch navigations successfully", async () => {
     const mockNavs = [{ _id: "1", name: "Main Menu" }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockNavs);
+    vi.mocked(client.fetch).mockResolvedValueOnce(mockNavs as any);
 
     const result = await getNavigations();
 
@@ -62,7 +62,7 @@ describe("Navigation Actions", () => {
   });
 
   it("should create a navigation", async () => {
-    const mockData = { name: "Footer", items: [] };
+    const mockData = { _type: "navigation" as const, name: "Footer", items: [] };
     const mockResponse = { _id: "new-id", ...mockData };
     vi.mocked(writeClient.create).mockResolvedValueOnce(mockResponse as any);
 
@@ -81,7 +81,7 @@ describe("Navigation Actions", () => {
 
   it("should fetch available pages", async () => {
     const mockPages = [{ _id: "page-1", title: "Home" }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockPages);
+    vi.mocked(client.fetch).mockResolvedValueOnce(mockPages as any);
 
     const result = await getPages();
 

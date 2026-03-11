@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getSiteSettings, updateSiteSettings } from "@/lib/actions/site-settings";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 

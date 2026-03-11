@@ -11,6 +11,7 @@ import { urlFor } from "@/sanity/lib/image";
 type RichTextBlockData = {
   _type: "richTextBlock";
   _key: string;
+  name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any[];
 };

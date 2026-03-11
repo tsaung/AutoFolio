@@ -127,10 +127,10 @@
 
 #### Session 5: Frontend Block Renderers
 
-- [ ] Create renderers: `StatsBlock`, `EmbedBlock`, `FaqBlock`, `FeatureGridBlock`, `LogoCloudBlock`, `TestimonialBlock`, `ImageGalleryBlock`, `ContactFormBlock`.
-- [ ] Update existing renderers (Hero, CTA, RichText, ProjectGrid, ExperienceTimeline, Skills) for document-based data.
-- [ ] Update `PageRenderer` component map for all 14 block types.
-- [ ] Verify: Test page with every block type renders correctly.
+- [x] Create renderers: `StatsBlock`, `EmbedBlock`, `FaqBlock`, `FeatureGridBlock`, `LogoCloudBlock`, `TestimonialBlock`, `ImageGalleryBlock`, `ContactFormBlock`.
+- [x] Update existing renderers (Hero, CTA, RichText, ProjectGrid, ExperienceTimeline, Skills) for document-based data.
+- [x] Update `PageRenderer` component map for all 14 block types.
+- [x] Verify: Test page with every block type renders correctly.
 
 #### Session 6: Page Builder Inline Quick-Create (Optional Enhancement)
 

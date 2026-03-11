@@ -6,6 +6,7 @@ export default function TestBlocks() {
   const projectData: ProjectGridBlockData = {
     _type: "projectGridBlock",
     _key: "p1",
+    name: "Projects Grid",
     projects: [
       {
         _id: "1",
@@ -30,6 +31,7 @@ export default function TestBlocks() {
   const experienceData: ExperienceTimelineBlockData = {
     _type: "experienceTimelineBlock",
     _key: "e1",
+    name: "My Experience",
     experiences: [
       {
         _id: "1",
@@ -61,6 +63,7 @@ export default function TestBlocks() {
   const skillsData: SkillsBlockData = {
     _type: "skillsBlock",
     _key: "s1",
+    name: "My Skills",
     skills: [
       { name: "React", proficiency: "expert" },
       { name: "TypeScript", proficiency: "advanced" },

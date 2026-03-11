@@ -1,6 +1,17 @@
 import { HeroBlock } from "@/components/v2/blocks/hero-block";
 import { RichTextBlock } from "@/components/v2/blocks/rich-text-block";
 import { CtaBlock } from "@/components/v2/blocks/cta-block";
+import { ProjectGridBlock } from "@/components/v2/blocks/project-grid-block";
+import { ExperienceTimelineBlock } from "@/components/v2/blocks/experience-timeline-block";
+import { SkillsBlock } from "@/components/v2/blocks/skills-block";
+import { StatsBlock } from "@/components/v2/blocks/stats-block";
+import { FaqBlock } from "@/components/v2/blocks/faq-block";
+import { EmbedBlock } from "@/components/v2/blocks/embed-block";
+import { FeatureGridBlock } from "@/components/v2/blocks/feature-grid-block";
+import { LogoCloudBlock } from "@/components/v2/blocks/logo-cloud-block";
+import { TestimonialBlock } from "@/components/v2/blocks/testimonial-block";
+import { ImageGalleryBlock } from "@/components/v2/blocks/image-gallery-block";
+import { ContactFormBlock } from "@/components/v2/blocks/contact-form-block";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,6 +41,17 @@ const blockComponents: Record<string, React.ComponentType<{ data: any }>> = {
   heroBlock: HeroBlock,
   richTextBlock: RichTextBlock,
   ctaBlock: CtaBlock,
+  projectGridBlock: ProjectGridBlock,
+  experienceTimelineBlock: ExperienceTimelineBlock,
+  skillsBlock: SkillsBlock,
+  statsBlock: StatsBlock,
+  faqBlock: FaqBlock,
+  embedBlock: EmbedBlock,
+  featureGridBlock: FeatureGridBlock,
+  logoCloudBlock: LogoCloudBlock,
+  testimonialBlock: TestimonialBlock,
+  imageGalleryBlock: ImageGalleryBlock,
+  contactFormBlock: ContactFormBlock,
 };
 
 // ---------------------------------------------------------------------------

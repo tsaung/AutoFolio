@@ -7,6 +7,7 @@ import Link from "next/link";
 type CtaBlockData = {
   _type: "ctaBlock";
   _key: string;
+  name: string;
   heading: string;
   text?: string;
   button?: {

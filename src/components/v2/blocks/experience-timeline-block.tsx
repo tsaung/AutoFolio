@@ -18,6 +18,9 @@ type Experience = {
 export type ExperienceTimelineBlockData = {
   _type: "experienceTimelineBlock";
   _key: string;
+  name: string;
+  headline?: string;
+  subheadline?: string;
   experiences: Experience[];
 };
 
@@ -36,6 +39,21 @@ export function ExperienceTimelineBlock({
 
   return (
     <section className="container mx-auto max-w-4xl px-6 py-16">
+      {(data.headline || data.subheadline) && (
+        <div className="mb-12 max-w-2xl">
+          {data.headline && (
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
+              {data.headline}
+            </h2>
+          )}
+          {data.subheadline && (
+            <p className="mt-4 text-lg text-muted-foreground">
+              {data.subheadline}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="relative border-l-2 border-muted pl-8 sm:pl-12">
         {data.experiences.map((exp, index) => {
           const isLast = index === data.experiences.length - 1;

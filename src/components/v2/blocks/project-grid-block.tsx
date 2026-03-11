@@ -26,6 +26,9 @@ type Project = {
 export type ProjectGridBlockData = {
   _type: "projectGridBlock";
   _key: string;
+  name: string;
+  headline?: string;
+  subheadline?: string;
   projects: Project[];
 };
 
@@ -40,6 +43,21 @@ export function ProjectGridBlock({ data }: { data: ProjectGridBlockData }) {
 
   return (
     <section className="container mx-auto px-6 py-16">
+      {(data.headline || data.subheadline) && (
+        <div className="mb-12 max-w-2xl">
+          {data.headline && (
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
+              {data.headline}
+            </h2>
+          )}
+          {data.subheadline && (
+            <p className="mt-4 text-lg text-muted-foreground">
+              {data.subheadline}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {data.projects.map((project) => (
           <div
