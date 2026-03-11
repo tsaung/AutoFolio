@@ -1,7 +1,9 @@
 import { getPublicProfile } from "@/lib/actions/profile";
 import { getPublicBotConfig } from "@/lib/actions/bot-config";
+import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 import { VisitorLayoutWrapper } from "@/components/portfolio/visitor-layout-wrapper";
 import { SetupChecklist } from "@/components/visitor/setup-checklist";
+import { ThemeInjector } from "@/components/portfolio/theme-injector";
 import { adminClient } from "@/lib/db/admin";
 
 export default async function VisitorLayout({
@@ -28,9 +30,11 @@ export default async function VisitorLayout({
 
   // Pre-fetch BotConfig safely
   const botConfig = await getPublicBotConfig();
+  const siteSettings = await getPublicSiteSettings();
 
   return (
     <VisitorLayoutWrapper profile={profile} botConfig={botConfig}>
+      <ThemeInjector brandColors={siteSettings?.brandColors} />
       {children}
     </VisitorLayoutWrapper>
   );

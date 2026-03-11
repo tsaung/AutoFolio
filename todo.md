@@ -142,10 +142,10 @@
 
 ### Phase 7: Themeable Design System
 
-- [ ] Implement CSS custom properties for brand colors, fonts, and spacing.
-- [ ] Wire brand color values from `siteSettings` (fetched at layout-level) into CSS variables.
-- [ ] Ensure all block components consume design tokens (no hardcoded colors).
-- [ ] Verify: Changing brand colors in dashboard updates the site's look.
+- [x] Implement CSS custom properties for brand colors, fonts, and spacing.
+- [x] Wire brand color values from `siteSettings` (fetched at layout-level) into CSS variables.
+- [x] Ensure all block components consume design tokens (no hardcoded colors).
+- [x] Verify: Changing brand colors in dashboard updates the site's look.
 
 ### Phase 8: RAG Auto-Ingestion Pipeline
 
