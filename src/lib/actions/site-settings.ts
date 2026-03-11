@@ -53,7 +53,7 @@ export async function updateSiteSettings(input: any) {
   // Apply updates as patch
   await writeClient.patch("siteSettings").set(input).commit();
 
-  revalidateTag("siteSettings", "layout");
+  revalidateTag("siteSettings", "max");
   revalidatePath("/settings", "layout");
   revalidatePath("/dashboard");
   return { success: true, settings: { _id: "siteSettings" } };
