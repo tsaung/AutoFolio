@@ -6,6 +6,13 @@ import {
   Code2,
   HelpCircle,
   LayoutGrid,
+  Image as ImageIcon,
+  Mail,
+  Cloud,
+  MessageSquare,
+  Briefcase,
+  History,
+  Wrench,
 } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 
@@ -58,5 +65,47 @@ export const BLOCK_CONFIG: Record<string, BlockConfig> = {
     description: "A grid highlighting key features, services, or benefits, often with icons.",
     icon: LayoutGrid,
     category: "medium",
+  },
+  imageGalleryBlock: {
+    title: "Image Gallery",
+    description: "A collection of images displayed in a grid, masonry, or carousel layout.",
+    icon: ImageIcon,
+    category: "complex",
+  },
+  contactFormBlock: {
+    title: "Contact Form",
+    description: "An interactive form allowing users to get in touch with you.",
+    icon: Mail,
+    category: "complex",
+  },
+  logoCloudBlock: {
+    title: "Logo Cloud",
+    description: "A section showcasing logos of clients, partners, or featured technologies.",
+    icon: Cloud,
+    category: "complex",
+  },
+  testimonialBlock: {
+    title: "Testimonial",
+    description: "A collection of quotes and reviews from clients or colleagues.",
+    icon: MessageSquare,
+    category: "complex",
+  },
+  projectGridBlock: {
+    title: "Project Grid",
+    description: "A dynamic grid of selected portfolio projects fetched from your CMS.",
+    icon: Briefcase,
+    category: "complex",
+  },
+  experienceTimelineBlock: {
+    title: "Experience Timeline",
+    description: "A visual timeline displaying selected work experiences.",
+    icon: History,
+    category: "complex",
+  },
+  skillsBlock: {
+    title: "Skills",
+    description: "A section detailing your professional skills and expertise.",
+    icon: Wrench,
+    category: "complex",
   },
 };

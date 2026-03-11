@@ -24,7 +24,6 @@ export default function NewBlockPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
         {Object.entries(BLOCK_CONFIG)
-          .filter(([_, config]) => config.category === "simple" || config.category === "medium")
           .map(([type, config]) => (
             <Card key={type} className="relative flex flex-col hover:border-primary/50 transition-colors">
               <CardHeader>

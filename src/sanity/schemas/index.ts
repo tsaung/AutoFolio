@@ -10,6 +10,13 @@ import { statsBlock } from "./blocks/stats-block";
 import { embedBlock } from "./blocks/embed-block";
 import { faqBlock } from "./blocks/faq-block";
 import { featureGridBlock } from "./blocks/feature-grid-block";
+import { imageGalleryBlock } from "./blocks/image-gallery-block";
+import { contactFormBlock } from "./blocks/contact-form-block";
+import { logoCloudBlock } from "./blocks/logo-cloud-block";
+import { testimonialBlock } from "./blocks/testimonial-block";
+import { projectGridBlock } from "./blocks/project-grid-block";
+import { experienceTimelineBlock } from "./blocks/experience-timeline-block";
+import { skillsBlock } from "./blocks/skills-block";
 
 // Other Documents
 import { page } from "./documents/page";
@@ -31,6 +38,13 @@ export const schemaTypes = [
   embedBlock,
   faqBlock,
   featureGridBlock,
+  imageGalleryBlock,
+  contactFormBlock,
+  logoCloudBlock,
+  testimonialBlock,
+  projectGridBlock,
+  experienceTimelineBlock,
+  skillsBlock,
   // Other Documents
   page,
   project,
