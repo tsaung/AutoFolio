@@ -65,9 +65,9 @@ export function HeroBlock({ data }: { data: HeroBlockData }) {
 
       {data.buttons && data.buttons.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-4">
-          {data.buttons.map((btn) => (
+          {data.buttons.map((btn, index) => (
             <Link
-              key={btn._key}
+              key={btn._key || index}
               href={btn.url || "#"}
               className={buttonClass(btn.style)}
             >
