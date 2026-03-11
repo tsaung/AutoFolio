@@ -8,10 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { sanityFetch } from "@/sanity/lib/client";
 import { createClient } from "@/lib/db/server";
-import { type SanityHeroBlock, type SanityCtaBlock } from "@/types/sanity-types";
-
-// Combine the two block types for this generic listing page
-type GlobalBlock = SanityHeroBlock | SanityCtaBlock;
+import { BLOCK_CONFIG } from "@/components/admin/blocks/forms/block-config";
 
 async function getGlobalBlocks() {
   const supabase = await createClient();
@@ -19,7 +16,7 @@ async function getGlobalBlocks() {
   if (!user) return [];
 
   const query = `
-    *[_type in ["heroBlock", "ctaBlock"]] | order(_createdAt desc) {
+    *[_type in ["heroBlock", "ctaBlock", "richTextBlock", "statsBlock", "embedBlock", "faqBlock", "featureGridBlock"]] | order(_createdAt desc) {
       _id,
       _type,
       _createdAt,
@@ -27,7 +24,12 @@ async function getGlobalBlocks() {
       name,
       "preview": select(
         _type == "heroBlock" => headline,
-        _type == "ctaBlock" => heading
+        _type == "ctaBlock" => heading,
+        _type == "richTextBlock" => content,
+        _type == "statsBlock" => coalesce(heading + " - ", "") + items[0].label,
+        _type == "embedBlock" => embedType,
+        _type == "faqBlock" => coalesce(heading + " - ", "") + items[0].question,
+        _type == "featureGridBlock" => coalesce(heading + " - ", "") + features[0].title
       )
     }
   `;
@@ -76,8 +78,20 @@ export default async function BlocksPage() {
                 <div className="space-y-1">
                   <CardTitle className="line-clamp-1">{block.name}</CardTitle>
                   <CardDescription className="flex items-center gap-1.5 uppercase text-xs tracking-wider font-semibold">
-                    <LayoutTemplate className="w-3.5 h-3.5" />
-                    {block._type === "heroBlock" ? "Hero Block" : "CTA Block"}
+                    {BLOCK_CONFIG[block._type] ? (
+                      <>
+                        {(() => {
+                          const Icon = BLOCK_CONFIG[block._type].icon;
+                          return <Icon className="w-3.5 h-3.5" />;
+                        })()}
+                        {BLOCK_CONFIG[block._type].title}
+                      </>
+                    ) : (
+                      <>
+                        <LayoutTemplate className="w-3.5 h-3.5" />
+                        {block._type}
+                      </>
+                    )}
                   </CardDescription>
                 </div>
               </div>
