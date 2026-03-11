@@ -86,16 +86,59 @@
 - [ ] Refactor generic form UI components (Image Upload, Array Builders for nested lists like socialLinks, Input with Validation, Rich Text Editor) into a reusable `admin/ui` library based on the inputs developed so far.
 - [x] Verify: Settings changes from dashboard reflect on the public site layout (Header, Footer, Navigation).
 
-### Phase 6: Admin Dashboard — Page Builder
+### Phase 6: Block Library + Page Builder (Reusable Blocks Architecture)
 
-- [x] Build `/admin/pages` — list all pages, create new page.
-- [x] Build `/admin/pages/[id]/edit` — form-based page builder using reusable UI components.
-- [x] Implement "Add Block" dropdown with block type selector.
-- [x] Build form for each core block type (Hero, RichText, CTA).
-- [x] Implement block reordering with `@dnd-kit/sortable`.
-- [x] Implement block removal.
+> [!IMPORTANT]
+> Blocks are **Sanity documents** (not inline objects). The Page Builder composes pages by referencing blocks from the library.
+
+#### Session 1: Schema Migration + Simple Blocks
+
+- [ ] Migrate `heroBlock`, `ctaBlock`, `richTextBlock` from `type: "object"` to `type: "document"` with `name` field.
+- [ ] Create new document schemas: `statsBlock`, `embedBlock`, `faqBlock`, `featureGridBlock`.
+- [ ] Update `page.ts` `pageBuilder` to use references: `{ type: "reference", to: [...all block types] }`.
+- [ ] Refactor `lib/actions/blocks.ts` to be generic (handle any block type).
+- [ ] Update TypeScript types and GROQ queries for dereferencing.
+- [ ] Verify: `npm run build` succeeds.
+
+#### Session 2: Block Library UI — Simple + Medium Block Forms
+
+- [ ] Refactor monolithic `block-form.tsx` into per-type form components under `components/admin/blocks/forms/`.
+- [ ] Create form components with Zod validation: `CtaBlockForm`, `RichTextBlockForm`, `StatsBlockForm`, `EmbedBlockForm`, `FaqBlockForm`, `FeatureGridBlockForm`.
+- [ ] Update `/admin/blocks/new` type picker with all new block types.
+- [ ] Update `/admin/blocks` list page to display all block types.
+- [ ] Verify: Can create and edit each block type from the library UI.
+
+#### Session 3: Block Library UI — Complex + Collection Blocks
+
+- [ ] Create forms: `HeroBlockForm` (image upload + buttons), `ImageGalleryBlockForm`, `ContactFormBlockForm`, `LogoCloudBlockForm`, `TestimonialBlockForm`.
+- [ ] Create collection block forms: `ProjectGridBlockForm`, `ExperienceTimelineBlockForm`, `SkillsBlockForm` (with reference pickers).
+- [ ] Create reusable `SanityReferencePicker` component.
+- [ ] Verify: Can create and edit all block types including image uploads and references.
+
+#### Session 4: Page Builder — Reference-Based Composition
+
+- [ ] Replace inline "Add Block" with a "Pick from Library" modal/drawer.
+- [ ] Display block references as compact cards (name + type) instead of inline forms.
+- [ ] Keep dnd-kit drag & drop for reordering references.
+- [ ] Update `updatePageBlocks` server action to save reference arrays.
+- [ ] Update GROQ query in `[[...slug]]/page.tsx` to dereference blocks with `->>`.
+- [ ] Remove old inline `block-forms/` directory.
+- [ ] Verify: Can pick blocks, reorder, save, and render on frontend.
+
+#### Session 5: Frontend Block Renderers
+
+- [ ] Create renderers: `StatsBlock`, `EmbedBlock`, `FaqBlock`, `FeatureGridBlock`, `LogoCloudBlock`, `TestimonialBlock`, `ImageGalleryBlock`, `ContactFormBlock`.
+- [ ] Update existing renderers (Hero, CTA, RichText, ProjectGrid, ExperienceTimeline, Skills) for document-based data.
+- [ ] Update `PageRenderer` component map for all 14 block types.
+- [ ] Verify: Test page with every block type renders correctly.
+
+#### Session 6: Page Builder Inline Quick-Create (Optional Enhancement)
+
+- [ ] Add "Quick Create" tab to page builder's block picker modal.
+- [ ] Embed library form components inline in the page builder.
+- [ ] Quick-created blocks auto-save as documents and insert as references.
 - [ ] Implement Next.js draft mode for page preview.
-- [x] Verify: Page built in dashboard renders correctly on the frontend.
+- [ ] Verify: Both workflows work — library-first and inline quick-create.
 
 ### Phase 7: Themeable Design System
 
@@ -104,13 +147,7 @@
 - [ ] Ensure all block components consume design tokens (no hardcoded colors).
 - [ ] Verify: Changing brand colors in dashboard updates the site's look.
 
-### Phase 8: Remaining Block Components
-
-- [ ] Create and polish remaining block components: FeatureGrid, FAQ, Testimonial, ImageGallery, Embed, LogoCloud, Stats, ContactForm, ProjectGrid, ExperienceTimeline, Skills.
-- [ ] Add corresponding forms in the page builder for each new block type.
-- [ ] Verify: All block types are createable from dashboard and render on frontend.
-
-### Phase 9: RAG Auto-Ingestion Pipeline
+### Phase 8: RAG Auto-Ingestion Pipeline
 
 - [ ] Add `source`, `source_id`, and `source_rev` columns to `knowledge_chunks` table.
 - [ ] Install `@portabletext/to-plain-text` for Portable Text serialization.
@@ -119,7 +156,7 @@
 - [ ] Configure the webhook trigger in the Sanity project dashboard.
 - [ ] Verify: Creating/updating content in dashboard triggers webhook and upserts embeddings.
 
-### Phase 10: Chat RAG Integration & Staleness Check
+### Phase 9: Chat RAG Integration & Staleness Check
 
 - [ ] Update the chat API to use the unified `knowledge_chunks` table.
 - [ ] Implement the on-the-fly staleness check on chat open.
@@ -127,7 +164,7 @@
 - [ ] Integrate chat interface into V2 layout — source bot name/avatar from `siteSettings`.
 - [ ] Verify: Chat correctly answers questions about content created via dashboard.
 
-### Phase 11: V1 Cleanup & Deprecation
+### Phase 10: V1 Cleanup & Deprecation
 
 - [ ] Remove old Supabase content tables: `projects`, `experiences`, `skills`, `social_links`, `profiles`.
 - [ ] Remove server actions for deprecated tables (in `src/lib/actions/`).
@@ -136,7 +173,7 @@
 - [ ] Update `.agent/rules/*.md` and `specs/*.md` to reflect final V2 architecture.
 - [ ] Verify: App builds cleanly, no dead imports or references to removed tables.
 
-### Phase 12: Polish & Documentation
+### Phase 11: Polish & Documentation
 
 - [ ] End-to-end test: clone template → configure env → deploy to Vercel.
 - [ ] Write template README with setup instructions for marketplace users.

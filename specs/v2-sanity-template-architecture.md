@@ -92,9 +92,22 @@ User clicks "Preview" → Enable Next.js draft mode → Fetch draft documents fr
 
 ## 2. Content Modeling: The "Page Builder" Approach
 
-V2 uses a **dynamic block-based page builder**. Users add, remove, and reorder sections via the custom admin dashboard — no code changes required.
+V2 uses a **reusable block library + reference-based page builder**. Users create standalone block documents in the Block Library (`/admin/blocks`), then compose pages by picking, referencing, and reordering those blocks in the Page Builder (`/admin/pages/[id]/edit`). No code changes required.
 
-### 2.1 Core Sanity Document Types
+### 2.1 Block Library Architecture
+
+Blocks are **Sanity documents** (not inline objects). Each block document has a `name` field for identification in the library (e.g., "Homepage Hero", "Newsletter CTA"). The `page` document's `pageBuilder` array holds **references** to these block documents.
+
+```
+/admin/blocks (Block Library)              /admin/pages/[id]/edit (Page Builder)
+┌──────────────────────────────┐           ┌──────────────────────────────┐
+│ Create & edit standalone     │           │ Pick blocks from library     │
+│ block DOCUMENTS              │ ──refs──▶ │ Drag & drop to reorder       │
+│ (Hero, CTA, FAQ, Stats...)   │           │ pageBuilder: [ref, ref, ref] │
+└──────────────────────────────┘           └──────────────────────────────┘
+```
+
+### 2.2 Core Sanity Document Types
 
 #### `page` (Document)
 
@@ -102,8 +115,8 @@ Represents a routable page (e.g., Home, About, Services).
 
 - `title` (String)
 - `slug` (Slug)
-- `seo` (Object — see §2.3)
-- `pageBuilder` (Array of Block objects)
+- `seo` (Object — see §2.4)
+- `pageBuilder` (Array of References to block documents)
 
 #### `project` (Document)
 
@@ -149,35 +162,35 @@ Global site configuration:
 >
 > **Supabase retains** only technical settings: bot model selection, system prompts, and RAG configuration (managed via `/admin/settings`).
 
-### 2.2 Page Builder Blocks
+### 2.3 Page Builder Block Types
 
-Blocks are organized into **General Purpose** and **Portfolio/Resume** categories.
+All blocks are **Sanity document types** with a `name` field for library identification. They are organized into **General Purpose** and **Portfolio/Resume** categories.
 
 #### General Purpose Blocks
 
-| Block Type          | Description                                                                     |
-| ------------------- | ------------------------------------------------------------------------------- |
-| `heroBlock`         | Headline, subheadline, CTA buttons, background image                            |
-| `richTextBlock`     | Portable Text content (paragraphs, lists, links, inline images)                 |
-| `imageGalleryBlock` | Grid or masonry image gallery with lightbox                                     |
-| `ctaBlock`          | Call-to-action banner with heading, text, and button                            |
-| `featureGridBlock`  | Icon + title + description grid (great for services, features, benefits)        |
-| `faqBlock`          | Accordion-style FAQ section                                                     |
-| `testimonialBlock`  | Carousel or grid of customer/client quotes                                      |
-| `embedBlock`        | YouTube, Vimeo, Calendly, or custom embed code                                  |
-| `logoCloudBlock`    | Client/partner/tech logo strip                                                  |
-| `statsBlock`        | Key metrics/numbers showcase (e.g., "10+ Years", "50+ Projects")                |
-| `contactFormBlock`  | Embeddable contact form (submissions handled via API route or external service) |
+| Block Type          | Schema Type  | Description                                                                     |
+| ------------------- | ------------ | ------------------------------------------------------------------------------- |
+| `heroBlock`         | `document`   | Headline, subheadline, CTA buttons, background image                            |
+| `richTextBlock`     | `document`   | Portable Text content (paragraphs, lists, links, inline images)                 |
+| `imageGalleryBlock` | `document`   | Grid or masonry image gallery with lightbox                                     |
+| `ctaBlock`          | `document`   | Call-to-action banner with heading, text, and button                            |
+| `featureGridBlock`  | `document`   | Icon + title + description grid (great for services, features, benefits)        |
+| `faqBlock`          | `document`   | Accordion-style FAQ section                                                     |
+| `testimonialBlock`  | `document`   | Carousel or grid of customer/client quotes                                      |
+| `embedBlock`        | `document`   | YouTube, Vimeo, Calendly, or custom embed code                                  |
+| `logoCloudBlock`    | `document`   | Client/partner/tech logo strip                                                  |
+| `statsBlock`        | `document`   | Key metrics/numbers showcase (e.g., "10+ Years", "50+ Projects")                |
+| `contactFormBlock`  | `document`   | Embeddable contact form (submissions handled via API route or external service) |
 
 #### Portfolio / Resume Blocks
 
-| Block Type                | Description                                                  |
-| ------------------------- | ------------------------------------------------------------ |
-| `projectGridBlock`        | References a list of `project` documents, displayed as cards |
-| `experienceTimelineBlock` | References `experience` documents in a vertical timeline     |
-| `skillsBlock`             | Grouped skill display with proficiency indicators            |
+| Block Type                | Schema Type  | Description                                                                          |
+| ------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `projectGridBlock`        | `document`   | References a list of `project` documents, displayed as cards (mode: all or manual)   |
+| `experienceTimelineBlock` | `document`   | References `experience` documents in a vertical timeline (mode: all or manual)       |
+| `skillsBlock`             | `document`   | Grouped skill display with proficiency indicators (mode: all or manual)              |
 
-### 2.3 SEO Schema
+### 2.4 SEO Schema
 
 Every `page` document includes an `seo` object:
 
@@ -186,9 +199,25 @@ Every `page` document includes an `seo` object:
 - `ogImage` (Sanity Image — for social sharing)
 - `noIndex` (Boolean — exclude from search engines)
 
-### 2.4 Next.js Component Mapping
+### 2.5 Next.js Component Mapping
 
-A dynamic catch-all route (`app/[[...slug]]/page.tsx`) fetches the `page` document from Sanity via GROQ. A `PageRenderer` component iterates over the `pageBuilder` array and maps each block's `_type` to a React component:
+A dynamic catch-all route (`app/[[...slug]]/page.tsx`) fetches the `page` document from Sanity via GROQ. The `pageBuilder` array contains **references**, so the GROQ query must **dereference** them:
+
+```groq
+*[_type == "page" && slug.current == $slug][0]{
+  title,
+  "slug": slug.current,
+  seo,
+  pageBuilder[]->{
+    _id,
+    _type,
+    name,
+    ...
+  }
+}
+```
+
+A `PageRenderer` component iterates over the dereferenced blocks and maps each block's `_type` to a React component:
 
 ```tsx
 const blockComponents: Record<string, React.ComponentType<{ data: any }>> = {
@@ -197,13 +226,21 @@ const blockComponents: Record<string, React.ComponentType<{ data: any }>> = {
   projectGridBlock: ProjectGrid,
   ctaBlock: CallToAction,
   faqBlock: FAQ,
-  // ...
+  statsBlock: Stats,
+  embedBlock: Embed,
+  featureGridBlock: FeatureGrid,
+  testimonialBlock: Testimonial,
+  imageGalleryBlock: ImageGallery,
+  logoCloudBlock: LogoCloud,
+  contactFormBlock: ContactForm,
+  experienceTimelineBlock: ExperienceTimeline,
+  skillsBlock: Skills,
 };
 
 export function PageRenderer({ blocks }: { blocks: SanityBlock[] }) {
   return blocks.map((block) => {
     const Component = blockComponents[block._type];
-    return Component ? <Component key={block._key} data={block} /> : null;
+    return Component ? <Component key={block._id} data={block} /> : null;
   });
 }
 ```
