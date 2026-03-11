@@ -8,7 +8,10 @@ async function getBlock(id: string) {
   const query = `
     *[_type in [
       "heroBlock", "ctaBlock", "richTextBlock",
-      "statsBlock", "embedBlock", "faqBlock", "featureGridBlock"
+      "statsBlock", "embedBlock", "faqBlock", "featureGridBlock",
+      "imageGalleryBlock", "contactFormBlock", "logoCloudBlock",
+      "testimonialBlock", "projectGridBlock", "experienceTimelineBlock",
+      "skillsBlock"
     ] && _id == $id][0] {
       ...
     }
