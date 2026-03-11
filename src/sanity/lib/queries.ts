@@ -19,9 +19,21 @@ export const PAGE_BY_SLUG_QUERY = groq`
     title,
     slug,
     seo,
-    pageBuilder[]
+    pageBuilder[]{
+      _key,
+      ...@->
+    }
   }
 `;
+
+export const BLOCKS_QUERY = groq`
+  *[_type in $types] | order(_updatedAt desc)
+`;
+
+export const BLOCK_BY_ID_QUERY = groq`
+  *[_id == $id][0]
+`;
+
 
 /**
  * Fetches all \`experience\` documents, ordered by sortOrder ascending.

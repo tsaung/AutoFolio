@@ -9,7 +9,8 @@ import { CtaBlock } from "@/components/v2/blocks/cta-block";
 /** Minimal shape shared by every Sanity page-builder block. */
 export type SanityBlock = {
   _type: string;
-  _key: string;
+  _key?: string;
+  _id?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -52,13 +53,14 @@ export function PageRenderer({ blocks }: PageRendererProps) {
     <main>
       {blocks.map((block) => {
         const Component = blockComponents[block._type];
+        const blockKey = block._key || block._id || Math.random().toString();
 
         if (!Component) {
           // In development, render a visible placeholder so authors notice.
           if (process.env.NODE_ENV === "development") {
             return (
               <div
-                key={block._key}
+                key={blockKey}
                 className="my-4 rounded border border-dashed border-yellow-500 bg-yellow-500/10 p-4 text-sm text-yellow-700"
               >
                 ⚠️ Unknown block type: <code>{block._type}</code>
@@ -68,7 +70,7 @@ export function PageRenderer({ blocks }: PageRendererProps) {
           return null;
         }
 
-        return <Component key={block._key} data={block} />;
+        return <Component key={blockKey} data={block} />;
       })}
     </main>
   );

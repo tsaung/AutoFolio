@@ -37,10 +37,18 @@ export const page = defineType({
       description: "Add, reorder, and configure the sections visually.",
       type: "array",
       of: [
-        { type: "heroBlock" },
-        { type: "richTextBlock" },
-        { type: "ctaBlock" },
-        // Future blocks to be added in Phase 2
+        {
+          type: "reference",
+          to: [
+            { type: "heroBlock" },
+            { type: "richTextBlock" },
+            { type: "ctaBlock" },
+            { type: "statsBlock" },
+            { type: "embedBlock" },
+            { type: "faqBlock" },
+            { type: "featureGridBlock" },
+          ],
+        },
       ],
     }),
   ],

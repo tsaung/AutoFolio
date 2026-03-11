@@ -91,7 +91,7 @@ export interface SanityNavigation {
 export interface SanityBlockReference {
   _type: "reference";
   _ref: string;
-  _key: string;
+  _key?: string;
 }
 
 export interface SanityHeroBlock {
@@ -128,12 +128,89 @@ export interface SanityCtaBlock {
 }
 
 export interface SanityRichTextBlock {
+  _id: string;
   _type: "richTextBlock";
-  _key: string;
+  _key?: string;
+  name: string;
   content: PortableTextBlock[];
+  createdBy?: string;
+  updatedBy?: string;
 }
 
-export type SanityPageBlock = SanityBlockReference | SanityRichTextBlock;
+export interface SanityStatsBlock {
+  _id: string;
+  _type: "statsBlock";
+  _key?: string;
+  name: string;
+  items: Array<{
+    _key: string;
+    label: string;
+    value: string;
+    suffix?: string;
+  }>;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityEmbedBlock {
+  _id: string;
+  _type: "embedBlock";
+  _key?: string;
+  name: string;
+  embedType: "youtube" | "vimeo" | "custom";
+  url?: string;
+  code?: string;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityFaqBlock {
+  _id: string;
+  _type: "faqBlock";
+  _key?: string;
+  name: string;
+  items: Array<{
+    _key: string;
+    question: string;
+    answer: string;
+  }>;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityFeatureGridBlock {
+  _id: string;
+  _type: "featureGridBlock";
+  _key?: string;
+  name: string;
+  features: Array<{
+    _key: string;
+    icon?: string;
+    title: string;
+    description: string;
+  }>;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export type SanityPageBlock = 
+  | SanityHeroBlock 
+  | SanityCtaBlock 
+  | SanityRichTextBlock 
+  | SanityStatsBlock 
+  | SanityEmbedBlock 
+  | SanityFaqBlock 
+  | SanityFeatureGridBlock;
+
+export const BLOCK_TYPES = [
+  "heroBlock",
+  "ctaBlock",
+  "richTextBlock",
+  "statsBlock",
+  "embedBlock",
+  "faqBlock",
+  "featureGridBlock",
+] as const;
 
 export interface SanityPage {
   _id: string;

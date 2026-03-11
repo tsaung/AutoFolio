@@ -3,9 +3,16 @@ import { defineType, defineField } from "sanity";
 export const ctaBlock = defineType({
   name: "ctaBlock",
   title: "Call to Action",
-  type: "object",
+  type: "document",
   icon: () => "📣",
   fields: [
+    defineField({
+      name: "name",
+      title: "Name",
+      type: "string",
+      description: "Internal name for this block in the library",
+      validation: (rule) => rule.required(),
+    }),
     defineField({
       name: "heading",
       title: "Heading",

@@ -3,9 +3,16 @@ import { defineType, defineField } from "sanity";
 export const richTextBlock = defineType({
   name: "richTextBlock",
   title: "Rich Text",
-  type: "object",
+  type: "document",
   icon: () => "📝",
   fields: [
+    defineField({
+      name: "name",
+      title: "Name",
+      type: "string",
+      description: "Internal name for this block in the library",
+      validation: (rule) => rule.required(),
+    }),
     defineField({
       name: "content",
       title: "Content",
