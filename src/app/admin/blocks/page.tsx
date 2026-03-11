@@ -16,7 +16,7 @@ async function getGlobalBlocks() {
   if (!user) return [];
 
   const query = `
-    *[_type in ["heroBlock", "ctaBlock", "richTextBlock", "statsBlock", "embedBlock", "faqBlock", "featureGridBlock"]] | order(_createdAt desc) {
+    *[_type in ["heroBlock", "ctaBlock", "richTextBlock", "statsBlock", "embedBlock", "faqBlock", "featureGridBlock", "imageGalleryBlock", "contactFormBlock", "logoCloudBlock", "testimonialBlock", "projectGridBlock", "experienceTimelineBlock", "skillsBlock"]] | order(_createdAt desc) {
       _id,
       _type,
       _createdAt,
@@ -29,7 +29,14 @@ async function getGlobalBlocks() {
         _type == "statsBlock" => coalesce(heading + " - ", "") + items[0].label,
         _type == "embedBlock" => embedType,
         _type == "faqBlock" => coalesce(heading + " - ", "") + items[0].question,
-        _type == "featureGridBlock" => coalesce(heading + " - ", "") + features[0].title
+        _type == "featureGridBlock" => coalesce(heading + " - ", "") + features[0].title,
+        _type == "imageGalleryBlock" => headline,
+        _type == "contactFormBlock" => headline,
+        _type == "logoCloudBlock" => headline,
+        _type == "testimonialBlock" => headline,
+        _type == "projectGridBlock" => headline,
+        _type == "experienceTimelineBlock" => headline,
+        _type == "skillsBlock" => headline
       )
     }
   `;
