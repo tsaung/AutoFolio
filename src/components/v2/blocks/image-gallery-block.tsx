@@ -58,11 +58,11 @@ export function ImageGalleryBlock({ data }: { data: ImageGalleryBlockData }) {
           layout === "masonry" ? "columns-1 sm:columns-2 lg:columns-3 block" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         }`}
       >
-        {data.images.map((img) => {
+        {data.images.map((img, index) => {
           const isMasonry = layout === "masonry";
           return (
             <figure 
-              key={img._key} 
+              key={img._key || index} 
               className={`group relative overflow-hidden rounded-xl bg-muted ${isMasonry ? "mb-4 sm:mb-6 break-inside-avoid" : "aspect-[4/3]"}`}
             >
               <Image

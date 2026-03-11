@@ -45,7 +45,7 @@ export function FaqBlock({ data }: { data: FaqBlockData }) {
 
       <Accordion type="single" collapsible className="w-full">
         {data.items.map((item, index) => (
-          <AccordionItem key={item._key} value={`item-${index}`}>
+          <AccordionItem key={item._key || index} value={`item-${index}`}>
             <AccordionTrigger className="text-left py-4 text-lg font-medium hover:text-primary transition-colors">
               {item.question}
             </AccordionTrigger>

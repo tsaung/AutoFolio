@@ -60,7 +60,7 @@ export function ExperienceTimelineBlock({
 
           return (
             <div
-              key={exp._id}
+              key={exp._id || index}
               className={`relative flex flex-col gap-2 ${
                 isLast ? "" : "mb-12"
               }`}

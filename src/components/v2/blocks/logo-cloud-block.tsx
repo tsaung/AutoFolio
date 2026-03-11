@@ -44,7 +44,7 @@ export function LogoCloudBlock({ data }: { data: LogoCloudBlockData }) {
           </h2>
         )}
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-          {data.logos.map((logo) => {
+          {data.logos.map((logo, index) => {
             const logoUrl = urlFor(logo.image).height(80).fit('max').auto('format').url();
             const content = (
               <div
@@ -63,7 +63,7 @@ export function LogoCloudBlock({ data }: { data: LogoCloudBlockData }) {
             if (logo.url) {
               return (
                 <a
-                  key={logo._key}
+                  key={logo._key || index}
                   href={logo.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -74,7 +74,7 @@ export function LogoCloudBlock({ data }: { data: LogoCloudBlockData }) {
               );
             }
 
-            return <div key={logo._key}>{content}</div>;
+            return <div key={logo._key || index}>{content}</div>;
           })}
         </div>
       </div>

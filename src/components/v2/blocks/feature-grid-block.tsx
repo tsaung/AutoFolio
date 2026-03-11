@@ -30,9 +30,9 @@ export function FeatureGridBlock({ data }: { data: FeatureGridBlockData }) {
   return (
     <section className="container mx-auto px-6 py-20 lg:py-24">
       <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-        {data.features.map((feature) => (
+        {data.features.map((feature, index) => (
           <div 
-            key={feature._key} 
+            key={feature._key || index} 
             className="flex flex-col space-y-4 rounded-xl p-6 transition-all hover:bg-muted/50 border border-transparent hover:border-border"
           >
             {feature.icon && (

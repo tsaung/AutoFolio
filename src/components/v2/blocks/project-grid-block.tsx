@@ -59,9 +59,9 @@ export function ProjectGridBlock({ data }: { data: ProjectGridBlockData }) {
       )}
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {data.projects.map((project) => (
+        {data.projects.map((project, index) => (
           <div
-            key={project._id || project.slug.current}
+            key={project._id || index}
             className="flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md"
           >
             {project.image?.asset && (
@@ -87,9 +87,9 @@ export function ProjectGridBlock({ data }: { data: ProjectGridBlockData }) {
 
               {project.tags && project.tags.length > 0 && (
                 <div className="mb-6 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
+                  {project.tags.map((tag, tagIndex) => (
                     <span
-                      key={tag}
+                      key={tagIndex}
                       className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground"
                     >
                       {tag}

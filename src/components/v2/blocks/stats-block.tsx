@@ -31,8 +31,8 @@ export function StatsBlock({ data }: { data: StatsBlockData }) {
     <section className="container mx-auto px-6 py-16">
       <div className="rounded-2xl bg-card p-8 md:p-12 shadow-sm border">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 text-center">
-          {data.items.map((stat) => (
-            <div key={stat._key} className="flex flex-col items-center justify-center space-y-2">
+          {data.items.map((stat, index) => (
+            <div key={stat._key || index} className="flex flex-col items-center justify-center space-y-2">
               <div className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground flex items-baseline justify-center">
                 <span>{stat.value}</span>
                 {stat.suffix && <span className="text-primary text-2xl md:text-3xl ml-1">{stat.suffix}</span>}

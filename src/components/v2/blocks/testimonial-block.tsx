@@ -47,9 +47,9 @@ export function TestimonialBlock({ data }: { data: TestimonialBlockData }) {
       )}
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {data.testimonials.map((testimonial) => (
+        {data.testimonials.map((testimonial, index) => (
           <div
-            key={testimonial._key}
+            key={testimonial._key || index}
             className="flex flex-col rounded-2xl bg-card p-8 shadow-sm border border-border"
           >
             <div className="mb-6 flex-1 text-lg leading-relaxed text-muted-foreground italic">
