@@ -11,7 +11,11 @@ description: Technology stack guidelines and coding conventions.
 - **Styling:** Tailwind CSS + Shadcn UI
   - **IMPORTANT:** Use `npx shadcn@latest add` - DO NOT install primitives directly.
   - `src/components/ui/` is reserved for Shadcn primitives only. Custom reusable components go in `src/components/` (e.g., `src/components/searchable-select.tsx`).
-- **State Management:** Server Stats preferred; React Context for global UI state only.
+- **Content Storage (CMS):** Sanity (headless API only). Source of truth for all structured user-facing content (pages, blocks, site settings). No Studio UI.
+- **Auth & Database:** Supabase (PostgreSQL + pgvector). Handles Authentication (sole provider), vector embeddings (derived from Sanity for RAG), and backend bot configurations.
+- **AI Integration:** OpenRouter / Vercel AI SDK for the public-facing chat assistant and embedding generation.
+- **Images:** `@sanity/image-url` for rendering responsive assets from the Sanity CDN.
+- **State Management:** Server actions and URL state preferred; React Context for global UI state only.
 - **Testing:** Vitest for logic and components, Playwright for E2E.
 
 ## 2. Coding Standards
