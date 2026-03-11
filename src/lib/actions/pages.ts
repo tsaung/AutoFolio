@@ -108,3 +108,46 @@ export async function updatePageBlocks(
     throw new Error(error.message || "Failed to update page.");
   }
 }
+
+export async function deletePage(pageId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return {
+      success: false,
+      message: "Unauthorized",
+    };
+  }
+
+  try {
+    await writeClient.delete(pageId);
+    revalidatePath("/admin/pages");
+    revalidatePath("/(visitor)/[slug]", "page");
+    return { success: true, message: "Page deleted successfully" };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Failed to delete page:", error);
+    
+    // Check if it's a Sanity reference error
+    const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+    if (error?.details?.type === "documentHasExistingReferencesError" || 
+        error?.message?.includes("documentHasExistingReferencesError") ||
+        error?.message?.includes("existing references") ||
+        errorString.includes("documentHasExistingReferencesError") ||
+        errorString.includes("existing references")) {
+      return {
+        success: false,
+        message: "Cannot delete this page because it is referenced by other documents (e.g., navigation links). Remove the references first.",
+      };
+    }
+
+    return {
+      success: false,
+      message: error?.message || "Failed to delete page.",
+    };
+  }
+}

@@ -18,6 +18,16 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { deletePage } from "@/lib/actions/pages";
+import { toast } from "sonner";
 
 type PageListItem = {
   _id: string;
@@ -29,12 +39,46 @@ type PageListItem = {
 export function PagesList({ initialPages }: { initialPages: PageListItem[] }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [pages] = useState<PageListItem[]>(initialPages);
+  const [pages, setPages] = useState<PageListItem[]>(initialPages);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingPage, setDeletingPage] = useState<PageListItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredPages = pages.filter((page) =>
     page.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     page.slug?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  function handleDeleteClick(page: PageListItem) {
+    setDeletingPage(page);
+    setDeleteDialogOpen(true);
+  }
+
+  async function handleDeleteConfirm() {
+    if (!deletingPage) return;
+    setIsDeleting(true);
+
+    try {
+      const result = await deletePage(deletingPage._id);
+      if (result.success) {
+        toast.success("Page deleted successfully");
+        setPages((current) => current.filter((p) => p._id !== deletingPage._id));
+        setDeleteDialogOpen(false);
+        setDeletingPage(null);
+      } else {
+        toast.error(result.message || "Failed to delete page");
+        setDeleteDialogOpen(false);
+        setDeletingPage(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete page:", error);
+      toast.error("Failed to delete page");
+      setDeleteDialogOpen(false);
+      setDeletingPage(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -149,8 +193,8 @@ export function PagesList({ initialPages }: { initialPages: PageListItem[] }) {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
-                            disabled
-                            title="Delete not implemented in sandbox"
+                            onClick={() => handleDeleteClick(page)}
+                            title="Delete page"
                           >
                             <Trash2 className="h-4 w-4" />
                             <span className="sr-only">Delete</span>
@@ -165,6 +209,35 @@ export function PagesList({ initialPages }: { initialPages: PageListItem[] }) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Page</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{deletingPage?.title}
+              &quot;? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
