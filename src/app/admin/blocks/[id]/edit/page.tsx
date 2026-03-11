@@ -2,26 +2,19 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/db/server";
 import { sanityFetch } from "@/sanity/lib/client";
-import { BlockForm } from "@/components/admin/blocks/block-form";
-import { type SanityHeroBlock, type SanityCtaBlock } from "@/types/sanity-types";
+import { BLOCK_FORM_REGISTRY } from "@/components/admin/blocks/forms";
 
 async function getBlock(id: string) {
   const query = `
-    *[_type in ["heroBlock", "ctaBlock"] && _id == $id][0] {
-      _id,
-      _type,
-      name,
-      headline,
-      subheadline,
-      buttons,
-      backgroundImage,
-      heading,
-      text,
-      button
+    *[_type in [
+      "heroBlock", "ctaBlock", "richTextBlock",
+      "statsBlock", "embedBlock", "faqBlock", "featureGridBlock"
+    ] && _id == $id][0] {
+      ...
     }
   `;
 
-  return await sanityFetch<SanityHeroBlock | SanityCtaBlock | null>({
+  return await sanityFetch<any | null>({
     query,
     params: { id },
     tags: [`block:${id}`],
@@ -48,10 +41,11 @@ export default async function EditBlockPage({
     notFound();
   }
 
-  // We need to type cast it correctly based on the _type for the form
-  if (block._type !== "heroBlock" && block._type !== "ctaBlock") {
+  const FormComponent = BLOCK_FORM_REGISTRY[block._type];
+
+  if (!FormComponent) {
     notFound();
   }
 
-  return <BlockForm type={block._type} initialData={block} blockId={block._id} />;
+  return <FormComponent type={block._type} initialData={block} blockId={block._id} />;
 }
