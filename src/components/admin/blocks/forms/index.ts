@@ -7,9 +7,14 @@ import { StatsBlockForm } from "./stats-block-form";
 import { EmbedBlockForm } from "./embed-block-form";
 import { FaqBlockForm } from "./faq-block-form";
 import { FeatureGridBlockForm } from "./feature-grid-block-form";
-
-// We temporarily use the old monolithic BlockForm for heroBlock
-import { BlockForm } from "../block-form";
+import { HeroBlockForm } from "./hero-block-form";
+import { ImageGalleryBlockForm } from "./image-gallery-block-form";
+import { ContactFormBlockForm } from "./contact-form-block-form";
+import { LogoCloudBlockForm } from "./logo-cloud-block-form";
+import { TestimonialBlockForm } from "./testimonial-block-form";
+import { ProjectGridBlockForm } from "./project-grid-block-form";
+import { ExperienceTimelineBlockForm } from "./experience-timeline-block-form";
+import { SkillsBlockForm } from "./skills-block-form";
 
 export const BLOCK_FORM_REGISTRY: Record<string, ComponentType<BlockFormProps>> = {
   ctaBlock: CtaBlockForm,
@@ -18,7 +23,14 @@ export const BLOCK_FORM_REGISTRY: Record<string, ComponentType<BlockFormProps>> 
   embedBlock: EmbedBlockForm,
   faqBlock: FaqBlockForm,
   featureGridBlock: FeatureGridBlockForm,
-  heroBlock: (props: BlockFormProps) => React.createElement(BlockForm, { ...props, type: "heroBlock" }),
+  heroBlock: HeroBlockForm,
+  imageGalleryBlock: ImageGalleryBlockForm,
+  contactFormBlock: ContactFormBlockForm,
+  logoCloudBlock: LogoCloudBlockForm,
+  testimonialBlock: TestimonialBlockForm,
+  projectGridBlock: ProjectGridBlockForm,
+  experienceTimelineBlock: ExperienceTimelineBlockForm,
+  skillsBlock: SkillsBlockForm,
 };
 
 export * from "./block-form-shell";

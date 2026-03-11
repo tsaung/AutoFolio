@@ -12,6 +12,13 @@ const ALLOWED_BLOCK_TYPES = [
   "embedBlock",
   "faqBlock",
   "featureGridBlock",
+  "imageGalleryBlock",
+  "contactFormBlock",
+  "logoCloudBlock",
+  "testimonialBlock",
+  "projectGridBlock",
+  "experienceTimelineBlock",
+  "skillsBlock",
 ];
 
 export async function createBlock(formData: FormData) {
@@ -149,5 +156,27 @@ export async function fetchBlocks(type?: string) {
   } catch (error: any) {
     console.error("Error fetching blocks:", error);
     return { error: error.message || "Failed to fetch blocks", blocks: [] };
+  }
+}
+
+export async function fetchSanityReferences(type: string) {
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { error: "Unauthorized" };
+    }
+
+    const query = `*[_type == $type] { _id, _type, title, name, slug } | order(_updatedAt desc)`;
+    const params = { type };
+
+    // We use no-store for admin panels so data is perfectly fresh
+    const docs = await client.withConfig({ useCdn: false }).fetch(query, params, { cache: 'no-store' });
+
+    return { success: true, documents: docs };
+  } catch (error: any) {
+    console.error("Error fetching sanity references:", error);
+    return { error: error.message || "Failed to fetch references", documents: [] };
   }
 }
