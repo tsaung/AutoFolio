@@ -93,37 +93,37 @@
 
 #### Session 1: Schema Migration + Simple Blocks
 
-- [ ] Migrate `heroBlock`, `ctaBlock`, `richTextBlock` from `type: "object"` to `type: "document"` with `name` field.
-- [ ] Create new document schemas: `statsBlock`, `embedBlock`, `faqBlock`, `featureGridBlock`.
-- [ ] Update `page.ts` `pageBuilder` to use references: `{ type: "reference", to: [...all block types] }`.
-- [ ] Refactor `lib/actions/blocks.ts` to be generic (handle any block type).
-- [ ] Update TypeScript types and GROQ queries for dereferencing.
-- [ ] Verify: `npm run build` succeeds.
+- [x] Migrate `heroBlock`, `ctaBlock`, `richTextBlock` from `type: "object"` to `type: "document"` with `name` field.
+- [x] Create new document schemas: `statsBlock`, `embedBlock`, `faqBlock`, `featureGridBlock`.
+- [x] Update `page.ts` `pageBuilder` to use references: `{ type: "reference", to: [...all block types] }`.
+- [x] Refactor `lib/actions/blocks.ts` to be generic (handle any block type).
+- [x] Update TypeScript types and GROQ queries for dereferencing.
+- [x] Verify: `npm run build` succeeds.
 
 #### Session 2: Block Library UI — Simple + Medium Block Forms
 
-- [ ] Refactor monolithic `block-form.tsx` into per-type form components under `components/admin/blocks/forms/`.
-- [ ] Create form components with Zod validation: `CtaBlockForm`, `RichTextBlockForm`, `StatsBlockForm`, `EmbedBlockForm`, `FaqBlockForm`, `FeatureGridBlockForm`.
-- [ ] Update `/admin/blocks/new` type picker with all new block types.
-- [ ] Update `/admin/blocks` list page to display all block types.
-- [ ] Verify: Can create and edit each block type from the library UI.
+- [x] Refactor monolithic `block-form.tsx` into per-type form components under `components/admin/blocks/forms/`.
+- [x] Create form components with Zod validation: `CtaBlockForm`, `RichTextBlockForm`, `StatsBlockForm`, `EmbedBlockForm`, `FaqBlockForm`, `FeatureGridBlockForm`.
+- [x] Update `/admin/blocks/new` type picker with all new block types.
+- [x] Update `/admin/blocks` list page to display all block types.
+- [x] Verify: Can create and edit each block type from the library UI.
 
 #### Session 3: Block Library UI — Complex + Collection Blocks
 
-- [ ] Create forms: `HeroBlockForm` (image upload + buttons), `ImageGalleryBlockForm`, `ContactFormBlockForm`, `LogoCloudBlockForm`, `TestimonialBlockForm`.
-- [ ] Create collection block forms: `ProjectGridBlockForm`, `ExperienceTimelineBlockForm`, `SkillsBlockForm` (with reference pickers).
-- [ ] Create reusable `SanityReferencePicker` component.
-- [ ] Verify: Can create and edit all block types including image uploads and references.
+- [x] Create forms: `HeroBlockForm` (image upload + buttons), `ImageGalleryBlockForm`, `ContactFormBlockForm`, `LogoCloudBlockForm`, `TestimonialBlockForm`.
+- [x] Create collection block forms: `ProjectGridBlockForm`, `ExperienceTimelineBlockForm`, `SkillsBlockForm` (with reference pickers).
+- [x] Create reusable `SanityReferencePicker` component.
+- [x] Verify: Can create and edit all block types including image uploads and references.
 
 #### Session 4: Page Builder — Reference-Based Composition
 
-- [ ] Replace inline "Add Block" with a "Pick from Library" modal/drawer.
-- [ ] Display block references as compact cards (name + type) instead of inline forms.
-- [ ] Keep dnd-kit drag & drop for reordering references.
-- [ ] Update `updatePageBlocks` server action to save reference arrays.
-- [ ] Update GROQ query in `[[...slug]]/page.tsx` to dereference blocks with `->>`.
-- [ ] Remove old inline `block-forms/` directory.
-- [ ] Verify: Can pick blocks, reorder, save, and render on frontend.
+- [x] Replace inline "Add Block" with a "Pick from Library" modal/drawer.
+- [x] Display block references as compact cards (name + type) instead of inline forms.
+- [x] Keep dnd-kit drag & drop for reordering references.
+- [x] Update `updatePageBlocks` server action to save reference arrays.
+- [x] Update GROQ query in `[[...slug]]/page.tsx` to dereference blocks with `->>`.
+- [x] Remove old inline `block-forms/` directory.
+- [x] Verify: Can pick blocks, reorder, save, and render on frontend.
 
 #### Session 5: Frontend Block Renderers
 
