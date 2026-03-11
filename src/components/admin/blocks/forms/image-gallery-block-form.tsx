@@ -36,7 +36,7 @@ export const imageGalleryBlockSchema = z.object({
     .min(1, "At least one image is required"),
 });
 
-export function ImageGalleryBlockForm({ initialData, blockId }: BlockFormProps) {
+export function ImageGalleryBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof imageGalleryBlockSchema>>({
     resolver: zodResolver(imageGalleryBlockSchema),
     defaultValues: initialData || {
@@ -54,7 +54,7 @@ export function ImageGalleryBlockForm({ initialData, blockId }: BlockFormProps) 
   });
 
   return (
-    <BlockFormShell type="imageGalleryBlock" blockId={blockId} form={form} schema={imageGalleryBlockSchema}>
+    <BlockFormShell type="imageGalleryBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={imageGalleryBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

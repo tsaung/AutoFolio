@@ -30,7 +30,7 @@ export const featureGridBlockSchema = z.object({
   })).min(1, "At least one feature is required"),
 });
 
-export function FeatureGridBlockForm({ initialData, blockId }: BlockFormProps) {
+export function FeatureGridBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof featureGridBlockSchema>>({
     resolver: zodResolver(featureGridBlockSchema),
     defaultValues: initialData || {
@@ -47,7 +47,7 @@ export function FeatureGridBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="featureGridBlock" blockId={blockId} form={form} schema={featureGridBlockSchema}>
+    <BlockFormShell type="featureGridBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={featureGridBlockSchema}>
       {(form) => (
         <>
           <FormField

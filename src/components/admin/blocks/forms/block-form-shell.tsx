@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import * as z from "zod";
@@ -27,6 +27,10 @@ export interface BlockFormProps {
   type: string;
   initialData?: any;
   blockId?: string;
+  /** Render mode: "page" = full-page layout, "inline" = compact for dialogs */
+  mode?: "page" | "inline";
+  /** Called when a block is successfully created in inline mode */
+  onCreated?: (result: { id: string; name: string }) => void;
 }
 
 interface BlockFormShellProps {
@@ -35,6 +39,10 @@ interface BlockFormShellProps {
   form: UseFormReturn<any>;
   schema: z.ZodType<any>;
   children: (form: UseFormReturn<any>) => React.ReactNode;
+  /** Render mode: "page" = full-page layout, "inline" = compact for dialogs */
+  mode?: "page" | "inline";
+  /** Called when a block is successfully created in inline mode */
+  onCreated?: (result: { id: string; name: string }) => void;
 }
 
 export function BlockFormShell({
@@ -43,6 +51,8 @@ export function BlockFormShell({
   form,
   schema,
   children,
+  mode = "page",
+  onCreated,
 }: BlockFormShellProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -67,6 +77,12 @@ export function BlockFormShell({
           return;
         }
 
+        if (mode === "inline" && onCreated && result && "id" in result) {
+          toast.success(`${title} created and added to page`);
+          onCreated({ id: result.id as string, name: data.name || title });
+          return;
+        }
+
         toast.success(`Block ${blockId ? "updated" : "created"} successfully`);
         router.push("/admin/blocks");
         router.refresh();
@@ -76,6 +92,45 @@ export function BlockFormShell({
     });
   }
 
+  // ── Inline mode: compact form without page chrome ──────────────────
+  if (mode === "inline") {
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Reference Name</FormLabel>
+                <FormControl>
+                  <Input placeholder={`e.g., Main ${title}`} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="space-y-4 pt-2 border-t">
+            {children(form)}
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={isPending} size="sm">
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="mr-2 h-4 w-4" />
+              )}
+              Create & Add
+            </Button>
+          </div>
+        </form>
+      </Form>
+    );
+  }
+
+  // ── Page mode: full-page layout with chrome ────────────────────────
   return (
     <div className="flex-1 space-y-4 p-8 pt-6 max-w-4xl mx-auto">
       <div className="flex items-center space-x-4 mb-8">

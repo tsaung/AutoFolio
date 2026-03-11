@@ -20,7 +20,7 @@ export const richTextBlockSchema = z.object({
   content: z.string().min(1, "Content is required"),
 });
 
-export function RichTextBlockForm({ initialData, blockId }: BlockFormProps) {
+export function RichTextBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof richTextBlockSchema>>({
     resolver: zodResolver(richTextBlockSchema),
     defaultValues: initialData || {
@@ -30,7 +30,7 @@ export function RichTextBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="richTextBlock" blockId={blockId} form={form} schema={richTextBlockSchema}>
+    <BlockFormShell type="richTextBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={richTextBlockSchema}>
       {(form) => (
         <FormField
           control={form.control}

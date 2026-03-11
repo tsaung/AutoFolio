@@ -36,7 +36,7 @@ export const heroBlockSchema = z.object({
     .optional(),
 });
 
-export function HeroBlockForm({ initialData, blockId }: BlockFormProps) {
+export function HeroBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof heroBlockSchema>>({
     resolver: zodResolver(heroBlockSchema),
     defaultValues: initialData || {
@@ -54,7 +54,7 @@ export function HeroBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="heroBlock" blockId={blockId} form={form} schema={heroBlockSchema}>
+    <BlockFormShell type="heroBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={heroBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

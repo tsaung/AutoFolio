@@ -34,7 +34,7 @@ export const embedBlockSchema = z.object({
   path: ["url"], // attach error to url field generally, form handles display
 });
 
-export function EmbedBlockForm({ initialData, blockId }: BlockFormProps) {
+export function EmbedBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof embedBlockSchema>>({
     resolver: zodResolver(embedBlockSchema),
     defaultValues: initialData || {
@@ -48,7 +48,7 @@ export function EmbedBlockForm({ initialData, blockId }: BlockFormProps) {
   const embedType = form.watch("embedType");
 
   return (
-    <BlockFormShell type="embedBlock" blockId={blockId} form={form} schema={embedBlockSchema}>
+    <BlockFormShell type="embedBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={embedBlockSchema}>
       {(form) => (
         <>
           <FormField

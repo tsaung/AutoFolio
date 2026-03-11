@@ -34,7 +34,7 @@ export const testimonialBlockSchema = z.object({
     .min(1, "At least one testimonial is required"),
 });
 
-export function TestimonialBlockForm({ initialData, blockId }: BlockFormProps) {
+export function TestimonialBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof testimonialBlockSchema>>({
     resolver: zodResolver(testimonialBlockSchema),
     defaultValues: initialData || {
@@ -50,7 +50,7 @@ export function TestimonialBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="testimonialBlock" blockId={blockId} form={form} schema={testimonialBlockSchema}>
+    <BlockFormShell type="testimonialBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={testimonialBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

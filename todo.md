@@ -134,11 +134,11 @@
 
 #### Session 6: Page Builder Inline Quick-Create (Optional Enhancement)
 
-- [ ] Add "Quick Create" tab to page builder's block picker modal.
-- [ ] Embed library form components inline in the page builder.
-- [ ] Quick-created blocks auto-save as documents and insert as references.
+- [x] Add "Quick Create" tab to page builder's block picker modal.
+- [x] Embed library form components inline in the page builder.
+- [x] Quick-created blocks auto-save as documents and insert as references.
 - [ ] Implement Next.js draft mode for page preview.
-- [ ] Verify: Both workflows work — library-first and inline quick-create.
+- [x] Verify: Both workflows work — library-first and inline quick-create.
 
 ### Phase 7: Themeable Design System
 

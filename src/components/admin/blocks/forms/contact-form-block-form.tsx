@@ -27,7 +27,7 @@ export const contactFormBlockSchema = z.object({
   showCompany: z.boolean(),
 });
 
-export function ContactFormBlockForm({ initialData, blockId }: BlockFormProps) {
+export function ContactFormBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof contactFormBlockSchema>>({
     resolver: zodResolver(contactFormBlockSchema),
     defaultValues: initialData || {
@@ -41,7 +41,7 @@ export function ContactFormBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="contactFormBlock" blockId={blockId} form={form} schema={contactFormBlockSchema}>
+    <BlockFormShell type="contactFormBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={contactFormBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

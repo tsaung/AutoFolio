@@ -28,7 +28,7 @@ export const statsBlockSchema = z.object({
   })).min(1, "At least one stat is required"),
 });
 
-export function StatsBlockForm({ initialData, blockId }: BlockFormProps) {
+export function StatsBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof statsBlockSchema>>({
     resolver: zodResolver(statsBlockSchema),
     defaultValues: initialData || {
@@ -44,7 +44,7 @@ export function StatsBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="statsBlock" blockId={blockId} form={form} schema={statsBlockSchema}>
+    <BlockFormShell type="statsBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={statsBlockSchema}>
       {(form) => (
         <>
           <FormField

@@ -32,7 +32,7 @@ export const skillsBlockSchema = z.object({
     .optional(),
 });
 
-export function SkillsBlockForm({ initialData, blockId }: BlockFormProps) {
+export function SkillsBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof skillsBlockSchema>>({
     resolver: zodResolver(skillsBlockSchema),
     defaultValues: initialData || {
@@ -44,7 +44,7 @@ export function SkillsBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="skillsBlock" blockId={blockId} form={form} schema={skillsBlockSchema}>
+    <BlockFormShell type="skillsBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={skillsBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

@@ -32,7 +32,7 @@ export const experienceTimelineBlockSchema = z.object({
     .optional(),
 });
 
-export function ExperienceTimelineBlockForm({ initialData, blockId }: BlockFormProps) {
+export function ExperienceTimelineBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof experienceTimelineBlockSchema>>({
     resolver: zodResolver(experienceTimelineBlockSchema),
     defaultValues: initialData || {
@@ -44,7 +44,7 @@ export function ExperienceTimelineBlockForm({ initialData, blockId }: BlockFormP
   });
 
   return (
-    <BlockFormShell type="experienceTimelineBlock" blockId={blockId} form={form} schema={experienceTimelineBlockSchema}>
+    <BlockFormShell type="experienceTimelineBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={experienceTimelineBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

@@ -32,7 +32,7 @@ export const logoCloudBlockSchema = z.object({
     .min(1, "At least one logo is required"),
 });
 
-export function LogoCloudBlockForm({ initialData, blockId }: BlockFormProps) {
+export function LogoCloudBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof logoCloudBlockSchema>>({
     resolver: zodResolver(logoCloudBlockSchema),
     defaultValues: initialData || {
@@ -48,7 +48,7 @@ export function LogoCloudBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="logoCloudBlock" blockId={blockId} form={form} schema={logoCloudBlockSchema}>
+    <BlockFormShell type="logoCloudBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={logoCloudBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField

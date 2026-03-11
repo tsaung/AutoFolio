@@ -26,7 +26,7 @@ export const ctaBlockSchema = z.object({
   }).optional(),
 });
 
-export function CtaBlockForm({ initialData, blockId }: BlockFormProps) {
+export function CtaBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof ctaBlockSchema>>({
     resolver: zodResolver(ctaBlockSchema),
     defaultValues: initialData || {
@@ -38,7 +38,7 @@ export function CtaBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="ctaBlock" blockId={blockId} form={form} schema={ctaBlockSchema}>
+    <BlockFormShell type="ctaBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={ctaBlockSchema}>
       {(form) => (
         <>
           <FormField

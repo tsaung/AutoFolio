@@ -28,7 +28,7 @@ export const faqBlockSchema = z.object({
   })).min(1, "At least one FAQ item is required"),
 });
 
-export function FaqBlockForm({ initialData, blockId }: BlockFormProps) {
+export function FaqBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof faqBlockSchema>>({
     resolver: zodResolver(faqBlockSchema),
     defaultValues: initialData || {
@@ -44,7 +44,7 @@ export function FaqBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="faqBlock" blockId={blockId} form={form} schema={faqBlockSchema}>
+    <BlockFormShell type="faqBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={faqBlockSchema}>
       {(form) => (
         <>
           <FormField

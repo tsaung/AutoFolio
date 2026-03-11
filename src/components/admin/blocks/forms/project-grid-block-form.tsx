@@ -32,7 +32,7 @@ export const projectGridBlockSchema = z.object({
     .optional(),
 });
 
-export function ProjectGridBlockForm({ initialData, blockId }: BlockFormProps) {
+export function ProjectGridBlockForm({ initialData, blockId, mode, onCreated }: BlockFormProps) {
   const form = useForm<z.infer<typeof projectGridBlockSchema>>({
     resolver: zodResolver(projectGridBlockSchema),
     defaultValues: initialData || {
@@ -44,7 +44,7 @@ export function ProjectGridBlockForm({ initialData, blockId }: BlockFormProps) {
   });
 
   return (
-    <BlockFormShell type="projectGridBlock" blockId={blockId} form={form} schema={projectGridBlockSchema}>
+    <BlockFormShell type="projectGridBlock" blockId={blockId} mode={mode} onCreated={onCreated} form={form} schema={projectGridBlockSchema}>
       {(form) => (
         <div className="space-y-6">
           <FormField
