@@ -88,9 +88,57 @@ export interface SanityNavigation {
   updatedBy?: string;
 }
 
+export interface SanityBlockReference {
+  _type: "reference";
+  _ref: string;
+  _key: string;
+}
+
+export interface SanityHeroBlock {
+  _id: string;
+  _type: "heroBlock";
+  _key?: string;
+  name: string;
+  headline: string;
+  subheadline?: string;
+  buttons?: Array<{
+    label: string;
+    url: string;
+    style: "primary" | "secondary" | "outline";
+    _key: string;
+  }>;
+  backgroundImage?: any;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityCtaBlock {
+  _id: string;
+  _type: "ctaBlock";
+  _key?: string;
+  name: string;
+  heading: string;
+  text?: string;
+  button?: {
+    label: string;
+    url: string;
+  };
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface SanityRichTextBlock {
+  _type: "richTextBlock";
+  _key: string;
+  content: PortableTextBlock[];
+}
+
+export type SanityPageBlock = SanityBlockReference | SanityRichTextBlock;
+
 export interface SanityPage {
   _id: string;
   _type: "page";
   title: string;
   slug?: { current: string };
+  pageBuilder?: SanityPageBlock[];
 }
