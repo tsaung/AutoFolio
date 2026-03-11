@@ -78,30 +78,78 @@ export const siteSettings = defineType({
       type: "object",
       fields: [
         defineField({
+          name: "themePreset",
+          title: "Theme Preset",
+          type: "string",
+          description: "Select a predefined theme or choose 'Custom' to use manual hex colors.",
+          options: {
+            list: [
+              { title: "Zinc", value: "zinc" },
+              { title: "Slate", value: "slate" },
+              { title: "Stone", value: "stone" },
+              { title: "Gray", value: "gray" },
+              { title: "Neutral", value: "neutral" },
+              { title: "Red", value: "red" },
+              { title: "Rose", value: "rose" },
+              { title: "Orange", value: "orange" },
+              { title: "Green", value: "green" },
+              { title: "Blue", value: "blue" },
+              { title: "Yellow", value: "yellow" },
+              { title: "Violet", value: "violet" },
+              { title: "Custom", value: "custom" },
+            ],
+          },
+          initialValue: "zinc",
+        }),
+        defineField({
           name: "primary",
           title: "Primary Color (Hex)",
           type: "string",
+          hidden: ({ parent }) => parent?.themePreset !== "custom",
           validation: (rule) =>
-            rule.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-              name: "hex color code",
+            rule.custom((value, context) => {
+              const themePreset = (context.parent as any)?.themePreset;
+              if (themePreset === "custom" && !value) {
+                return "Primary color is required when using a custom theme";
+              }
+              if (value && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value)) {
+                return "Must be a valid hex color code";
+              }
+              return true;
             }),
         }),
         defineField({
           name: "secondary",
           title: "Secondary Color (Hex)",
           type: "string",
+          hidden: ({ parent }) => parent?.themePreset !== "custom",
           validation: (rule) =>
-            rule.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-              name: "hex color code",
+            rule.custom((value, context) => {
+              const themePreset = (context.parent as any)?.themePreset;
+              if (themePreset === "custom" && !value) {
+                return "Secondary color is required when using a custom theme";
+              }
+              if (value && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value)) {
+                return "Must be a valid hex color code";
+              }
+              return true;
             }),
         }),
         defineField({
           name: "accent",
           title: "Accent Color (Hex)",
           type: "string",
+          hidden: ({ parent }) => parent?.themePreset !== "custom",
           validation: (rule) =>
-            rule.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-              name: "hex color code",
+            rule.custom((value, context) => {
+              const themePreset = (context.parent as any)?.themePreset;
+              if (themePreset === "custom" && !value) {
+                return "Accent color is required when using a custom theme";
+              }
+              if (value && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value)) {
+                return "Must be a valid hex color code";
+              }
+              return true;
             }),
         }),
       ],

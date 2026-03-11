@@ -7,7 +7,8 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateSiteSettings } from "@/lib/actions/site-settings";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, Check } from "lucide-react";
+import { THEMES } from "@/lib/themes";
 
 import {
   Form,
@@ -31,9 +32,10 @@ import {
 const siteSettingsSchema = z.object({
   siteName: z.string().min(1, "Site name is required"),
   brandColors: z.object({
-    primary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form"),
-    secondary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form"),
-    accent: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form"),
+    themePreset: z.string().optional(),
+    primary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form").optional().or(z.literal("")),
+    secondary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form").optional().or(z.literal("")),
+    accent: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form").optional().or(z.literal("")),
   }).optional(),
   mainNavigation: z.string().optional(),
   footerNavigation: z.string().optional(),
@@ -55,10 +57,14 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
 
   // Parse default brand colors or set fallback
   const defaultColors = initialData?.brandColors || {
+    themePreset: "zinc",
     primary: "#000000",
     secondary: "#666666",
     accent: "#0000ff",
   };
+  if (initialData?.brandColors && !initialData.brandColors.themePreset) {
+    defaultColors.themePreset = "custom";
+  }
 
   const form = useForm<SiteSettingsFormValues>({
     resolver: zodResolver(siteSettingsSchema),
@@ -75,6 +81,8 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
     control: form.control,
     name: "footer.socialLinks"
   });
+
+  const themePreset = form.watch("brandColors.themePreset");
 
   async function onSubmit(data: SiteSettingsFormValues) {
     setIsPending(true);
@@ -124,56 +132,108 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
 
         <div className="space-y-4">
           <h4 className="text-sm font-medium">Brand Colors</h4>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="brandColors.primary"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Primary Color (Hex)</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center gap-2">
-                      <Input type="color" className="w-12 h-10 p-1" {...field} />
-                      <Input placeholder="#000000" {...field} />
+          <FormField
+            control={form.control}
+            name="brandColors.themePreset"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Theme Preset</FormLabel>
+                <FormControl>
+                  <div className="flex flex-wrap gap-2">
+                    {THEMES.map((theme) => (
+                      <div
+                        key={theme.name}
+                        onClick={() => field.onChange(theme.name)}
+                        className={`flex flex-col items-center gap-2 cursor-pointer p-2 rounded-md transition-all ${
+                          field.value === theme.name
+                            ? "ring-2 ring-primary bg-accent/50"
+                            : "hover:bg-accent/50"
+                        }`}
+                      >
+                        <div
+                          className="w-10 h-10 rounded-full border shadow-sm flex items-center justify-center"
+                          style={{ backgroundColor: theme.light.activeColor }}
+                        >
+                          {field.value === theme.name && <Check className="w-5 h-5 text-white mix-blend-difference" />}
+                        </div>
+                        <span className="text-xs font-medium">{theme.label}</span>
+                      </div>
+                    ))}
+                    <div
+                      onClick={() => field.onChange("custom")}
+                      className={`flex flex-col items-center gap-2 cursor-pointer p-2 rounded-md transition-all ${
+                        field.value === "custom"
+                          ? "ring-2 ring-primary bg-accent/50"
+                          : "hover:bg-accent/50"
+                      }`}
+                    >
+                      <div className="w-10 h-10 border shadow-sm rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 via-green-500 to-blue-500">
+                        {field.value === "custom" && <Check className="w-5 h-5 text-white" />}
+                      </div>
+                      <span className="text-xs font-medium">Custom</span>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="brandColors.secondary"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Secondary Color (Hex)</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center gap-2">
-                      <Input type="color" className="w-12 h-10 p-1" {...field} />
-                      <Input placeholder="#666666" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="brandColors.accent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Accent Color (Hex)</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center gap-2">
-                      <Input type="color" className="w-12 h-10 p-1" {...field} />
-                      <Input placeholder="#0000ff" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Select a predefined Shadcn theme, or choose Custom to manually set hexadecimal colors.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {themePreset === "custom" && (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="brandColors.primary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Color (Hex)</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center gap-2">
+                        <Input type="color" className="w-12 h-10 p-1" {...field} value={field.value || ""} />
+                        <Input placeholder="#000000" {...field} value={field.value || ""} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="brandColors.secondary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secondary Color (Hex)</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center gap-2">
+                        <Input type="color" className="w-12 h-10 p-1" {...field} value={field.value || ""} />
+                        <Input placeholder="#666666" {...field} value={field.value || ""} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="brandColors.accent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Accent Color (Hex)</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center gap-2">
+                        <Input type="color" className="w-12 h-10 p-1" {...field} value={field.value || ""} />
+                        <Input placeholder="#0000ff" {...field} value={field.value || ""} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
         </div>
 
         <div className="space-y-4">
