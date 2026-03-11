@@ -12,6 +12,7 @@ import {
   Globe,
   Menu,
   FileText,
+  LayoutTemplate,
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
@@ -27,6 +28,11 @@ const sidebarItems = [
     title: "Pages",
     href: "/admin/pages",
     icon: FileText,
+  },
+  {
+    title: "Blocks Library",
+    href: "/admin/blocks",
+    icon: LayoutTemplate,
   },
   {
     title: "Knowledge Base",
