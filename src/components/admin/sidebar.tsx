@@ -15,44 +15,88 @@ import {
   LayoutTemplate,
   PanelLeftClose,
   PanelLeftOpen,
+  Folder,
+  Briefcase,
+  Code,
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const sidebarItems = [
+const sidebarGroups = [
   {
-    title: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
+    heading: "Overview",
+    items: [
+      {
+        title: "Dashboard",
+        href: "/admin",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "View Site",
+        href: "/",
+        icon: Globe,
+      },
+    ],
   },
   {
-    title: "Pages",
-    href: "/admin/pages",
-    icon: FileText,
+    heading: "Content",
+    items: [
+      {
+        title: "Pages",
+        href: "/admin/pages",
+        icon: FileText,
+      },
+      {
+        title: "Blocks Library",
+        href: "/admin/blocks",
+        icon: LayoutTemplate,
+      },
+      {
+        title: "Navigation",
+        href: "/admin/navigation",
+        icon: Menu,
+      },
+    ],
   },
   {
-    title: "Blocks Library",
-    href: "/admin/blocks",
-    icon: LayoutTemplate,
+    heading: "Collections",
+    items: [
+      {
+        title: "Projects",
+        href: "/admin/projects",
+        icon: Folder,
+      },
+      {
+        title: "Experiences",
+        href: "/admin/experiences",
+        icon: Briefcase,
+      },
+      {
+        title: "Skills",
+        href: "/admin/skills",
+        icon: Code,
+      },
+      {
+        title: "Social Links",
+        href: "/admin/social-links",
+        icon: Share2,
+      },
+    ],
   },
   {
-    title: "Knowledge Base",
-    href: "/admin/knowledge",
-    icon: Database,
-  },
-  {
-    title: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
-  {
-    title: "Navigation",
-    href: "/admin/navigation",
-    icon: Menu,
-  },
-  {
-    title: "View Site",
-    href: "/",
-    icon: Globe,
+    heading: "System",
+    items: [
+      {
+        title: "Knowledge Base",
+        href: "/admin/knowledge",
+        icon: Database,
+      },
+      {
+        title: "Settings",
+        href: "/admin/settings",
+        icon: Settings,
+      },
+    ],
   },
 ];
 
@@ -76,29 +120,46 @@ export function SidebarContent({
         className,
       )}
     >
-      <div className="flex-1 pt-4">
+      <div className="flex-1 pt-4 pb-4 overflow-y-auto">
         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-          {sidebarItems.map((item) => {
-            const isActive = pathname === item.href;
-            const isExternal = item.href === "/";
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary whitespace-nowrap overflow-hidden",
-                  isActive ? "bg-muted text-primary" : "text-muted-foreground",
-                  collapsed && "justify-center px-2",
-                )}
-                title={collapsed ? item.title : undefined}
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                {!collapsed && item.title}
-              </Link>
-            );
-          })}
+          {sidebarGroups.map((group, groupIndex) => (
+            <div key={group.heading} className="mb-4 last:mb-0">
+              {collapsed ? (
+                groupIndex !== 0 && (
+                  <div className="mx-2 mb-2 h-px bg-border" aria-hidden="true" />
+                )
+              ) : (
+                <h4 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  {group.heading}
+                </h4>
+              )}
+              <div className="grid gap-1">
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href;
+                  const isExternal = item.href === "/";
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary whitespace-nowrap overflow-hidden",
+                        isActive
+                          ? "bg-muted text-primary"
+                          : "text-muted-foreground hover:bg-muted/50",
+                        collapsed && "justify-center px-2",
+                      )}
+                      title={collapsed ? item.title : undefined}
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
       </div>
 
