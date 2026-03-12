@@ -47,6 +47,7 @@ export const page = defineType({
             { type: "embedBlock" },
             { type: "faqBlock" },
             { type: "featureGridBlock" },
+            { type: "projectGridBlock" },
           ],
         },
       ],

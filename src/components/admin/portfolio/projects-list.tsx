@@ -56,13 +56,17 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
     setIsDeleting(true);
 
     try {
-      await deleteProject(deletingProject._id);
+      const result = await deleteProject(deletingProject._id);
+      if (result && 'error' in result && result.error) {
+        toast.error(result.error);
+        return;
+      }
       setDeleteDialogOpen(false);
       setDeletingProject(null);
       toast.success("Project deleted successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to delete project:", error);
-      toast.error("Failed to delete project");
+      toast.error(error.message || "Failed to delete project");
     } finally {
       setIsDeleting(false);
     }

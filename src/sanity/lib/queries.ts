@@ -21,7 +21,12 @@ export const PAGE_BY_SLUG_QUERY = groq`
     seo,
     pageBuilder[]{
       _key,
-      ...@->
+      ...@->{
+        ...,
+        _type == "projectGridBlock" => {
+          projects[]->
+        }
+      }
     }
   }
 `;

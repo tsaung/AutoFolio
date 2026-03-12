@@ -119,7 +119,7 @@ export async function updateProject(
   }
 }
 
-export async function deleteProject(id: string): Promise<void> {
+export async function deleteProject(id: string): Promise<{ error?: string } | void> {
   const supabase = await createClient();
 
   const {
@@ -127,17 +127,28 @@ export async function deleteProject(id: string): Promise<void> {
     error: authError,
   } = await supabase.auth.getUser();
   if (authError || !user) {
-    throw new Error("Unauthorized");
+    return { error: "Unauthorized" };
   }
 
   try {
-    await writeClient.delete(id);
+    const publishedId = id.replace(/^drafts\./, "");
+    const draftId = `drafts.${publishedId}`;
+
+    await writeClient
+      .transaction()
+      .delete(publishedId)
+      .delete(draftId)
+      .commit();
+
     revalidatePath("/admin/projects", "layout");
     revalidatePath("/admin");
     // TODO: update RAG pipeline to use Sanity webhook or direct call
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting project from Sanity:", error);
-    throw new Error("Failed to delete project");
+    if (error.message?.includes("reference") || error.details?.type === "reference") {
+      return { error: "Cannot delete project because it is referenced elsewhere (e.g., in a Project Grid block). Please remove it from any pages first." };
+    }
+    return { error: "Failed to delete project. Make sure it is not referenced elsewhere." };
   }
 }
 
