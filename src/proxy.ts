@@ -38,14 +38,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const protectedPaths = [
-    "/dashboard",
-    "/experiences",
-    "/improve",
-    "/knowledge",
-    "/projects",
-    "/settings",
-    "/skills",
-    "/social-links",
+    "/admin",
   ];
 
   const isProtectedRoute = protectedPaths.some((path) =>
@@ -69,7 +62,7 @@ export async function proxy(request: NextRequest) {
       !path.startsWith("/_next") &&
       !path.startsWith("/static") &&
       !path.startsWith("/auth") &&
-      path !== "/settings/profile"
+      path !== "/admin/settings/profile"
     ) {
       const { data: profile } = await supabase
         .from("profiles")
@@ -79,7 +72,7 @@ export async function proxy(request: NextRequest) {
 
       if (!profile) {
         const url = request.nextUrl.clone();
-        url.pathname = "/settings/profile";
+        url.pathname = "/admin/settings/profile";
         return NextResponse.redirect(url);
       }
     }

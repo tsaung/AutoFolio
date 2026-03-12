@@ -139,8 +139,9 @@ describe("Site Settings Server Actions", () => {
       expect(mockSet).toHaveBeenCalledWith(input);
       expect(mockCommit).toHaveBeenCalled();
 
-      expect(mockRevalidateTag).toHaveBeenCalledWith("siteSettings", "layout");
-      expect(mockRevalidatePath).toHaveBeenCalledWith("/settings", "layout");
+      expect(mockRevalidateTag).toHaveBeenCalledWith("siteSettings", "max");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/admin/settings", "layout");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/admin");
       expect(result).toEqual({ success: true, settings: { _id: "siteSettings" } });
     });
   });

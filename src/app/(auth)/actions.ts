@@ -20,7 +20,7 @@ export async function login(prevState: any, formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/admin')
 }
 
 export async function resetPassword(prevState: any, formData: FormData) {
@@ -54,7 +54,7 @@ export async function updatePassword(prevState: any, formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/admin')
 }
 
 export async function signout() {

@@ -90,8 +90,8 @@ export async function createSocialLink(
     throw new Error("Failed to create social link");
   }
 
-  revalidatePath("/social-links");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/social-links");
+  revalidatePath("/admin");
   return data;
 }
 
@@ -125,8 +125,8 @@ export async function updateSocialLink(
     throw new Error("Failed to update social link");
   }
 
-  revalidatePath("/social-links");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/social-links");
+  revalidatePath("/admin");
   return data;
 }
 
@@ -152,8 +152,8 @@ export async function deleteSocialLink(id: string): Promise<void> {
     throw new Error("Failed to delete social link");
   }
 
-  revalidatePath("/social-links");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/social-links");
+  revalidatePath("/admin");
 }
 
 export async function reorderSocialLinks(
@@ -185,8 +185,8 @@ export async function reorderSocialLinks(
     throw new Error("Failed to reorder social links");
   }
 
-  revalidatePath("/social-links");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/social-links");
+  revalidatePath("/admin");
 }
 
 /**

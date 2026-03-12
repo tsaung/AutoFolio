@@ -92,8 +92,8 @@ export async function createSkill(
     throw new Error("Failed to create skill");
   }
 
-  revalidatePath("/skills");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/skills");
+  revalidatePath("/admin");
   after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
@@ -128,8 +128,8 @@ export async function updateSkill(
     throw new Error("Failed to update skill");
   }
 
-  revalidatePath("/skills");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/skills");
+  revalidatePath("/admin");
   after(() => syncSkillsToKnowledge(user.id));
   return data;
 }
@@ -156,8 +156,8 @@ export async function deleteSkill(id: string): Promise<void> {
     throw new Error("Failed to delete skill");
   }
 
-  revalidatePath("/skills");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/skills");
+  revalidatePath("/admin");
   after(() => syncSkillsToKnowledge(user.id));
 }
 
@@ -190,8 +190,8 @@ export async function reorderSkills(
     throw new Error("Failed to reorder skills");
   }
 
-  revalidatePath("/skills");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/skills");
+  revalidatePath("/admin");
   after(() => syncSkillsToKnowledge(user.id));
 }
 

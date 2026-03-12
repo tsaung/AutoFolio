@@ -92,8 +92,8 @@ export async function createProject(
     throw new Error("Failed to create project");
   }
 
-  revalidatePath("/projects");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   after(() => syncProjectsToKnowledge(user.id));
 
   return data;
@@ -129,8 +129,8 @@ export async function updateProject(
     throw new Error("Failed to update project");
   }
 
-  revalidatePath("/projects");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   after(() => syncProjectsToKnowledge(user.id));
 
   return data;
@@ -158,8 +158,8 @@ export async function deleteProject(id: string): Promise<void> {
     throw new Error("Failed to delete project");
   }
 
-  revalidatePath("/projects");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   after(() => syncProjectsToKnowledge(user.id));
 }
 
@@ -198,8 +198,8 @@ export async function reorderProjects(
     throw new Error("Failed to reorder projects");
   }
 
-  revalidatePath("/projects");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   after(() => syncProjectsToKnowledge(user.id));
 }
 
