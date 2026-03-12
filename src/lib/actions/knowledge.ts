@@ -95,8 +95,8 @@ export async function createDocument(input: {
     throw new Error("Failed to create document");
   }
 
-  revalidatePath("/knowledge");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/knowledge");
+  revalidatePath("/admin");
 
   // Background: chunk + embed
   after(() => processDocument(data.id, user.id, input.content));
@@ -135,8 +135,8 @@ export async function updateDocument(
     throw new Error("Failed to update document");
   }
 
-  revalidatePath("/knowledge");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/knowledge");
+  revalidatePath("/admin");
 
   // Background: re-chunk + re-embed
   after(() => processDocument(data.id, user.id, input.content));
@@ -166,6 +166,6 @@ export async function deleteDocument(id: string): Promise<void> {
     throw new Error("Failed to delete document");
   }
 
-  revalidatePath("/knowledge");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/knowledge");
+  revalidatePath("/admin");
 }

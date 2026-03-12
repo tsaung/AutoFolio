@@ -71,8 +71,8 @@ export async function createExperience(
       updatedBy: user.id,
     });
 
-    revalidatePath("/experiences", "layout");
-    revalidatePath("/dashboard");
+    revalidatePath("/admin/experiences", "layout");
+    revalidatePath("/admin");
     // TODO: RAG pipeline sync
     return data as unknown as SanityExperience;
   } catch (error) {
@@ -104,8 +104,8 @@ export async function updateExperience(
       })
       .commit();
 
-    revalidatePath("/experiences", "layout");
-    revalidatePath("/dashboard");
+    revalidatePath("/admin/experiences", "layout");
+    revalidatePath("/admin");
     // TODO: RAG pipeline sync
     return data as unknown as SanityExperience;
   } catch (error) {
@@ -127,8 +127,8 @@ export async function deleteExperience(id: string): Promise<void> {
 
   try {
     await writeClient.delete(id);
-    revalidatePath("/experiences", "layout");
-    revalidatePath("/dashboard");
+    revalidatePath("/admin/experiences", "layout");
+    revalidatePath("/admin");
     // TODO: RAG pipeline sync
   } catch (error) {
     console.error("Error deleting experience from Sanity:", error);
@@ -157,8 +157,8 @@ export async function reorderExperiences(
     });
 
     await tx.commit();
-    revalidatePath("/experiences", "layout");
-    revalidatePath("/dashboard");
+    revalidatePath("/admin/experiences", "layout");
+    revalidatePath("/admin");
     // TODO: RAG pipeline sync
   } catch (error) {
     console.error("Error reordering experiences in Sanity:", error);

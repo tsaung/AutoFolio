@@ -54,7 +54,7 @@ export async function updateSiteSettings(input: any) {
   await writeClient.patch("siteSettings").set(input).commit();
 
   revalidateTag("siteSettings", "max");
-  revalidatePath("/settings", "layout");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/settings", "layout");
+  revalidatePath("/admin");
   return { success: true, settings: { _id: "siteSettings" } };
 }

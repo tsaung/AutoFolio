@@ -109,7 +109,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
             Manage your portfolio projects.
           </p>
         </div>
-        <Button onClick={() => router.push("/projects/new")}>
+        <Button onClick={() => router.push("/admin/projects/new")}>
           <Plus className="mr-2 h-4 w-4" />
           Add Project
         </Button>
@@ -259,7 +259,7 @@ export function ProjectsList({ initialProjects }: ProjectsListProps) {
                             size="icon"
                             className="h-8 w-8"
                             onClick={() =>
-                              router.push(`/projects/${project._id}/edit`)
+                              router.push(`/admin/projects/${project._id}/edit`)
                             }
                           >
                             <Pencil className="h-4 w-4" />

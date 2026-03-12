@@ -190,7 +190,7 @@ export function SkillsList({ initialSkills }: SkillsListProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => router.push(`/skills/${skill._id}/edit`)}
+                        onClick={() => router.push(`/admin/skills/${skill._id}/edit`)}
                       >
                         <Pencil className="h-4 w-4" />
                         <span className="sr-only">Edit</span>

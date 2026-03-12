@@ -90,7 +90,7 @@ export function SkillForm({
         onSuccess();
         router.refresh();
       } else {
-        router.push("/skills");
+        router.push("/admin/skills");
         router.refresh();
       }
     } catch (error) {

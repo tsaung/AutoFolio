@@ -96,7 +96,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
         });
         toast.success("Project created successfully");
       }
-      router.push("/projects");
+      router.push("/admin/projects");
       router.refresh();
     } catch (error) {
       console.error("Failed to submit project:", error);

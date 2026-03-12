@@ -100,6 +100,6 @@ export async function updateBotConfig(
     throw new Error("Failed to update bot config");
   }
 
-  revalidatePath("/settings/bot");
+  revalidatePath("/admin/settings/bot");
   return { success: true };
 }

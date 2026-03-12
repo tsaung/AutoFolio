@@ -92,8 +92,8 @@ export async function createExperience(
     throw new Error("Failed to create experience");
   }
 
-  revalidatePath("/experiences");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/experiences");
+  revalidatePath("/admin");
   after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
@@ -128,8 +128,8 @@ export async function updateExperience(
     throw new Error("Failed to update experience");
   }
 
-  revalidatePath("/experiences");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/experiences");
+  revalidatePath("/admin");
   after(() => syncExperiencesToKnowledge(user.id));
   return data;
 }
@@ -156,8 +156,8 @@ export async function deleteExperience(id: string): Promise<void> {
     throw new Error("Failed to delete experience");
   }
 
-  revalidatePath("/experiences");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/experiences");
+  revalidatePath("/admin");
   after(() => syncExperiencesToKnowledge(user.id));
 }
 
@@ -190,8 +190,8 @@ export async function reorderExperiences(
     throw new Error("Failed to reorder experiences");
   }
 
-  revalidatePath("/experiences");
-  revalidatePath("/dashboard");
+  revalidatePath("/admin/experiences");
+  revalidatePath("/admin");
   after(() => syncExperiencesToKnowledge(user.id));
 }
 

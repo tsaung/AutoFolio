@@ -101,6 +101,6 @@ export async function updateProfile(data: Record<string, any>) {
     console.error("Error managing bot config:", err);
   }
 
-  revalidatePath("/settings/profile");
+  revalidatePath("/admin/settings/profile");
   return { success: true };
 }

@@ -87,7 +87,7 @@ export function SocialLinkForm({
         onSuccess();
         router.refresh();
       } else {
-        router.push("/social-links");
+        router.push("/admin/social-links");
         router.refresh();
       }
     } catch (error) {
