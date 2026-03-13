@@ -14,13 +14,6 @@ import {
   deleteSkill,
   reorderSkills,
   getPublicSkills,
-  getSocialLinks,
-  getSocialLink,
-  createSocialLink,
-  updateSocialLink,
-  deleteSocialLink,
-  reorderSocialLinks,
-  getPublicSocialLinks,
 } from "../sanity-portfolio";
 import {
   PROJECTS_QUERY,
@@ -28,8 +21,6 @@ import {
   PUBLIC_PROJECTS_QUERY,
   SKILLS_QUERY,
   SKILL_BY_ID_QUERY,
-  SOCIAL_LINKS_QUERY,
-  SOCIAL_LINK_BY_ID_QUERY,
 } from "@/sanity/lib/queries";
 
 // --- Mocks ---
@@ -234,56 +225,6 @@ describe("Sanity Portfolio Server Actions", () => {
       expect(mockTransaction).toHaveBeenCalled();
       expect(mockTxPatch).toHaveBeenCalledTimes(2);
       expect(mockTxCommit).toHaveBeenCalled();
-    });
-  });
-
-  // ==========================================
-  // SOCIAL LINKS
-  // ==========================================
-  describe("Social Links", () => {
-    it("getSocialLinks should return links for authenticated user", async () => {
-      const mockData = [{ _id: "1", platform: "Link 1" }];
-
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: "user-1" } },
-        error: null,
-      });
-      mockFetch.mockResolvedValue(mockData);
-
-      const result = await getSocialLinks();
-
-      expect(mockFetch).toHaveBeenCalledWith(SOCIAL_LINKS_QUERY, {}, { cache: "no-store" });
-      expect(result).toEqual(mockData);
-    });
-
-    it("updateSocialLink should update a link with updatedBy", async () => {
-      const input = { platform: "Updated Link" };
-
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: "user-1" } },
-        error: null,
-      });
-
-      const result = await updateSocialLink("1", input);
-
-      expect(mockPatch).toHaveBeenCalledWith("1");
-      expect(mockSet).toHaveBeenCalledWith({
-        ...input,
-        updatedBy: "user-1",
-      });
-      expect(mockCommit).toHaveBeenCalled();
-      expect(result).toEqual({ _id: "patched" });
-    });
-
-    it("deleteSocialLink should delete a link", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: "user-1" } },
-        error: null,
-      });
-
-      await deleteSocialLink("1");
-
-      expect(mockDelete).toHaveBeenCalledWith("1");
     });
   });
 });

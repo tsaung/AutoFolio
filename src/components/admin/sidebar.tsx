@@ -76,11 +76,6 @@ const sidebarGroups = [
         href: "/admin/skills",
         icon: Code,
       },
-      {
-        title: "Social Links",
-        href: "/admin/social-links",
-        icon: Share2,
-      },
     ],
   },
   {
