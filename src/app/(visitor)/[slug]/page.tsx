@@ -6,7 +6,6 @@ import { PageRenderer, type SanityBlock } from "@/components/v2/page-renderer";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
 import { getPublicProfile } from "@/lib/actions/profile";
-import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 
 // ---------------------------------------------------------------------------
@@ -73,7 +72,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
     getPublicSiteSettings()
   ]);
 
-  const socialLinks = profile ? await getPublicSocialLinks(profile.id) : [];
+  const socialLinks = siteSettings?.footer?.socialLinks || [];
 
   if (!page) {
     notFound();

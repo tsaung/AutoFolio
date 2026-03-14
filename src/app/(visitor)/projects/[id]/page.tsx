@@ -1,7 +1,6 @@
 import { getPublicProject } from "@/lib/actions/projects";
 import { getPublicProfile } from "@/lib/actions/profile";
 import { getPublicBotConfig } from "@/lib/actions/bot-config";
-import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 import { VisitorNav } from "@/components/portfolio/visitor-nav";
 import { VisitorFooter } from "@/components/portfolio/visitor-footer";
@@ -33,11 +32,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const [botConfig, socialLinks, siteSettings] = await Promise.all([
+  const [botConfig, siteSettings] = await Promise.all([
     getPublicBotConfig(),
-    profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
     getPublicSiteSettings(),
   ]);
+
+  const socialLinks = siteSettings?.footer?.socialLinks || [];
 
   return (
     <main className="min-h-screen bg-background text-foreground">

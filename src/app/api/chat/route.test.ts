@@ -105,12 +105,6 @@ describe("POST /api/chat", () => {
           error: null,
         });
       }
-      if (table === "social_links") {
-        return createMockChain({
-          data: [{ platform: "GitHub", url: "https://github.com/tsaung" }],
-          error: null,
-        });
-      }
       // knowledge_chunks / rpc fallback
       return createMockChain({ data: [], error: null });
     });

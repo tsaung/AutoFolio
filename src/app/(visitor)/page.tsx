@@ -3,7 +3,6 @@ import { getPublicBotConfig } from "@/lib/actions/bot-config";
 import { getPublicProjects } from "@/lib/actions/projects";
 import { getPublicExperiences } from "@/lib/actions/experiences";
 import { getPublicSkills } from "@/lib/actions/skills";
-import { getPublicSocialLinks } from "@/lib/actions/social-links";
 import { getPublicSiteSettings } from "@/lib/actions/site-settings";
 
 import { ProfileHero } from "@/components/visitor/profile-hero";
@@ -35,13 +34,14 @@ export default async function VisitorPage({
   const isPreview = preview === "true";
 
   // Parallel data fetching for performance
-  const [projects, experiences, skills, socialLinks, siteSettings] = await Promise.all([
+  const [projects, experiences, skills, siteSettings] = await Promise.all([
     profile ? getPublicProjects(profile.id, isPreview) : Promise.resolve([]),
     profile ? getPublicExperiences(profile.id, isPreview) : Promise.resolve([]),
     profile ? getPublicSkills(profile.id) : Promise.resolve([]),
-    profile ? getPublicSocialLinks(profile.id) : Promise.resolve([]),
     getPublicSiteSettings(),
   ]);
+
+  const socialLinks = siteSettings?.footer?.socialLinks || [];
 
   return (
     <div className="flex flex-col min-h-max w-full bg-background text-foreground">

@@ -6,18 +6,23 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
 
 interface VisitorFooterProps {
   profile: Profile | null;
-  socialLinks: SocialLink[];
+  socialLinks: Array<{
+    _key?: string;
+    platform?: string;
+    url?: string;
+    icon?: string;
+  }>;
   siteSettings?: any;
 }
 
 export function VisitorFooter({ profile, socialLinks, siteSettings }: VisitorFooterProps) {
   const currentYear = new Date().getFullYear();
 
-  const getSocialIcon = (platform: string) => {
+  const getSocialIcon = (platform?: string) => {
+    if (!platform) return <ExternalLink className="w-7 h-7" />;
     switch (platform.toLowerCase()) {
       case "github":
         return <Github className="w-7 h-7" />;
@@ -37,22 +42,25 @@ export function VisitorFooter({ profile, socialLinks, siteSettings }: VisitorFoo
     <footer className="border-t bg-muted/30 py-12">
       <div className="container mx-auto px-4 flex flex-col items-center space-y-8">
         {/* Social Links */}
-        {(siteSettings?.footer?.socialLinks || socialLinks).length > 0 && (
+        {socialLinks.length > 0 && (
           <div className="flex items-center gap-6">
-            {(siteSettings?.footer?.socialLinks || socialLinks).map((link: any, i: number) => (
-              <Button
-                key={link.id || link._key || i}
-                variant="ghost"
-                size="icon"
-                asChild
-                className="rounded-full w-12 h-12 text-primary hover:bg-primary/10 hover:scale-110 transition-all"
-              >
-                <Link href={link.url} target="_blank" rel="noopener noreferrer">
-                  {getSocialIcon(link.platform)}
-                  <span className="sr-only">{link.platform}</span>
-                </Link>
-              </Button>
-            ))}
+            {socialLinks.map((link, i) => {
+              if (!link.url) return null;
+              return (
+                <Button
+                  key={link._key || i}
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                  className="rounded-full w-12 h-12 text-primary hover:bg-primary/10 hover:scale-110 transition-all"
+                >
+                  <Link href={link.url} target="_blank" rel="noopener noreferrer">
+                    {getSocialIcon(link.platform)}
+                    <span className="sr-only">{link.platform || "Social Link"}</span>
+                  </Link>
+                </Button>
+              );
+            })}
           </div>
         )}
 

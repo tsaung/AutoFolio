@@ -75,17 +75,23 @@ export async function POST(req: Request) {
     );
   }
 
-  // 2. Fetch User Profile + Social Links for Context
-  const [profileResult, socialLinksResult] = await Promise.all([
+  // 2. Fetch User Profile for Context
+  const [profileResult] = await Promise.all([
     adminClient.from("profiles").select("*").limit(1).single(),
-    adminClient
-      .from("social_links")
-      .select("platform, url")
-      .order("sort_order", { ascending: true }),
   ]);
 
   const profile = profileResult.data;
-  const socialLinks = socialLinksResult.data;
+
+  // We should also get site settings to get the social links for the chatbot
+  const { client } = await import("@/sanity/lib/client");
+  const { SITE_SETTINGS_QUERY } = await import("@/sanity/lib/queries");
+  let socialLinks: any[] = [];
+  try {
+    const siteSettings = await client.fetch(SITE_SETTINGS_QUERY);
+    socialLinks = siteSettings?.footer?.socialLinks || [];
+  } catch (error) {
+    console.warn("Failed to fetch site settings for chat:", error);
+  }
 
   const profileParts: string[] = [];
   if (profile) {
@@ -97,6 +103,7 @@ export async function POST(req: Request) {
       `Professional Summary: ${profile.professional_summary ?? "Not available."}`,
     );
   }
+
   if (socialLinks && socialLinks.length > 0) {
     profileParts.push(
       `\nContact & Social Links:`,

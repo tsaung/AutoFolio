@@ -19,6 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +59,15 @@ const siteSettingsSchema = z.object({
 
 type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
 
+const PREDEFINED_PLATFORMS = [
+  "GitHub",
+  "LinkedIn",
+  "Twitter",
+  "X",
+  "Email",
+  "Website",
+];
+
 export function SiteSettingsForm({ initialData, availableNavigations = [] }: { initialData: any, availableNavigations?: any[] }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -81,6 +98,30 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
     control: form.control,
     name: "footer.socialLinks"
   });
+
+  const [isSocialDialogOpen, setIsSocialDialogOpen] = useState(false);
+  const [newSocialPlatform, setNewSocialPlatform] = useState("");
+  const [newSocialUrl, setNewSocialUrl] = useState("");
+
+  const handleAddSocial = () => {
+    if (!newSocialPlatform || !newSocialUrl) {
+      toast.error("Please provide both a platform and a URL.");
+      return;
+    }
+    try {
+      if (newSocialPlatform !== "Email" && !newSocialUrl.startsWith("mailto:")) {
+        new URL(newSocialUrl);
+      }
+    } catch {
+      toast.error("Please provide a valid URL.");
+      return;
+    }
+
+    appendSocial({ platform: newSocialPlatform, url: newSocialUrl, icon: "" });
+    setNewSocialPlatform("");
+    setNewSocialUrl("");
+    setIsSocialDialogOpen(false);
+  };
 
   const themePreset = form.watch("brandColors.themePreset");
 
@@ -317,65 +358,85 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
           />
 
           <div className="space-y-4 pt-4">
-            <h5 className="text-sm font-medium">Social Links</h5>
-            {socialFields.map((field, index) => (
-              <div key={field.id} className="flex gap-4 items-end">
-                <FormField
-                  control={form.control}
-                  name={`footer.socialLinks.${index}.platform`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className={index !== 0 ? "sr-only" : ""}>Platform</FormLabel>
-                      <FormControl>
-                        <Input placeholder="GitHub" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`footer.socialLinks.${index}.url`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className={index !== 0 ? "sr-only" : ""}>URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://github.com/yourusername" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`footer.socialLinks.${index}.icon`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className={index !== 0 ? "sr-only" : ""}>Icon (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="github" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button 
-                  type="button" 
-                  variant="destructive" 
-                  size="icon" 
-                  onClick={() => removeSocial(index)}
-                >
-                  <Trash className="w-4 h-4" />
-                </Button>
+            <div className="flex items-center justify-between">
+              <h5 className="text-sm font-medium">Social Links</h5>
+              <Dialog open={isSocialDialogOpen} onOpenChange={setIsSocialDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button type="button" variant="outline" size="sm">
+                    <Plus className="w-4 h-4 mr-2" /> Add Social Link
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Social Link</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Platform</label>
+                      <Select value={newSocialPlatform} onValueChange={setNewSocialPlatform}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select platform" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PREDEFINED_PLATFORMS.map((platform) => (
+                            <SelectItem key={platform} value={platform}>
+                              {platform}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">URL</label>
+                      <Input
+                        placeholder="https://"
+                        value={newSocialUrl}
+                        onChange={(e) => setNewSocialUrl(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsSocialDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddSocial}>Add Link</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {socialFields.length > 0 ? (
+              <div className="grid gap-3">
+                {socialFields.map((field, index) => {
+                  const currentPlatform = form.watch(`footer.socialLinks.${index}.platform`);
+                  const currentUrl = form.watch(`footer.socialLinks.${index}.url`);
+                  return (
+                    <div
+                      key={field.id}
+                      className="flex items-center justify-between p-3 border rounded-md bg-card"
+                    >
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="font-medium text-sm">{currentPlatform}</span>
+                        <span className="text-xs text-muted-foreground truncate max-w-[250px] sm:max-w-md">
+                          {currentUrl}
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        onClick={() => removeSocial(index)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => appendSocial({ platform: "", url: "", icon: "" })}
-            >
-              <Plus className="w-4 h-4 mr-2" /> Add Social Link
-            </Button>
+            ) : (
+              <p className="text-sm text-muted-foreground">No social links added yet.</p>
+            )}
           </div>
         </div>
 

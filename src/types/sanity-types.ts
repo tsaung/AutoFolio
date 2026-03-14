@@ -53,19 +53,6 @@ export interface SanitySkill {
   updatedBy?: string;
 }
 
-export interface SanitySocialLink {
-  _id: string;
-  _type: "socialLink";
-  _createdAt: string;
-  _updatedAt: string;
-  platform: string;
-  url: string;
-  icon?: string;
-  sortOrder: number;
-  createdBy?: string;
-  updatedBy?: string;
-}
-
 export interface SanityNavigationItem {
   _key?: string;
   _type: "navigationItem";

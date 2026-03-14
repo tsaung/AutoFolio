@@ -21,12 +21,16 @@ const TechIcon = dynamic(() =>
 );
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type SocialLink = Database["public"]["Tables"]["social_links"]["Row"];
 type Skill = Database["public"]["Tables"]["skills"]["Row"];
 
 interface ProfileHeroProps {
   profile: Profile | null;
-  socialLinks?: SocialLink[];
+  socialLinks?: Array<{
+    _key?: string;
+    platform?: string;
+    url?: string;
+    icon?: string;
+  }>;
   skills?: Skill[];
 }
 
@@ -64,7 +68,8 @@ export function ProfileHero({
     );
   }
 
-  const getSocialIcon = (platform: string) => {
+  const getSocialIcon = (platform?: string) => {
+    if (!platform) return <ExternalLink className="w-5 h-5" />;
     switch (platform.toLowerCase()) {
       case "github":
         return <Github className="w-5 h-5" />;
@@ -108,20 +113,23 @@ export function ProfileHero({
         {/* Social Links */}
         {socialLinks.length > 0 && (
           <div className="flex items-center gap-4">
-            {socialLinks.map((link) => (
-              <Button
-                key={link.id}
-                variant="ghost"
-                size="icon"
-                asChild
-                className="rounded-full hover:bg-muted/80 hover:scale-110 transition-all"
-              >
-                <Link href={link.url} target="_blank" rel="noopener noreferrer">
-                  {getSocialIcon(link.platform)}
-                  <span className="sr-only">{link.platform}</span>
-                </Link>
-              </Button>
-            ))}
+            {socialLinks.map((link, i) => {
+              if (!link.url) return null;
+              return (
+                <Button
+                  key={link._key || i}
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                  className="rounded-full hover:bg-muted/80 hover:scale-110 transition-all"
+                >
+                  <Link href={link.url} target="_blank" rel="noopener noreferrer">
+                    {getSocialIcon(link.platform)}
+                    <span className="sr-only">{link.platform || "Social Link"}</span>
+                  </Link>
+                </Button>
+              );
+            })}
           </div>
         )}
 
