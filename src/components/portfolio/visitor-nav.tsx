@@ -11,6 +11,7 @@ import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
 import { cloudinaryLoader } from "@/lib/cloudinary-loader";
 import dynamic from "next/dynamic";
+import { urlFor } from "@/sanity/lib/image";
 
 const ModeToggle = dynamic(
   () => import("@/components/mode-toggle").then((mod) => mod.ModeToggle),
@@ -18,7 +19,7 @@ const ModeToggle = dynamic(
 );
 
 export function VisitorNav({
-  name,
+  name, // Keeping as optional for backward compatibility if used elsewhere without refactoring
   avatarUrl,
   siteSettings,
 }: {
@@ -134,21 +135,23 @@ export function VisitorNav({
               )}
               onClick={(e) => scrollToSection(e, "about")}
             >
-              <Avatar className="h-8 w-8">
-                <Image
-                  loader={cloudinaryLoader}
-                  src={avatarUrl || "/avatar.jpg"}
-                  alt={name || "Profile"}
-                  width={32}
-                  height={32}
-                  className="object-cover rounded-full"
-                />
-                <AvatarFallback>
-                  {name?.slice(0, 2).toUpperCase() || "BF"}
-                </AvatarFallback>
+              <Avatar className="h-8 w-8 rounded-md bg-transparent">
+                {siteSettings?.logo ? (
+                  <Image
+                    src={urlFor(siteSettings.logo).width(64).height(64).url()}
+                    alt={siteSettings?.siteName || name || "Logo"}
+                    width={32}
+                    height={32}
+                    className="object-contain rounded-md"
+                  />
+                ) : (
+                  <AvatarFallback className="rounded-md bg-primary/10 text-primary">
+                    {(siteSettings?.siteName || name || "BF").slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <span className="text-lg font-bold tracking-tight">
-                {name || "BotFolio"}
+                {siteSettings?.siteName || name || "BotFolio"}
               </span>
             </Link>
           </div>

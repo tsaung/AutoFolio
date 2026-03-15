@@ -1,9 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import { getBotConfig } from "@/lib/actions/bot-config";
+import { getProfile } from "@/lib/actions/profile";
 import { BotConfigForm } from "@/components/admin/settings/bot-config-form";
 
 export default async function SettingsBotPage() {
-  const config = await getBotConfig("public_agent");
+  const [config, profile] = await Promise.all([
+    getBotConfig("public_agent"),
+    getProfile()
+  ]);
 
   return (
     <div className="space-y-6">
@@ -15,7 +19,7 @@ export default async function SettingsBotPage() {
         </p>
       </div>
       <Separator />
-      <BotConfigForm initialData={config} type="public_agent" />
+      <BotConfigForm initialData={config} profileData={profile} type="public_agent" />
     </div>
   );
 }

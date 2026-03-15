@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { updateSiteSettings } from "@/lib/actions/site-settings";
 import { Plus, Trash, Check } from "lucide-react";
 import { THEMES } from "@/lib/themes";
+import { SanityImageUpload } from "@/components/admin/sanity-image-upload";
 
 import {
   Form,
@@ -39,6 +40,7 @@ import {
 
 const siteSettingsSchema = z.object({
   siteName: z.string().min(1, "Site name is required"),
+  logo: z.any().optional(),
   brandColors: z.object({
     themePreset: z.string().optional(),
     primary: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex form").optional().or(z.literal("")),
@@ -87,6 +89,7 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
     resolver: zodResolver(siteSettingsSchema),
     defaultValues: {
       siteName: initialData?.siteName || "",
+      logo: initialData?.logo || undefined,
       brandColors: defaultColors,
       mainNavigation: initialData?.mainNavigation?._ref || "",
       footerNavigation: initialData?.footerNavigation?._ref || "",
@@ -154,22 +157,44 @@ export function SiteSettingsForm({ initialData, availableNavigations = [] }: { i
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="siteName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Site Name</FormLabel>
-              <FormControl>
-                <Input placeholder="My Portfolio" {...field} />
-              </FormControl>
-              <FormDescription>
-                This acts as the default title for the site, and appears in the header.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <FormField
+            control={form.control}
+            name="siteName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Site Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="My Portfolio" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This acts as the default title for the site, and appears in the header.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="logo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Site Logo</FormLabel>
+                <FormControl>
+                  <SanityImageUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Upload a logo to display in the header and navigation.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="space-y-4">
           <h4 className="text-sm font-medium">Brand Colors</h4>

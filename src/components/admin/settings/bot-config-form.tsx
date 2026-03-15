@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateBotConfig } from "@/lib/actions/bot-config";
+import { updateProfile } from "@/lib/actions/profile";
 import { Database } from "@/types/database";
 import {
   SearchableSelect,
@@ -26,6 +27,21 @@ import {
 import type { OpenRouterModel } from "@/app/api/models/route";
 
 const botConfigFormSchema = z.object({
+  profession: z.string().min(2, {
+    message: "Profession/Role must be at least 2 characters.",
+  }),
+  experience: z.union([z.string(), z.number()]).transform(val => Number(val) || 0).refine(val => val >= 0, {
+    message: "Years of experience must be a non-negative number.",
+  }),
+  field: z.string().min(2, {
+    message: "Field/Industry must be at least 2 characters.",
+  }),
+  professionalSummary: z.string().min(10, {
+    message: "Professional summary must be at least 10 characters.",
+  }),
+  chatWelcomeMessage: z.string().max(300, {
+    message: "Chat welcome message must not be longer than 300 characters.",
+  }).optional(),
   systemPrompt: z.string().min(10, {
     message: "System prompt must be at least 10 characters.",
   }),
@@ -42,9 +58,11 @@ const botConfigFormSchema = z.object({
 
 type BotConfigFormValues = z.infer<typeof botConfigFormSchema>;
 type BotConfigData = Database["public"]["Tables"]["bot_configs"]["Row"];
+type ProfileData = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface BotConfigFormProps {
   initialData?: BotConfigData | null;
+  profileData?: Partial<ProfileData> | null;
   type: "public_agent" | "admin_agent";
 }
 
@@ -76,7 +94,7 @@ function formatContextLength(length: number): string {
   return `${length}`;
 }
 
-export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
+export function BotConfigForm({ initialData, profileData, type }: BotConfigFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -117,9 +135,14 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
     "",
   ];
 
-  const form = useForm<BotConfigFormValues>({
+  const form = useForm({
     resolver: zodResolver(botConfigFormSchema),
     defaultValues: {
+      profession: profileData?.profession || "",
+      experience: profileData?.experience || 0,
+      field: profileData?.field || "",
+      professionalSummary: profileData?.professional_summary || "I'm a {profession} with over {experience} years of experience in {field}.",
+      chatWelcomeMessage: profileData?.chat_welcome_message || "Hello! I am the AI assistant. How can I help you today?",
       systemPrompt: initialData?.system_prompt || "",
       model: initialData?.model || "google/gemini-2.0-flash-001",
       provider: initialData?.provider || "openrouter",
@@ -138,13 +161,26 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
         (p) => p.trim() !== "",
       );
 
+      // 1. Update bot_configs
       await updateBotConfig(type, {
         system_prompt: data.systemPrompt,
         model: data.model,
         provider: data.provider,
         predefined_prompts: cleanedPrompts,
       });
-      setSuccessMessage("Bot configuration updated successfully!");
+
+      // 2. Update profiles table (for persona context without running destructive migrations)
+      await updateProfile({
+        profession: data.profession,
+        experience: Number(data.experience),
+        field: data.field,
+        professional_summary: data.professionalSummary,
+        chat_welcome_message: data.chatWelcomeMessage,
+        name: profileData?.name || "Portfolio Owner", // Keep required fields
+        welcome_message: profileData?.welcome_message || "", // Keep existing if any
+      });
+
+      setSuccessMessage("Bot configuration and persona updated successfully!");
     } catch (error) {
       console.error(error);
       setErrorMessage("Failed to update configuration. Please try again.");
@@ -202,8 +238,99 @@ export function BotConfigForm({ initialData, type }: BotConfigFormProps) {
 
         <div className="space-y-4">
           <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            Persona
+            Persona & Identity
           </h4>
+          <FormField
+            control={form.control}
+            name="profession"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Role / Industry Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g. Fullstack Web Development Agency" {...field} />
+                </FormControl>
+                <FormDescription>The primary role or service provided by the site.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="experience"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Years Active / Experience</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="e.g. 5"
+                      {...field}
+                      value={field.value as number}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="field"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Field / Niche</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. Software Engineering" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="professionalSummary"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Identity / Company Summary</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Brief summary of your professional background or company mission..."
+                    className="resize-none h-32"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This summary will be used by the AI to answer general questions about the site when RAG data is not sufficient.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="chatWelcomeMessage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Chat Bot Welcome Message</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Hello! I am the AI assistant. How can I help you today?"
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Displayed as the first message when a visitor opens the chat interface.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="systemPrompt"
