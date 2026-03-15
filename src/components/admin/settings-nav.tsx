@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { User, Bot, MessageSquare, Cpu, Globe } from "lucide-react";
+import { Bot, MessageSquare, Cpu, Globe } from "lucide-react";
 
 interface SettingsNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
@@ -49,11 +49,6 @@ export function SettingsNav({ className, items, ...props }: SettingsNavProps) {
 }
 
 export const settingsNavItems = [
-  {
-    title: "Profile",
-    href: "/admin/settings/profile",
-    icon: User,
-  },
   {
     title: "Site Settings",
     href: "/admin/settings/site",
