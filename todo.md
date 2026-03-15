@@ -180,6 +180,16 @@
 - [ ] Update all spec files to match V2 final state.
 - [ ] Update `.agent/rules/` to reflect V2 conventions.
 
+### Phase 12: Installation Setup Wizard (UX Improvement)
+
+- [ ] Research and design the UI/UX flow for the Setup Wizard (environment check, database init, admin registration, initial bot config).
+- [ ] Implement a `/setup` route accessible only when the database is empty or not initialized.
+- [ ] Implement secure API routes to run Supabase SQL migrations and pgvector setup automatically from the UI.
+- [ ] Implement a wizard UI to guide the user through verifying Sanity and Supabase environment variables.
+- [ ] Implement the admin account creation step within the wizard, connecting to Supabase Auth.
+- [ ] Connect the wizard to save the initial bot settings (site name, profession, preferred AI model).
+- [ ] Ensure the final step redirects seamlessly to the `/admin/dashboard`.
+
 ## Post-Migration
 
 - [ ] Vercel Analytics integration
